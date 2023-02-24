@@ -1,10 +1,12 @@
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-class User {
+class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;
     private int weight, height, age, rate;
     private double[] nutrition = new double[8];
+    private FoodDatabase fdata;
+    private RecipeDatabase rdata;
 
 
     public User(String name, String gender, int weight, int height, String dateOfBirth, String goal, int rate) {
@@ -15,6 +17,8 @@ class User {
         this.dateOfBirth = dateOfBirth;
         this.goal = goal;
         this.rate = rate;
+        this.fdata = new FoodDatabase(name + "'s Food Database");
+        this.rdata = new RecipeDatabase(name + "'s Recipe Database");
         this.calculateAge();
         this.updateNutrition();
 

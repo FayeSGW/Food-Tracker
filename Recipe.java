@@ -1,50 +1,65 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class Recipe {
-    private String name;
+class Recipe extends SupFood {
     private HashMap<String, Food> ingredients;
     private HashMap<String, Integer> ingredientsList;
     private double nutrition[];
-    private int servings;
 
     public Recipe(String name, int servings) {
-        this.name = name;
+        super(name, servings);
         this.ingredients = new HashMap<>();
         this.ingredientsList = new HashMap<>();
         this.nutrition = new double[8];
 
-        this.servings = servings;
     }
 
-    public String showName() {
-        return this.name;
+    public String showUnit() {
+        return "servings";
     }
 
     public double[] showNutrition() {
-        return this.nutrition;
+        return nutrition;
     }
 
-    public void addIngredient(String name, int weight, FoodDatabase data) {
+    public void addIngredient(String name, int weight, Database data) {
+        SupFood ingredient;
         try {
-            Food ingredient = data.addFromDatabase(name);
-            double[] nutr = ingredient.unitNutrition();
-            this.ingredients.put(name, ingredient);
-            this.ingredientsList.put(name, weight);
-            double[] weighted = new double[8];
-            for (int i = 0; i < this.nutrition.length; i++) {
-                weighted[i] = nutr[i] * weight;
-                this.nutrition[i] = this.nutrition[i] + weighted[i];
-            }   
+            ingredient = data.addFromDatabase(name);
+            if (ingredient instanceof Food) {
+                Food ingr = (Food) ingredient;
+                double[] nutr = ingredient.unitNutrition();
+                ingredients.put(name, ingr);
+                ingredientsList.put(name, weight);
+                double[] weighted = new double[8];
+                for (int i = 0; i < nutrition.length; i++) {
+                    weighted[i] = nutr[i] * weight;
+                    nutrition[i] = nutrition[i] + weighted[i];
+                }   
+            } else {
+                Recipe rec = (Recipe) ingredient;
+                addFromRecipe(rec, weight, data);
+            }
         } catch (NullPointerException e) {
             System.out.println("Not in database! ");
+        } 
+    }
+
+    public void addFromRecipe(Recipe rec, int servings, Database data) {
+        for (String name: rec.showIngredients().keySet()) {
+            System.out.println(name);
+            int weight = rec.showIngredientList().get(name);
+            int totalServings = rec.servings();
+            double newWeight = weight * ((double) servings / totalServings);
+            weight = (int) newWeight;
+            addIngredient(name, weight, data);
         }
     }
 
     public void removeIngredient(String name) {
         Food food = this.ingredients.get(name);
         double[] weighted = new double[8];
-        int weight = this.ingredientsList.get(name);
+        int weight = ingredientsList.get(name);
         for (int i = 0; i < this.nutrition.length; i++) {
             weighted[i] = food.unitNutrition()[i] * weight; 
             this.nutrition[i] = this.nutrition[i] - weighted[i];
@@ -60,26 +75,23 @@ class Recipe {
         return text;
     }
 
-    public double[] unitNutrition() {
-        double[] unit = new double[8];
-        for (int i = 0; i < this.nutrition.length; i++) {
-            unit[i] = this.nutrition[i] / this.servings;
-        }
-        return unit;
-    }
 
     public HashMap<String, Food> showIngredients() {
-        return this.ingredients;
+        return ingredients;
+    }
+
+    public HashMap<String, Integer> showIngredientList() {
+        return ingredientsList;
     }
 
     public String toString() {
-        ArrayList<String> ingredients = new ArrayList<>();
-        for (String name : this.ingredients.keySet()) {
-            Food ingredient = this.ingredients.get(name);
-            String strng = this.ingredientsList.get(name) + " " + ingredient.showUnit() + " " + name;
-            ingredients.add(strng);
+        ArrayList<String> ingrdnts = new ArrayList<>();
+        for (String name : ingredients.keySet()) {
+            Food ingredient = ingredients.get(name);
+            String strng = ingredientsList.get(name) + " " + ingredient.showUnit() + " " + name;
+            ingrdnts.add(strng);
         }
-        String list = this.name + ": " + String.join("," , ingredients);
+        String list = name + ": " + String.join(", " , ingrdnts);
         return list;
     }
 
