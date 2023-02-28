@@ -3,9 +3,8 @@ import java.util.Scanner;
 
 class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);
-    private String name, unit;
-    private int weight;
-    double[] nutrition = new double[8];
+    private String unit;
+    //double[] nutrition = new double[8];
 
     public Food(String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt) {
         super(name, weight);
@@ -19,12 +18,9 @@ class Food extends SupFood{
         return text;
     }
 
-    public double[] showNutrition() {
-        return nutrition;
-    }
 
     public String showWeight() {
-        String show = weight + unit;
+        String show = weight +" " + unit;
         return show;
     }
 
@@ -45,7 +41,7 @@ class Food extends SupFood{
         String[] nutrients = {"Calories", "Fat", "Sat Fat", "Carbs", "Sugar", "Fibre", "Protein", "Salt"};
         for (int i = 0; i < nutrients.length; i++) {
             if (choice.equals(nutrients[i])) {
-                this.nutrition[i] = nut;
+                nutrition[i] = nut;
             }
         }
     }

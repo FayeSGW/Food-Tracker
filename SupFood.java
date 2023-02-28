@@ -1,16 +1,14 @@
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 abstract class SupFood {
     Scanner scanner = new Scanner(System.in);
     protected String name;
     protected double nutrition[] = new double[8];
-    protected int servings;
+    protected int weight;
 
-    public SupFood(String name, int servings) {
+    public SupFood(String name, int weight) {
         this.name = name;
-        this.servings = servings;
+        this.weight = weight;
     }
 
     public String showName() {
@@ -19,10 +17,12 @@ abstract class SupFood {
 
     abstract String showUnit();
 
-    abstract double[] showNutrition();
+    public double[] showNutrition() {
+        return nutrition;
+    }
 
-    public int servings() {
-        return servings;
+    public int weight() {
+        return weight;
     }
 
     public void editName() {
@@ -41,7 +41,7 @@ abstract class SupFood {
     public double[] unitNutrition() {
         double[] unit = new double[8];
         for (int i = 0; i < nutrition.length; i++) {
-            unit[i] = nutrition[i] / servings;
+            unit[i] = nutrition[i] / weight;
         }
         return unit;
     }

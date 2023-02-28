@@ -7,13 +7,15 @@ class Day {
     private double[] nutrition, remainingNutrition;
     private HashMap<String, Exercise> exercise;
     private int caloriesBurned;
+    private User user;
 
     public Day(String date, User user) {
         this.date = date;
-        this.breakfast = new Meal("Breakfast", this.date);
-        this.lunch = new Meal("Lunch", this.date);
-        this.dinner = new Meal("Dinner", this.date);
-        this.snacks = new Meal("Snacks", this.date);
+        this.user = user;
+        this.breakfast = new Meal("Breakfast", date);
+        this.lunch = new Meal("Lunch", date);
+        this.dinner = new Meal("Dinner", date);
+        this.snacks = new Meal("Snacks", date);
         this.nutrition = new double[8];
         this.remainingNutrition = user.showNutrition();
         this.exercise = new HashMap<>();
@@ -21,20 +23,20 @@ class Day {
     }
 
     public String showDate() {
-        return this.date;
+        return date;
     }
 
-    public void addFood(String meal, String item, int amount, FoodDatabase database) {
+    public void addFood(String meal, String item, int amount, Database database) {
         String name = meal.toLowerCase().trim();
         double[] foodNutrition = new double[8];
         if (name.equals("breakfast")) {
-            foodNutrition = this.breakfast.addFood(item, amount, database);
+            foodNutrition = breakfast.add(item, amount, database);
         } else if (name.equals("lunch")) {
-            foodNutrition = this.lunch.addFood(item, amount, database);
+            foodNutrition = lunch.add(item, amount, database);
         } else if (name.equals("dinner")) {
-            foodNutrition = this.dinner.addFood(item, amount, database);
+            foodNutrition = dinner.add(item, amount, database);
         } else if (name.equals("snacks")) {
-            foodNutrition = this.snacks.addFood(item, amount, database);
+            foodNutrition = snacks.add(item, amount, database);
         }
         for (int i = 0; i < this.nutrition.length; i++) {
             this.nutrition[i] = this.nutrition[i] + foodNutrition[i];
@@ -43,7 +45,7 @@ class Day {
         }
     }
 
-    public void addRecipe(String meal, String item, int amount, RecipeDatabase database) {
+    /*public void addRecipe(String meal, String item, int amount, RecipeDatabase database) {
         String name = meal.toLowerCase().trim();
         double[] recipeNutrition = new double[8];
         if (name.equals("breakfast")) {
@@ -60,11 +62,11 @@ class Day {
             remainingNutrition[i] = remainingNutrition[i] - recipeNutrition[i];
 
         }
-    }
+    }*/
 
 
 
-    public void removeFood(String meal, String item) {
+    public void remove(String meal, String item) {
         String name = meal.toLowerCase().trim();
         double[] nutr = new double[8];
         if (name.equals("breakfast")) {
@@ -102,6 +104,17 @@ class Day {
             nutrition[i] = nutrition[i] - nutr[i];
             remainingNutrition[i] = remainingNutrition[i] + nutr[i];
         }
+    }
+
+    public void clearAll() {
+        breakfast.removeAll();
+        lunch.removeAll();
+        dinner.removeAll();
+        snacks.removeAll();
+        nutrition = new double[8];
+        remainingNutrition = user.showNutrition();
+        exercise.clear();
+        caloriesBurned = 0;
     }
 
     public void addExercise(String name, int time, int calories) {
@@ -146,8 +159,8 @@ class Day {
     @Override
     public String toString() {
         String meals = String.format("%s \nBreakfast: %s \n\nLunch: %s \n\nDinner: %s \n\nSnacks: %s", date, breakfast.toString(), lunch.toString(), dinner.toString(), snacks.toString());
-        String exercise = "\nToday's workouts: \n" + this.exerciseToString();
-        String total = String.format("\nTotal Eaten: \nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", nutrition[0], nutrition[1], nutrition[2], nutrition[3], nutrition[4], nutrition[5], nutrition[6], nutrition[7]);
+        String exercise = "\n\nToday's workouts: \n" + this.exerciseToString();
+        String total = String.format("\n\nTotal Eaten: \nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", nutrition[0], nutrition[1], nutrition[2], nutrition[3], nutrition[4], nutrition[5], nutrition[6], nutrition[7]);
         String burned = "\n\nTotal calories burned: " + caloriesBurned;
         String remaining = String.format("\n\nRemaining nutrition: \nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", remainingNutrition[0], remainingNutrition[1], remainingNutrition[2], remainingNutrition[3], remainingNutrition[4], remainingNutrition[5], remainingNutrition[6], remainingNutrition[7]);
 

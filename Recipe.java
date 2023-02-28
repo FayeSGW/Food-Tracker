@@ -4,7 +4,7 @@ import java.util.HashMap;
 class Recipe extends SupFood {
     private HashMap<String, Food> ingredients;
     private HashMap<String, Integer> ingredientsList;
-    private double nutrition[];
+    //private double nutrition[];
 
     public Recipe(String name, int servings) {
         super(name, servings);
@@ -18,9 +18,6 @@ class Recipe extends SupFood {
         return "servings";
     }
 
-    public double[] showNutrition() {
-        return nutrition;
-    }
 
     public void addIngredient(String name, int weight, Database data) {
         SupFood ingredient;
@@ -49,7 +46,7 @@ class Recipe extends SupFood {
         for (String name: rec.showIngredients().keySet()) {
             System.out.println(name);
             int weight = rec.showIngredientList().get(name);
-            int totalServings = rec.servings();
+            int totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
             weight = (int) newWeight;
             addIngredient(name, weight, data);
