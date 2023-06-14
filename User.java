@@ -7,6 +7,7 @@ class User implements java.io.Serializable {
     private double weight, rate;
     private double[] nutrition = new double[8];
     private Database data;
+    private Diary diary;
 
 
     public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate) {
@@ -18,6 +19,7 @@ class User implements java.io.Serializable {
         this.goal = goal;
         this.rate = rate;
         this.data = new Database(name + "'s Database");
+        this.diary = new Diary(name, this);
         this.calculateAge();
         this.updateNutrition();
 

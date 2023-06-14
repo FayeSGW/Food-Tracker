@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Set;
 
-class Diary {
+class Diary implements java.io.Serializable {
     private String name;
     private TreeMap<String, Day> diary;
     private User user;

@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-class Database {
-    Scanner input = new Scanner(System.in);
+class Database implements java.io.Serializable {
+    transient Scanner input = new Scanner(System.in);
     protected String name;
     //private ArrayList<Food> database = new ArrayList<>();
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();

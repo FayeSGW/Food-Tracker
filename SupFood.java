@@ -3,12 +3,13 @@ import java.util.Scanner;
 abstract class SupFood {
     Scanner scanner = new Scanner(System.in);
     protected String name;
-    protected double nutrition[] = new double[8];
+    protected double nutrition[];
     protected int weight;
 
     public SupFood(String name, int weight) {
         this.name = name;
         this.weight = weight;
+        nutrition = new double[8];
     }
 
     public String showName() {

@@ -10,7 +10,7 @@ class Recipe extends SupFood {
         super(name, servings);
         this.ingredients = new HashMap<>();
         this.ingredientsList = new HashMap<>();
-        this.nutrition = new double[8];
+        //this.nutrition = new double[8];
 
     }
 
