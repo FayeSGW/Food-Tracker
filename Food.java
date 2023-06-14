@@ -1,14 +1,18 @@
-
+import java.util.ArrayList;
 import java.util.Scanner;
 
 class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);
     private String unit;
+    private String barcode;
+    private ArrayList<String> foodType;
     //double[] nutrition = new double[8];
 
-    public Food(String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt) {
-        super(name, weight);
+    public Food(Database data, String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        super(data, name, weight);
+        this.barcode = barcode;
         this.unit = unit;
+        foodType = new ArrayList<>();
         this.nutrition[0] = calories; this.nutrition[1] = fat; this.nutrition[2] = satfat; this.nutrition[3] = carbs; this.nutrition[4] = sugar; this.nutrition[5] = fibre; this.nutrition[6] = protein; this.nutrition[7] = salt;
         }
 
@@ -18,6 +22,37 @@ class Food extends SupFood{
         return text;
     }
 
+    public void addFoodType(String type) {
+        foodType.add(type);
+        for (SupFood food: data.access().values()) {
+            if (food instanceof Recipe) {
+                Recipe recipe = (Recipe) food;
+                if (recipe.showIngredients().keySet().contains(name)) {
+                    recipe.addFoodType(type);
+                }
+            }
+        }
+    }
+
+    public void removeFoodType(String type) {
+        foodType.remove(type);
+        for (SupFood food: data.access().values()) {
+            if (food instanceof Recipe) {
+                Recipe recipe = (Recipe) food;
+                if (!recipe.checkIngredientFoodTypes(name, type)) {
+                    recipe.removeFoodType(type);
+                }
+            }
+        }
+    }
+
+    public ArrayList<String> showFoodTypes() {
+        return foodType;
+    }
+
+    public String showBarcode() {
+        return barcode;
+    }
 
     public String showWeight() {
         String show = weight +" " + unit;

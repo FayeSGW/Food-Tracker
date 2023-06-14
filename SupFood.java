@@ -5,11 +5,13 @@ abstract class SupFood {
     protected String name;
     protected double nutrition[];
     protected int weight;
+    protected Database data;
 
-    public SupFood(String name, int weight) {
+    public SupFood(Database data, String name, int weight) {
         this.name = name;
         this.weight = weight;
         nutrition = new double[8];
+        this.data = data;
     }
 
     public String showName() {

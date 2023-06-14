@@ -13,9 +13,9 @@ class Database implements java.io.Serializable {
         this.name = name;
     }
 
-    public void addFood(String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt) {
+    public void addFood(String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         if (addCheck(name)) {
-            Food food = new Food(name, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt);
+            Food food = new Food(this, name, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
         }
     }
@@ -24,7 +24,7 @@ class Database implements java.io.Serializable {
         if (!addCheck(name)) {
             System.out.println("OK!");
         }
-        Recipe recipe = new Recipe(name, servings);
+        Recipe recipe = new Recipe(this, name, servings);
         database.put(name, recipe);
         return recipe;
     }
