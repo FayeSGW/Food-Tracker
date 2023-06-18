@@ -1,12 +1,14 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.time.LocalDate;
 
 class Meal {
-    private String name, date;
+    private String name;
+    private LocalDate date;
     private HashMap<String, ArrayList<Object>> foodlst;
     private double[] nutrition;
 
-    public Meal(String name, String date) {
+    public Meal(String name, LocalDate date) {
         this.name = name;
         this.date = date;
         this.foodlst = new HashMap<>();

@@ -80,6 +80,6 @@ class Food extends SupFood{
             }
         }
     }
-  
+ 
 }
 

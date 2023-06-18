@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,7 +83,7 @@ class Recipe extends SupFood {
                 addFromRecipe(rec, weight);
             }
         } catch (NullPointerException e) {
-            System.out.println("Not in database! ");
+            //System.out.println("Not in database! ");
         } 
     }
 
@@ -114,7 +115,7 @@ class Recipe extends SupFood {
             weighted[i] = food.unitNutrition()[i] * weight; 
             nutrition[i] = nutrition[i] - weighted[i];
         }
-        
+
         for (String type: food.showFoodTypes()) {
             if (!checkIngredientFoodTypes(name, type)) {
                 removeFoodType(type);

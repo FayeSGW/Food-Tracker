@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+
 class Database implements java.io.Serializable {
     transient Scanner input = new Scanner(System.in);
     protected String name;
@@ -29,19 +30,17 @@ class Database implements java.io.Serializable {
         return recipe;
     }
 
-    public Boolean addCheck(String name) {
-        Boolean True = true;
-        Boolean False = false;
+    public boolean addCheck(String name) {
         if (database.containsKey(name)) {
             System.out.println("This exists already! ");
             System.out.println(database.get(name));
             System.out.println("Would you to overwrite? ");
             String replace = input.nextLine();
             if (replace.toUpperCase().equals("N")) {
-                return False;
+                return false;
             }
         }
-        return True;
+        return true;
     }
 
     public HashMap<String, SupFood> access() {
@@ -68,6 +67,7 @@ class Database implements java.io.Serializable {
     public SupFood addFromDatabase(String name) {
         if (!database.containsKey(name)) {
             System.out.println("Not in database!");
+            return null;
         }
         return findItem(name);
     }
@@ -76,6 +76,7 @@ class Database implements java.io.Serializable {
         SupFood item = database.get(name);
         return item;        
     }
+
 
     @Override
     public String toString() {

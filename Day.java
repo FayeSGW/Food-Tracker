@@ -1,15 +1,16 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.time.LocalDate;
 
 class Day {
-    private String date;
+    private LocalDate date;
     private Meal breakfast, lunch, dinner, snacks;
     private double[] nutrition, remainingNutrition;
     private HashMap<String, Exercise> exercise;
-    private int caloriesBurned;
+    private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private User user;
 
-    public Day(String date, User user) {
+    public Day(LocalDate date, User user) {
         this.date = date;
         this.user = user;
         this.breakfast = new Meal("Breakfast", date);
@@ -19,10 +20,10 @@ class Day {
         this.nutrition = new double[8];
         this.remainingNutrition = user.showNutrition();
         this.exercise = new HashMap<>();
-        this.caloriesBurned = 0;
+        remainingWater = user.showWater();
     }
 
-    public String showDate() {
+    public LocalDate showDate() {
         return date;
     }
 
@@ -140,6 +141,19 @@ class Day {
         }
     }
 
+    public void addWater(int amount) {
+        waterDrunk += amount;
+        remainingWater -= amount;
+    }
+
+    public int showWaterDrunk() {
+        return waterDrunk;
+    }
+
+    public int showRemainingWater() {
+        return remainingWater;
+    }
+
     public String exerciseToString() {
         ArrayList<String> list = new ArrayList<>();
         for (String workout: exercise.keySet()) {
@@ -155,6 +169,11 @@ class Day {
     public double[] showRemainingNutrition() {
         return remainingNutrition;
     }
+
+    public double showRemainingCalories() {
+        return remainingNutrition[0];
+    }
+
 
     @Override
     public String toString() {

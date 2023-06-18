@@ -3,24 +3,31 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Set;
+import java.time.LocalDate;
 
 class Diary implements java.io.Serializable {
     private String name;
-    private TreeMap<String, Day> diary;
+    private TreeMap<LocalDate, Day> diary;
     private User user;
+    private LocalDate current;
     
     public Diary(String name, User user) {
         this.name = name;
         this.user = user;
         this.diary = new TreeMap<>();
+        showDay(LocalDate.now());
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return String.join(", ", diary.keySet());
+    }*/
+
+    public int showWater() {
+        return 8;
     }
 
-    public Set<String> showDays() {
+    public Set<LocalDate> showDays() {
         return diary.keySet();
     }
 
@@ -28,60 +35,69 @@ class Diary implements java.io.Serializable {
         return name;
     }
 
-    public void addDay(String date) {
+    public LocalDate showCurrentDate() {
+        return current;
+    }
+
+    public void addDay(LocalDate date) {
         if (!diary.keySet().contains(date)) {
             Day day = new Day(date, user);
             diary.put(date, day);
         }
     }
 
-    public String showDay(String date) {
+    public String showDay(LocalDate date) {
         this.addDay(date);
         Day d = diary.get(date);
+        current = date;
         return d.toString();
     }
 
-    public Day getDay(String date) {
+    public Day getDay(LocalDate date) {
         this.addDay(date);
+        current = date;
         return diary.get(date);
     }
 
-    public Day next(String date) {
-        String nxt = diary.higherKey(date);
+    public Day next(LocalDate date) {
+        LocalDate nxt = diary.higherKey(date);
         try {
             diary.get(nxt);
         } catch (NullPointerException e) {
-            String[] day = date.split("-");
+            /*String[] day = date.split("-");
             int[] dayInt = {Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])};
             LocalDate dayDate = LocalDate.of(dayInt[0], dayInt[1], dayInt[2]);
             LocalDate nextDay = dayDate.plusDays(1);
             nxt = nextDay.toString();
-            this.addDay(nxt);
+            this.addDay(nxt);*/
         }
-        System.out.println(nxt);
+        //System.out.println(nxt);
+        current = nxt;
         return diary.get(nxt);
     }
 
-    public Day previous(String date) {
-        String prev = diary.lowerKey(date);
+    public Day previous(LocalDate date) {
+        LocalDate prev = diary.lowerKey(date);
         try {
             diary.get(prev);
         } catch (NullPointerException e) {
-            String[] day = date.split("-");
+            /*String[] day = date.split("-");
             int[] dayInt = {Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])};
             LocalDate dayDate = LocalDate.of(dayInt[0], dayInt[1], dayInt[2]);
             LocalDate prevDay = dayDate.minusDays(1);
             prev = prevDay.toString();
-            this.addDay(prev);
+            this.addDay(prev);*/
         }
-        System.out.println(prev);
+        //System.out.println(prev);
+        current = prev;
         return diary.get(prev);
     }
 
     public Day goToToday() {
         LocalDate today = LocalDate.now();
-        String todayS = today.toString();
-        return diary.get(todayS);
+        //String todayS = today.toString();
+        current = today;
+        return diary.get(today);
     }
 
 }

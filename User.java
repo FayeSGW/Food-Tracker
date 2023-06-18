@@ -3,7 +3,7 @@ import java.time.temporal.ChronoUnit;
 
 class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;
-    private int height, age;
+    private int height, age, water = 8;
     private double weight, rate;
     private double[] nutrition = new double[8];
     private Database data;
@@ -112,6 +112,18 @@ class User implements java.io.Serializable {
 
     public Database accessDatabase() {
         return data;
+    }
+
+    public Diary accessDiary() {
+        return diary;
+    }
+
+    public void setWater(int amount) {
+        water = amount;
+    }
+
+    public int showWater() {
+        return water;
     }
 
     @Override

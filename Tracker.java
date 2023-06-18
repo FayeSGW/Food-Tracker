@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 class Tracker {
     
-    public static User loadUser(Scanner scan) {
+    public static void loadUser(Scanner scan) {
         String name, gender, goal, dob;
         int weight, height, rate;
         User user = null;
@@ -44,7 +44,7 @@ class Tracker {
             user = (User) in.readObject();
             in.close();
             fileIn.close();
-        } catch (FileNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("Create User: ");
         }
 
