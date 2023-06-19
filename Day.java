@@ -9,6 +9,7 @@ class Day {
     private HashMap<String, Exercise> exercise;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private User user;
+    private Database database;
 
     public Day(LocalDate date, User user) {
         this.date = date;
@@ -21,13 +22,14 @@ class Day {
         this.remainingNutrition = user.showNutrition();
         this.exercise = new HashMap<>();
         remainingWater = user.showWater();
+        this.database = user.accessDatabase();
     }
 
     public LocalDate showDate() {
         return date;
     }
 
-    public void addFood(String meal, String item, int amount, Database database) {
+    public void addFood(String meal, String item, int amount) {
         String name = meal.toLowerCase().trim();
         double[] foodNutrition = new double[8];
         if (name.equals("breakfast")) {

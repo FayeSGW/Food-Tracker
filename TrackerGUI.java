@@ -7,6 +7,9 @@ class Test {
         User user = new User("Faye", "F", 81, 165, "24.07.1989", "loss", 1);
         Diary diary = new Diary("", user);
         TrackerControl control = new TrackerControl(user, diary);
+
+        Database data = user.accessDatabase();
+        data.addFood("Apple", 100, "g", 47.0, 0.1, 0.0, 10.0, 6.8, 2.5, 0.3, 0.0, null);
         control.start();
         
 
@@ -17,6 +20,7 @@ class Test {
 class TrackerGUI {
     TrackerControl control;
     SummaryGUI sGUI;
+    DiaryGUI dGUI;
     JFrame window;
     JTabbedPane tabbedPane;
 
@@ -30,9 +34,10 @@ class TrackerGUI {
 
 
 
-    TrackerGUI (TrackerControl control, SummaryGUI sGUI) {
+    TrackerGUI (TrackerControl control, SummaryGUI sGUI, DiaryGUI dGUI) {
         this.control = control;
         this.sGUI = sGUI;
+        this.dGUI = dGUI;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -46,10 +51,10 @@ class TrackerGUI {
         tabbedPane = new JTabbedPane();
         window.add(tabbedPane);
 
-        summary = sGUI; summary.setLayout(new BoxLayout(summary, BoxLayout.PAGE_AXIS));
+        summary = sGUI; summary.setLayout(new BoxLayout(summary, BoxLayout.Y_AXIS));
         tabbedPane.add("Summary", summary);
 
-        diary = new JPanel();
+        diary = dGUI;
         tabbedPane.add("Diary", diary);
 
         history = new JPanel();
@@ -74,9 +79,10 @@ class TrackerGUI {
 
 
         window.pack();
-        window.setSize(500, 500);
+        window.setSize(500, 400);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+        //window.setResizable(false);
 
     }
 

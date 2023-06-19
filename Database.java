@@ -1,3 +1,5 @@
+package db;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -21,14 +23,14 @@ class Database implements java.io.Serializable {
         }
     }
 
-    public Recipe addRecipe(String name, int servings) {
+    /*public Recipe addRecipe(String name, int servings) {
         if (!addCheck(name)) {
             System.out.println("OK!");
         }
         Recipe recipe = new Recipe(this, name, servings);
         database.put(name, recipe);
         return recipe;
-    }
+    }*/
 
     public boolean addCheck(String name) {
         if (database.containsKey(name)) {

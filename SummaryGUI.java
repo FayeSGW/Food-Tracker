@@ -5,16 +5,16 @@ import java.time.LocalDate;
 
 class SummaryGUI extends JPanel {
     TrackerControl control;
-    User user;
 
-    JPanel summaryDateButtons, summaryAddButtons, caloriesPanel, caloriesGraphic, macros, macrosCarbs, macrosProtein, macrosFat, macrosText, macrosGraphic, carbsGraphic, proteinGraphic, fatGraphic, waterAll, waterGraphic;
-    JLabel caloriesTitle, caloriesLeft, macrosTitle, carbs, carbsZero, carbsGoal, protein, proteinZero, proteinGoal, fat, fatZero, fatGoal, waterTitle, waterZero, waterGoal;
+    JPanel summaryDateButtons, summaryAddButtons, caloriesPanel, caloriesText, caloriesGraphic;
+    JPanel macros, macrosPanel, macrosCarbs, macrosProtein, macrosFat, macrosText, macrosGraphic, carbsText, carbsGraphic, proteinText, proteinGraphic, fatText, fatGraphic, waterPanel, waterAll, waterGraphic;
+    JLabel caloriesTitle, caloriesLeft, calsZero, calsGoal, macrosTitle, carbs, carbsZero, carbsGoal, protein, proteinZero, proteinGoal, fat, fatZero, fatGoal, waterTitle, waterZero, waterGoal;
     JButton prevDay, chooseDay, nextDay, addFood, addWater, addExercise, updateWeight;
-    JProgressBar carbProgress, proteinProgress, fatProgress, waterProgress;
+    JProgressBar caloriesProgress, carbProgress, proteinProgress, fatProgress, waterProgress;
 
     SummaryGUI(TrackerControl control) {
         this.control = control;
-        //this.user = user;
+
                 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -33,44 +33,52 @@ class SummaryGUI extends JPanel {
 
         summaryAddButtons = new JPanel(new FlowLayout());
         this.add(summaryAddButtons);
-        addFood = new JButton("Add Food");
+        addFood = new JButton("Add Food"); addFood.addActionListener(new addFood());
         addWater = new JButton("Add Water");
         addExercise = new JButton("Add Exercise");
         updateWeight = new JButton("Update Weight");
         summaryAddButtons.add(addFood); summaryAddButtons.add(addWater); summaryAddButtons.add(addExercise); summaryAddButtons.add(updateWeight);
 
-        caloriesTitle = new JLabel("Calories");
-        this.add(caloriesTitle); 
+        caloriesPanel = new JPanel(new BorderLayout()); this.add(caloriesPanel);
+        caloriesTitle = new JLabel("Calories", SwingConstants.CENTER); 
+        caloriesPanel.add(caloriesTitle, BorderLayout.NORTH); 
 
-        caloriesPanel = new JPanel();
-        caloriesLeft = new JLabel("Left: ");
+        caloriesText = new JPanel(); caloriesText.setPreferredSize(new Dimension(200, 25));
+        caloriesPanel.add(caloriesText, BorderLayout.WEST); 
+        caloriesLeft = new JLabel("Left: "); caloriesText.add(caloriesLeft);
         caloriesGraphic = new JPanel(); 
-        this.add(caloriesPanel);
-        caloriesPanel.add(caloriesLeft); caloriesPanel.add(caloriesGraphic);
+        caloriesPanel.add(caloriesGraphic, BorderLayout.EAST);
 
-        macrosTitle = new JLabel("Macros");
-        this.add(macrosTitle);
+        calsZero = new JLabel("0"); caloriesGraphic.add(calsZero);
+        caloriesProgress = new JProgressBar(); caloriesGraphic.add(caloriesProgress);
+        calsGoal = new JLabel(); caloriesGraphic.add(calsGoal);
 
-        macros = new JPanel(); macros.setLayout(new BoxLayout(macros, BoxLayout.Y_AXIS));
-        this.add(macros);
+        macrosPanel = new JPanel(new BorderLayout()); this.add(macrosPanel);
+        macrosTitle = new JLabel("Macros", SwingConstants.CENTER); macrosPanel.add(macrosTitle, BorderLayout.NORTH);
 
-        /*macrosText = new JPanel(); macrosText.setLayout(new BoxLayout(macrosText, BoxLayout.Y_AXIS));
+        //macros = new JPanel(); macros.setLayout(new BoxLayout(macros, BoxLayout.Y_AXIS));
+        //this.add(macros);
+
+        macrosText = new JPanel(); macrosText.setLayout(new BoxLayout(macrosText, BoxLayout.Y_AXIS));
         macrosGraphic = new JPanel(); macrosGraphic.setLayout(new BoxLayout(macrosGraphic, BoxLayout.Y_AXIS));
-        macros.add(macrosText); macros.add(macrosGraphic);*/
+        macrosPanel.add(macrosText, BorderLayout.WEST); macrosPanel.add(macrosGraphic, BorderLayout.EAST);
 
-        macrosCarbs = new JPanel(); macros.add(macrosCarbs);
-        carbs = new JLabel("Carbs: "); macrosCarbs.add(carbs);
+        //macrosCarbs = new JPanel(); macros.add(macrosCarbs);
+        carbsText = new JPanel(); carbsText.setPreferredSize(new Dimension(150, 25)); macrosText.add(carbsText);
+        carbs = new JLabel("Carbs: ");  //macrosCarbs.add(carbs);
 
-        macrosProtein = new JPanel(); macros.add(macrosProtein);
-        protein = new JLabel("Protein: "); macrosProtein.add(protein);
+        //macrosProtein = new JPanel(); macros.add(macrosProtein);
+        proteinText = new JPanel(); proteinText.setPreferredSize(new Dimension(150, 25)); macrosText.add(proteinText);
+        protein = new JLabel("Protein: "); //macrosProtein.add(protein);
 
-        macrosFat = new JPanel(); macros.add(macrosFat);
-        fat = new JLabel("Fat: "); macrosFat.add(fat);
-        //macrosText.add(carbs); macrosText.add(protein); macrosText.add(fat);
+        //macrosFat = new JPanel(); macros.add(macrosFat);
+        fatText = new JPanel(); fatText.setPreferredSize(new Dimension(200, 25)); macrosText.add(fatText);
+        fat = new JLabel("Fat: "); //macrosFat.add(fat);
+        carbsText.add(carbs); proteinText.add(protein); fatText.add(fat);
 
-        carbsGraphic = new JPanel(); macrosCarbs.add(carbsGraphic); //macrosGraphic.add(carbsGraphic);
-        proteinGraphic = new JPanel(); macrosProtein.add(proteinGraphic); //macrosGraphic.add(proteinGraphic);
-        fatGraphic = new JPanel(); macrosFat.add(fatGraphic); //macrosGraphic.add(fatGraphic);
+        carbsGraphic = new JPanel(); macrosGraphic.add(carbsGraphic);
+        proteinGraphic = new JPanel(); macrosGraphic.add(proteinGraphic);
+        fatGraphic = new JPanel(); macrosGraphic.add(fatGraphic);
 
         carbsZero = new JLabel("0"); carbsGraphic.add(carbsZero);
         carbProgress = new JProgressBar(); carbsGraphic.add(carbProgress);
@@ -84,19 +92,17 @@ class SummaryGUI extends JPanel {
         fatProgress = new JProgressBar(); fatGraphic.add(fatProgress);
         fatGoal = new JLabel(); fatGraphic.add(fatGoal);
 
+        waterPanel = new JPanel(new BorderLayout()); this.add(waterPanel);
 
-        waterTitle = new JLabel("Water");
-        this.add(waterTitle);
+        waterTitle = new JLabel("Water", SwingConstants.CENTER); waterPanel.add(waterTitle, BorderLayout.NORTH);
 
         waterAll = new JPanel();
-        this.add(waterAll);
+        waterPanel.add(waterAll, BorderLayout.SOUTH);
 
         waterZero = new JLabel("0"); waterAll.add(waterZero);
         waterProgress = new JProgressBar(); waterAll.add(waterProgress);
         waterGoal = new JLabel(); waterAll.add(waterGoal);
 
-        
-        
     }
 
     void changeDate(String day, int date, String month) {
@@ -104,8 +110,11 @@ class SummaryGUI extends JPanel {
         chooseDay.setText(string);
     }
 
-    void updateCalories(String string) {
+    void updateCalories(String string, int cals) {
         caloriesLeft.setText("Left: " + string);
+        caloriesProgress.setValue(cals);
+        caloriesProgress.setString(Integer.toString(cals));
+        caloriesProgress.setStringPainted(true);
     }
 
     void updateCarbs(String string, double carbs) {
@@ -127,6 +136,12 @@ class SummaryGUI extends JPanel {
         fatProgress.setValue((int)fat);
         fatProgress.setString(Double.toString(fat) + " g");
         fatProgress.setStringPainted(true);
+
+    }
+
+    void setCalsGoal(int calories) {
+        caloriesProgress.setMaximum(calories);
+        calsGoal.setText(Integer.toString(calories) + "    ");
     }
 
     void setWaterProgessBounds(int water) {
@@ -147,7 +162,7 @@ class SummaryGUI extends JPanel {
 
     void setFatGoal(double fat) {
         fatProgress.setMaximum((int)fat);
-        fatGoal.setText(String.format("%.1f g", fat));
+        fatGoal.setText(String.format("%.1f g ", fat));
     }
 
     void updateWater(int water) {
@@ -156,6 +171,12 @@ class SummaryGUI extends JPanel {
         waterProgress.setStringPainted(true);
     }
 
+    class addFood implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.addFoodTest();
+        }
+    }
 
     class chooseDate implements ActionListener {
         @Override
