@@ -15,7 +15,7 @@ public class RetrieveDB {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/fayes/OneDrive/Documents/GitHub/FoodTrackerJava/SQL/db/FoodRecipeDatabase.db");
+            conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/fayes/OneDrive/Documents/GitHub/FoodTrackerJava/src/SQL/databases/FoodRecipeDatabase.db");
             System.out.println("Yay");
             
         } catch (SQLException e) {

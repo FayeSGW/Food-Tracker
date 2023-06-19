@@ -2,6 +2,7 @@ package src.db;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import src.SQL.java.connect.sql.code.*;
 
 public class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);

@@ -109,7 +109,7 @@ class TrackerControl {
 
     void addFoodTest() {
         Day day = diary.getDay(showCurrentDate());
-        day.addFood("breakfast", "Apple", 100);
+        day.addFood("breakfast", "Banana", 100);
         updateNutrition();
     }
 }

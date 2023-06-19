@@ -3,7 +3,10 @@ package src.diary;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import src.db.*;
+import src.db.SupFood;
+import src.db.Food;
+import src.db.Recipe;
+import src.SQL.java.connect.sql.code.*;
 
 public class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;

@@ -6,6 +6,7 @@ import javax.swing.*;
 
 import src.db.*;
 import src.diary.*;
+import src.SQL.java.connect.sql.code.*;
 
 class Test {
     public static void main (String [] args) {
@@ -14,7 +15,7 @@ class Test {
         TrackerControl control = new TrackerControl(user, diary);
 
         Database data = user.accessDatabase();
-        data.addFood("Apple", 100, "g", 47.0, 0.1, 0.0, 10.0, 6.8, 2.5, 0.3, 0.0, null);
+        GetDB.getFoods(data);
         control.start();
         
 
