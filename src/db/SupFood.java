@@ -17,7 +17,9 @@ public abstract class SupFood {
         this.data = data;
     }
 
-    public String showName() {
+    public abstract String showName();
+
+    public String showDisplayName() {
         return name;
     }
 

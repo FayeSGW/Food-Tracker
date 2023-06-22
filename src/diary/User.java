@@ -10,13 +10,13 @@ import src.SQL.java.connect.sql.code.*;
 
 public class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;
-    private int height, age, water = 8;
+    private int height, age, water;
     private double weight, rate;
     private double[] nutrition = new double[8];
     private Database data;
     private Diary diary;
 
-
+    //Gender = M/F, weight in kg, height in cm, DOB as DD.MM.YYYY, goal = loss,
     public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate) {
         this.name = name;
         this.gender = gender;
@@ -27,25 +27,32 @@ public class User implements java.io.Serializable {
         this.rate = rate;
         this.data = new Database(name + "'s Database");
         this.diary = new Diary(name, this);
-        this.calculateAge();
-        this.updateNutrition();
-
-        
+        age = calculateAge();
+        updateNutrition();
+        water = 8;
     }
 
-    public void calculateAge() {
+    public Database accessDatabase() {
+        return data;
+    }
+
+    public Diary accessDiary() {
+        return diary;
+    }
+
+    public int calculateAge() {
         LocalDate today = LocalDate.now();
-        String[] dobSplit = dateOfBirth.split("\\.");
-        int[] dobInt = {Integer.parseInt(dobSplit[0]), Integer.parseInt(dobSplit[1]), Integer.parseInt(dobSplit[2])};
-        LocalDate dob = LocalDate.of(dobInt[2], dobInt[1], dobInt[0]);
+        //String[] dobSplit = dateOfBirth.split("\\.");
+        //int[] dobInt = {Integer.parseInt(dobSplit[0]), Integer.parseInt(dobSplit[1]), Integer.parseInt(dobSplit[2])};
+        //LocalDate dob = LocalDate.of(dobInt[2], dobInt[1], dobInt[0]);
+        LocalDate dob = LocalDate.parse(dateOfBirth);
         long age = ChronoUnit.YEARS.between(dob, today);
         int ageInt = Math.toIntExact(age);
-        age = ageInt;
-
+        return ageInt;
     }
 
 
-    public int weightGoal(double rate, String goal) {
+    public int caloriesForWeightGoal(double rate, String goal) {
         int dailyCalories = (int) (rate * 7700) / 7;
         int calories = 0;
         if (goal.toUpperCase().equals("L")) { //Calorie defecit for weight loss
@@ -77,7 +84,7 @@ public class User implements java.io.Serializable {
         double sugar = 50;
         double salt = 6;
         double restingCalories = ((msj + hb) / 2) * 1.2;
-        int calories = (int)restingCalories + weightGoal(rate, goal);
+        int calories = (int)restingCalories + caloriesForWeightGoal(rate, goal);
         double protein = (calories * 0.25) / 4;
         double carbs = (calories * 0.5) / 4;
         double fat = (calories * 0.25) / 9;
@@ -93,7 +100,6 @@ public class User implements java.io.Serializable {
     }
 
 
-
     public void updateWeight(double weight) {
         this.weight = weight;
         updateNutrition();
@@ -105,27 +111,65 @@ public class User implements java.io.Serializable {
         updateNutrition();
     }
 
-    public double[] showNutrition() {
-        return nutrition;
+
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void changeHeight(int height) {
+        this.height = height;
+    }
+
+    public void changeDOB(String dob) {
+        dateOfBirth = dob;
     }
 
     public String showName() {
         return name;
     }
 
+    public String showGender() {
+        if (gender.equals("M")) {
+            return "Man";
+        } else {
+            return "Woman";
+        }
+    }
+
+    public int showHeight() {
+        return height;
+    }
+
     public int showAge() {
         return age;
     }
 
-    public Database accessDatabase() {
-        return data;
+    public String showGoal() {
+        String g = "";
+        if (goal.equals("M")) {
+            return "Maintain weight";
+        } else if (goal.equals("L")) {
+            g = "Lose";
+        } else {
+            g = "Gain";
+        }
+        return String.format("%s %d kg per week", g, rate);
     }
 
-    public Diary accessDiary() {
-        return diary;
+    public double[] showNutrition() {
+        return nutrition;
     }
 
-    public void setWater(int amount) {
+    
+
+    
+
+    public void setWaterGoal(int amount) {
         water = amount;
     }
 
@@ -136,7 +180,7 @@ public class User implements java.io.Serializable {
     @Override
     public String toString() {
         String nutrition = String.format("\nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", this.nutrition[0], this.nutrition[1], this.nutrition[2], this.nutrition[3], this.nutrition[4], this.nutrition[5], this.nutrition[6], this.nutrition[7]);
-        String strng = String.format("Name: %s \nGender: %s \nCurrent weight: %d \nHeight: %d \nAge: %d \nRecommended food intake: %s", this.name, this.gender, this.weight, this.height, this.age, nutrition);
+        String strng = String.format("Name: %s \nGender: %s \nCurrent weight: %.1f \nHeight: %d \nAge: %d \nRecommended food intake: %s", this.name, this.gender, this.weight, this.height, this.age, nutrition);
         return strng;
     }
 }

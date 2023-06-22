@@ -14,14 +14,15 @@ public class Database implements java.io.Serializable {
     //private ArrayList<Food> database = new ArrayList<>();
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();
     //protected HashMap<String, Recipe> rdata = new HashMap<String, Recipe>();
+    private ArrayList<SupFood> searchResults;
 
     public Database(String name) {
         this.name = name;
     }
 
-    public void addFood(String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public void addFood(String name, String nickname, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         if (addCheck(name)) {
-            Food food = new Food(this, name, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            Food food = new Food(this, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
         }
     }
@@ -57,15 +58,18 @@ public class Database implements java.io.Serializable {
         database.remove(item);
     }
 
-    public String searchDatabase(String item) {
-        ArrayList<String> result = new ArrayList<>();
+    public ArrayList<SupFood> searchDatabase(String item) {
+        searchResults = new ArrayList<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
-                result.add(food);
+                SupFood result = database.get(food);
+                searchResults.add(result);
+                System.out.println(result.showName());
             }
         }
-        String search = String.join(", ", result);
-        return search; 
+        //SupFood[] results = new SupFood[searchResults.size()];
+        //String search = String.join(", ", result);
+        return searchResults; 
     }
 
 
@@ -78,7 +82,12 @@ public class Database implements java.io.Serializable {
     }
 
     public SupFood findItem(String name) {
-        SupFood item = database.get(name);
+        SupFood item = null;
+        for (String fullName: database.keySet()) {
+            if (fullName.contains(name)) {
+                item = database.get(fullName);
+            }
+        }
         return item;        
     }
 

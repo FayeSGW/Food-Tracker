@@ -13,18 +13,28 @@ public class Day {
     private double[] nutrition, remainingNutrition;
     private HashMap<String, Exercise> exercise;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
+    private double calorieGoal, carbGoal, fatGoal, proteinGoal;
     private User user;
     private Database database;
 
     public Day(LocalDate date, User user) {
         this.date = date;
         this.user = user;
-        this.breakfast = new Meal("Breakfast", date);
-        this.lunch = new Meal("Lunch", date);
-        this.dinner = new Meal("Dinner", date);
-        this.snacks = new Meal("Snacks", date);
-        this.nutrition = new double[8];
-        this.remainingNutrition = user.showNutrition();
+        breakfast = new Meal("Breakfast", date);
+        lunch = new Meal("Lunch", date);
+        dinner = new Meal("Dinner", date);
+        snacks = new Meal("Snacks", date);
+        nutrition = new double[8];
+        remainingNutrition = new double[8];
+        for (int i = 0; i < nutrition.length; i++) {
+            remainingNutrition[i] = user.showNutrition()[i];
+        }
+
+        calorieGoal = user.showNutrition()[0];
+        carbGoal = user.showNutrition()[3];
+        fatGoal = user.showNutrition()[1];
+        proteinGoal = user.showNutrition()[6];
+
         this.exercise = new HashMap<>();
         remainingWater = user.showWater();
         this.database = user.accessDatabase();
@@ -47,10 +57,15 @@ public class Day {
             foodNutrition = snacks.add(item, amount, database);
         }
         for (int i = 0; i < this.nutrition.length; i++) {
-            this.nutrition[i] = this.nutrition[i] + foodNutrition[i];
-            this.remainingNutrition[i] = this.remainingNutrition[i] - foodNutrition[i];
+            nutrition[i] = nutrition[i] + foodNutrition[i];
+            remainingNutrition[i] = remainingNutrition[i] - foodNutrition[i];
 
         }
+    }
+
+    public double[] showGoals() {
+        double[] goals = {calorieGoal, fatGoal, carbGoal, proteinGoal};
+        return goals;
     }
 
     /*public void addRecipe(String meal, String item, int amount, RecipeDatabase database) {
@@ -131,6 +146,12 @@ public class Day {
         remainingNutrition[1] = remainingNutrition[1] + ((calories * 0.25)/9); //update fat requirement based on new calories
         remainingNutrition[3] = remainingNutrition[3] + ((calories * 0.5)/4); //update carbs based on new calories
         remainingNutrition[6] = remainingNutrition[6] + ((calories * 0.25)/4); //update protein requirement based on new calories
+        
+        calorieGoal += calories;
+        fatGoal += ((calories * 0.25)/9);
+        carbGoal += ((calories * 0.5)/4);
+        proteinGoal += ((calories * 0.25)/4);
+
         caloriesBurned += calories;
         exercise.put(name, workout);
     }
@@ -143,6 +164,12 @@ public class Day {
             remainingNutrition[1] = remainingNutrition[1] - ((calories * 0.25)/9);
             remainingNutrition[3] = remainingNutrition[3] - ((calories * 0.5)/4);
             remainingNutrition[6] = remainingNutrition[6] - ((calories * 0.25)/4);
+            
+            calorieGoal -= calories;
+            fatGoal -= ((calories * 0.25)/9);
+            carbGoal -= ((calories * 0.5)/4);
+            proteinGoal -= ((calories * 0.25)/4);
+            
             caloriesBurned -= calories;
             exercise.remove(name);
         }

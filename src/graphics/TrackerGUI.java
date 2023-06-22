@@ -10,12 +10,13 @@ import src.SQL.java.connect.sql.code.*;
 
 class Test {
     public static void main (String [] args) {
-        User user = new User("Faye", "F", 81, 165, "24.07.1989", "loss", 1);
-        Diary diary = new Diary("", user);
+        User user = GetFoodsDB.getUser();
+        //User user = new User("Faye", "F", 81, 165, "24.07.1989", "L", 1);
+        Diary diary = user.accessDiary();
         TrackerControl control = new TrackerControl(user, diary);
 
         Database data = user.accessDatabase();
-        GetDB.getFoods(data);
+        //GetFoodsDB.getFoods(data);
         control.start();
         
 
@@ -40,7 +41,7 @@ class TrackerGUI {
 
 
 
-    TrackerGUI (TrackerControl control, SummaryGUI sGUI, DiaryGUI dGUI) {
+    TrackerGUI (TrackerControl control, String name, SummaryGUI sGUI, DiaryGUI dGUI) {
         this.control = control;
         this.sGUI = sGUI;
         this.dGUI = dGUI;
@@ -51,7 +52,7 @@ class TrackerGUI {
             System.exit(1);
         }
 
-        window = new JFrame("Food and Exercise Tracker");
+        window = new JFrame(name + "'s Food and Exercise Tracker");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         tabbedPane = new JTabbedPane();

@@ -20,22 +20,26 @@ class TrackerControl {
     Diary diary;
 
     TrackerControl(User user, Diary diary) {
+        this.user = user;
+        this.diary = diary;  
         sGUI = new SummaryGUI(this);
         dGUI = new DiaryGUI(this);
-        tGUI = new TrackerGUI(this, sGUI, dGUI);
-        this.user = user;
-        this.diary = diary;
-        
-        
-        //cGUI = new CalendarGUI(this, LocalDate.now());
-        
+        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI);
+             
     }
+
+    public User showUser() {
+        return user;
+    }
+
 
     void start() {
         chooseDate(LocalDate.now());
+        System.out.println(LocalDate.now());
         showGoals();
     }
 
+    //Functionality for the date chooser on the SummaryGUI and DiaryGUI
     void updateDate(LocalDate date) {
         String day = DayOfWeek.from(date).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
         int dayDate = date.getDayOfMonth();
@@ -65,11 +69,18 @@ class TrackerControl {
         LocalDate current = showCurrentDate();
         LocalDate next = current.plusDays(1);
         chooseDate(next);
-        
+
     }
 
+    void openCalendar() {
+        LocalDate current = showCurrentDate();
+        CalendarGUI cGUI = new CalendarGUI(this, current);
+    }
+
+    //Updating nutrition display on the SummaryGUI
     void updateNutrition() {
         Day day = diary.getDay(showCurrentDate());
+        //System.out.println(showCurrentDate());
         double[] remaining = day.showRemainingNutrition();
         double[] nutrition = day.showNutrition();
         int drunk = day.showWaterDrunk();
@@ -87,29 +98,36 @@ class TrackerControl {
         sGUI.updateFat(fat, nutrition[1]);
 
         sGUI.updateWater(drunk);
+
+        showGoals();
     }
 
     void showGoals() {
         int water = user.showWater();
         sGUI.setWaterProgessBounds(water);
 
-        double[] nutrition = user.showNutrition();
-        double cals = nutrition[0], carbs = nutrition[3], protein = nutrition[6], fat = nutrition[1];
-        sGUI.setCalsGoal((int)cals);
-        sGUI.setCarbsGoal(carbs);
-        sGUI.setProteinGoal(protein);
-        sGUI.setFatGoal(fat);
-    }
-
-    void updateWaterDrunk() {
         Day day = diary.getDay(showCurrentDate());
-        int drunk = day.showWaterDrunk();
-        sGUI.updateWater(drunk);
+
+        double[] goals = day.showGoals();
+        sGUI.setCalsGoal((int)goals[0]);
+        sGUI.setCarbsGoal(goals[2]);
+        sGUI.setProteinGoal(goals[3]);
+        sGUI.setFatGoal(goals[1]);
     }
 
     void addFoodTest() {
         Day day = diary.getDay(showCurrentDate());
         day.addFood("breakfast", "Banana", 100);
         updateNutrition();
+    }
+
+    void addFoodToDiary(String meal, String name, int amount) {
+        Day day = diary.getDay(showCurrentDate());
+        day.addFood(meal, name, amount);
+        updateNutrition();
+    }
+
+    void addFoodDialogue() {
+        AddFoodControl aControl = new AddFoodControl(this);
     }
 }

@@ -53,7 +53,7 @@ class SummaryGUI extends JPanel {
 
         calsZero = new JLabel("0"); caloriesGraphic.add(calsZero);
         caloriesProgress = new JProgressBar(); caloriesGraphic.add(caloriesProgress);
-        calsGoal = new JLabel(); caloriesGraphic.add(calsGoal);
+        calsGoal = new JLabel(); calsGoal.setPreferredSize(new Dimension(50, 26)); caloriesGraphic.add(calsGoal);
 
         macrosPanel = new JPanel(new BorderLayout()); this.add(macrosPanel);
         macrosTitle = new JLabel("Macros", SwingConstants.CENTER); macrosPanel.add(macrosTitle, BorderLayout.NORTH);
@@ -84,15 +84,15 @@ class SummaryGUI extends JPanel {
 
         carbsZero = new JLabel("0"); carbsGraphic.add(carbsZero);
         carbProgress = new JProgressBar(); carbsGraphic.add(carbProgress);
-        carbsGoal = new JLabel(); carbsGraphic.add(carbsGoal);
+        carbsGoal = new JLabel(); carbsGoal.setPreferredSize(new Dimension(50, 26)); carbsGraphic.add(carbsGoal);
 
         proteinZero = new JLabel("0"); proteinGraphic.add(proteinZero);
         proteinProgress = new JProgressBar(); proteinGraphic.add(proteinProgress);
-        proteinGoal = new JLabel(); proteinGraphic.add(proteinGoal);
+        proteinGoal = new JLabel(); proteinGoal.setPreferredSize(new Dimension(50, 26)); proteinGraphic.add(proteinGoal);
 
         fatZero = new JLabel("0"); fatGraphic.add(fatZero);
         fatProgress = new JProgressBar(); fatGraphic.add(fatProgress);
-        fatGoal = new JLabel(); fatGraphic.add(fatGoal);
+        fatGoal = new JLabel(); fatGoal.setPreferredSize(new Dimension(50, 26)); fatGraphic.add(fatGoal);
 
         waterPanel = new JPanel(new BorderLayout()); this.add(waterPanel);
 
@@ -122,23 +122,22 @@ class SummaryGUI extends JPanel {
     void updateCarbs(String string, double carbs) {
         this.carbs.setText("Carbs: " + string);
         carbProgress.setValue((int)carbs);
-        carbProgress.setString(Double.toString(carbs) + " g");
+        carbProgress.setString(String.format("%.1f g", carbs));
         carbProgress.setStringPainted(true);
     }
 
     void updateProtein(String string, double protein) {
         this.protein.setText("Protein: " + string);
         proteinProgress.setValue((int)protein);
-        proteinProgress.setString(Double.toString(protein) + " g");
+        proteinProgress.setString(String.format("%.1f g", protein));
         proteinProgress.setStringPainted(true);
     }
 
     void updateFat(String string, double fat) {
         this.fat.setText("Fat: " + string);
         fatProgress.setValue((int)fat);
-        fatProgress.setString(Double.toString(fat) + " g");
+        fatProgress.setString(String.format("%.1f g", fat));
         fatProgress.setStringPainted(true);
-
     }
 
     void setCalsGoal(int calories) {
@@ -176,15 +175,18 @@ class SummaryGUI extends JPanel {
     class addFood implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addFoodTest();
+            //AddFoodControl aControl = new AddFoodControl(control);
+            control.addFoodDialogue();
+            //control.addFoodTest();
         }
     }
 
     class chooseDate implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            LocalDate current = control.showCurrentDate();
-            CalendarGUI cGUI = new CalendarGUI(control, current);
+            //LocalDate current = control.showCurrentDate();
+            //CalendarGUI cGUI = new CalendarGUI(control, current);
+            control.openCalendar();
         }
     }
 

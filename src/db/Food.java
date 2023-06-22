@@ -6,13 +6,14 @@ import src.SQL.java.connect.sql.code.*;
 
 public class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);
-    private String unit;
+    private String unit, displayName;
     private String barcode;
     private ArrayList<String> foodType;
     //double[] nutrition = new double[8];
 
-    public Food(Database data, String name, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public Food(Database data, String name, String displayName, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         super(data, name, weight);
+        this.displayName = displayName;
         this.barcode = barcode;
         this.unit = unit;
         foodType = new ArrayList<>();
@@ -23,6 +24,16 @@ public class Food extends SupFood{
     public String toString() {
         String text = String.format("%s: \n%s \n%.0f calories \n%.1f g fat \n%.1f g saturated fat \n%.1f g carbohydrates\n%.1f g sugar \n%.1f g fibre \n%.1f g protein \n%.1f g salt", name, showWeight(), this.nutrition[0], this.nutrition[1], this.nutrition[2], this.nutrition[3], this.nutrition[4], this.nutrition[5], this.nutrition[6], this.nutrition[7]);
         return text;
+    }
+
+    @Override
+    public String showName() {
+        return name;
+    }
+
+    @Override
+    public String showDisplayName() {
+        return displayName;
     }
 
     public void addFoodType(String type) {

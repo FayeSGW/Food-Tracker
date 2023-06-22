@@ -25,6 +25,11 @@ public class Recipe extends SupFood {
     }
     
     @Override
+    public String showName() {
+        return name;
+    }
+
+    @Override
     public String showUnit() {
         return "servings";
     }

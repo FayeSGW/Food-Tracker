@@ -48,7 +48,7 @@ class CalendarGUI {
         }
 
         calendar = new JFrame("Choose Date");
-        calendar.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        calendar.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         whole = new JPanel(new BorderLayout());
         calendar.add(whole);

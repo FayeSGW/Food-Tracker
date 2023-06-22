@@ -16,8 +16,8 @@ public class Diary implements java.io.Serializable {
     public Diary(String name, User user) {
         this.name = name;
         this.user = user;
-        this.diary = new TreeMap<>();
-        showDay(LocalDate.now());
+        diary = new TreeMap<>();
+        current = LocalDate.now();
     }
 
     public int showWater() {

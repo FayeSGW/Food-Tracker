@@ -24,7 +24,7 @@ public class Meal {
         double [] weighted = new double[8];
         ArrayList<Object> arr;
         try {
-            SupFood food = data.addFromDatabase(name);
+            SupFood food = data.findItem(name);
             String unit = food.showUnit();
             double[] unitNutrition = food.unitNutrition();
             if (foodlst.containsKey(name)) {

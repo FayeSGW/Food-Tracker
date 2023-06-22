@@ -37,8 +37,9 @@ class DiaryGUI extends JPanel {
     class chooseDate implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            LocalDate current = control.showCurrentDate();
-            CalendarGUI cGUI = new CalendarGUI(control, current);
+            //LocalDate current = control.showCurrentDate();
+            //CalendarGUI cGUI = new CalendarGUI(control, current);
+            control.openCalendar();
         }
     }
 
