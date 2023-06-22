@@ -171,9 +171,9 @@ public class GetFoodsDB {
                 int amount = frs.getInt("Amount");
 
                 String dateString = frs.getString("Date");
-                int day = frs.getInt("Day");
+                /*int day = frs.getInt("Day");
                 int month = frs.getInt("Month");
-                int year = frs.getInt("Year");
+                int year = frs.getInt("Year");*/
 
                 //LocalDate date = LocalDate.of(year, month, day);
                 LocalDate date = LocalDate.parse(dateString);
