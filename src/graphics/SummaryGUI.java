@@ -35,8 +35,8 @@ class SummaryGUI extends JPanel {
 
         summaryAddButtons = new JPanel(new FlowLayout());
         this.add(summaryAddButtons);
-        addFood = new JButton("Add Food"); addFood.addActionListener(new addFood());
-        addWater = new JButton("Add Water");
+        addFood = new JButton("Add Food"); addFood.addActionListener(new addFood(0));
+        addWater = new JButton("Add Water"); addWater.addActionListener(new addWaterC());
         addExercise = new JButton("Add Exercise");
         updateWeight = new JButton("Update Weight");
         summaryAddButtons.add(addFood); summaryAddButtons.add(addWater); summaryAddButtons.add(addExercise); summaryAddButtons.add(updateWeight);
@@ -173,11 +173,23 @@ class SummaryGUI extends JPanel {
     }
 
     class addFood implements ActionListener {
+        int index;
+        addFood(int index) {
+            this.index = index;
+        }
+
         @Override
         public void actionPerformed (ActionEvent e) {
             //AddFoodControl aControl = new AddFoodControl(control);
-            control.addFoodDialogue();
+            control.addFoodDialogue(index);
             //control.addFoodTest();
+        }
+    }
+
+    class addWaterC implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.addWater();
         }
     }
 

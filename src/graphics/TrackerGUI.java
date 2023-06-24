@@ -61,7 +61,7 @@ class TrackerGUI {
         summary = sGUI; summary.setLayout(new BoxLayout(summary, BoxLayout.Y_AXIS));
         tabbedPane.add("Summary", summary);
 
-        diary = dGUI;
+        diary = dGUI; dGUI.setLayout(new BoxLayout(diary, BoxLayout.Y_AXIS));
         tabbedPane.add("Diary", diary);
 
         history = new JPanel();
@@ -90,6 +90,8 @@ class TrackerGUI {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         //window.setResizable(false);
+
+        System.out.println(String.format("%s, %s, %s, %s, %s, %s, %s, %s", dGUI.overviewCalories.getWidth(), dGUI.overviewCarbs.getWidth(), dGUI.overviewSugar.getWidth(), dGUI.overviewFat.getWidth(), dGUI.overviewSatFat.getWidth(), dGUI.overviewProtein.getWidth(), dGUI.overviewFibre.getWidth(), dGUI.overviewSalt.getWidth()));
     }
 
 }

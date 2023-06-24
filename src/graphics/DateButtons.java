@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.time.LocalDate;
 
 class DateButtons extends JPanel {
-    /*TrackerControl control;
+    TrackerControl control;
 
     JPanel dateButtons;
     static JButton prevDay, chooseDay, nextDay;
@@ -51,5 +51,5 @@ class DateButtons extends JPanel {
         public void actionPerformed (ActionEvent e) {
             control.goToNextDay();
         }
-    }*/
+    }
 }

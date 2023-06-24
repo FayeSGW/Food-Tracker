@@ -63,6 +63,13 @@ public class Day {
         }
     }
 
+    public void addFoodFromGUI(String meal, String item, int amount) {
+        addFood(meal, item, amount);
+        SupFood food = database.findItem(item);
+        String fullName = food.showName();
+        AddToDiary.addFood(user, this, meal, fullName, amount);
+    }
+
     public double[] showGoals() {
         double[] goals = {calorieGoal, fatGoal, carbGoal, proteinGoal};
         return goals;
@@ -173,6 +180,11 @@ public class Day {
             caloriesBurned -= calories;
             exercise.remove(name);
         }
+    }
+
+    public void addWaterFromGUI() {
+        addWater(1);
+        AddToDiary.addWater(this);
     }
 
     public void addWater(int amount) {

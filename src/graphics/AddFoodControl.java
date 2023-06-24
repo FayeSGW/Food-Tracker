@@ -11,9 +11,9 @@ class AddFoodControl {
     AddFoodGUI gui;
     Database data;
 
-    AddFoodControl(TrackerControl tControl) {
+    AddFoodControl(TrackerControl tControl, int index) {
         this.tControl = tControl;
-        gui = new AddFoodGUI(this);
+        gui = new AddFoodGUI(this, index);
         data = tControl.showUser().accessDatabase();
     }
 
@@ -23,6 +23,7 @@ class AddFoodControl {
         for (SupFood food: results) {
             asString.add(food.showDisplayName());
             //System.out.println(food.showName());
+            //System.out.println(food.showDisplayName());
         }
         
         return asString;
@@ -30,6 +31,7 @@ class AddFoodControl {
 
     String showUnit(String name) {
         SupFood item = data.findItem(name);
+        System.out.println(data.isRecipe(name));
         //System.out.println(item);
         return item.showUnit();
     }

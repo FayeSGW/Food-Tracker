@@ -7,6 +7,8 @@ import java.util.TreeMap;
 import java.util.Set;
 import java.time.LocalDate;
 
+import src.SQL.java.connect.sql.code.*;
+
 public class Diary implements java.io.Serializable {
     private String name;
     private TreeMap<LocalDate, Day> diary;
@@ -36,10 +38,17 @@ public class Diary implements java.io.Serializable {
         return current;
     }
 
+    public Day addSavedDays(LocalDate date) {
+        Day day = new Day(date, user);
+        diary.put(date, day);
+        return day;
+    }
+
     public void addDay(LocalDate date) {
         if (!diary.keySet().contains(date)) {
             Day day = new Day(date, user);
             diary.put(date, day);
+            AddToDiary.addDay(day);
         }
     }
 

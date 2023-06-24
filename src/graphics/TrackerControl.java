@@ -15,6 +15,7 @@ class TrackerControl {
     TrackerGUI tGUI;
     SummaryGUI sGUI;
     DiaryGUI dGUI;
+    //DiaryControl dCont;
     //CalendarGUI cGUI;
     User user;
     Diary diary;
@@ -23,6 +24,7 @@ class TrackerControl {
         this.user = user;
         this.diary = diary;  
         sGUI = new SummaryGUI(this);
+        //dCont = new DiaryControl(this);
         dGUI = new DiaryGUI(this);
         tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI);
              
@@ -100,6 +102,8 @@ class TrackerControl {
         sGUI.updateWater(drunk);
 
         showGoals();
+
+        dGUI.updateSummary(nutrition, remaining);
     }
 
     void showGoals() {
@@ -123,11 +127,17 @@ class TrackerControl {
 
     void addFoodToDiary(String meal, String name, int amount) {
         Day day = diary.getDay(showCurrentDate());
-        day.addFood(meal, name, amount);
+        day.addFoodFromGUI(meal, name, amount);
         updateNutrition();
     }
 
-    void addFoodDialogue() {
-        AddFoodControl aControl = new AddFoodControl(this);
+    void addFoodDialogue(int index) {
+        AddFoodControl aControl = new AddFoodControl(this, index);
+    }
+
+    void addWater() {
+        Day day = diary.getDay(showCurrentDate());
+        day.addWaterFromGUI();
+        updateNutrition();
     }
 }

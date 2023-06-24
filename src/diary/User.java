@@ -17,7 +17,7 @@ public class User implements java.io.Serializable {
     private Diary diary;
 
     //Gender = M/F, weight in kg, height in cm, DOB as DD.MM.YYYY, goal = loss,
-    public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate) {
+    public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate, int water) {
         this.name = name;
         this.gender = gender;
         this.weight = weight;
@@ -25,11 +25,12 @@ public class User implements java.io.Serializable {
         this.dateOfBirth = dateOfBirth;
         this.goal = goal;
         this.rate = rate;
+        this.water = water;
         this.data = new Database(name + "'s Database");
         this.diary = new Diary(name, this);
         age = calculateAge();
         updateNutrition();
-        water = 8;
+        
     }
 
     public Database accessDatabase() {
@@ -134,15 +135,24 @@ public class User implements java.io.Serializable {
     }
 
     public String showGender() {
-        if (gender.equals("M")) {
+        return gender;
+        /*if (gender.equals("M")) {
             return "Man";
         } else {
             return "Woman";
-        }
+        }*/
     }
 
     public int showHeight() {
         return height;
+    }
+
+    public double showWeight() {
+        return weight;
+    }
+
+    public String showDOB() {
+        return dateOfBirth;
     }
 
     public int showAge() {
@@ -150,6 +160,14 @@ public class User implements java.io.Serializable {
     }
 
     public String showGoal() {
+        return goal;
+    }
+
+    public double showRate() {
+        return rate;
+    }
+
+    public String showGoalString() {
         String g = "";
         if (goal.equals("M")) {
             return "Maintain weight";

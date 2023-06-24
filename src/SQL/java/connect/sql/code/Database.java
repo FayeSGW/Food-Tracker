@@ -91,6 +91,14 @@ public class Database implements java.io.Serializable {
         return item;        
     }
 
+    public boolean isRecipe(String name) {
+        SupFood item = findItem(name);
+        if (item instanceof Recipe) {
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public String toString() {

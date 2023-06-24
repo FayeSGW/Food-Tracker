@@ -27,6 +27,7 @@ class AddFoodTest {
 
 class AddFoodGUI {
     AddFoodControl control;
+    int index;
 
     JFrame window;
     JPanel whole, searchPanel, listPanel, foodButtons, amountPanel, spare, space;
@@ -41,9 +42,10 @@ class AddFoodGUI {
     String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
     ArrayList<String> searchResult;
 
-    AddFoodGUI (AddFoodControl control) {
+    AddFoodGUI (AddFoodControl control, int index) {
         this.control = control;
         searchResult = new ArrayList<>();
+        this.index = index;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -98,6 +100,7 @@ class AddFoodGUI {
         foodButtons.add(Box.createRigidArea(new Dimension(0,10))); foodButtons.add(mealLabel);
 
         mealChooser = new JComboBox<>(mealsList); mealChooser.setMaximumSize(new Dimension(100, 30));
+        mealChooser.setSelectedIndex(index);
         mealChooser.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(mealChooser);
         foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
 
@@ -174,10 +177,12 @@ class AddFoodGUI {
     class selectItem implements ListSelectionListener {
         @Override
         public void valueChanged (ListSelectionEvent e) {
-            String name = foodsList.getSelectedValue();
-            String unit = control.showUnit(name);
-            unitLabel.setText(unit);
-
+            if (!e.getValueIsAdjusting()) {
+                String name = foodsList.getSelectedValue();
+                System.out.println(name);
+                String unit = control.showUnit(name);
+                unitLabel.setText(unit);
+            }
             amountInput.requestFocusInWindow();
         }
     }

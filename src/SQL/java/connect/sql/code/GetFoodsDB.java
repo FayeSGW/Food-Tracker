@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import org.sqlite.SQLiteConfig;
 import java.time.LocalDate;
+
+import org.sqlite.SQLiteConfig;
 
 import src.db.*;
 import src.diary.*;
@@ -16,7 +19,9 @@ public class GetFoodsDB {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/fayes/OneDrive/Documents/GitHub/FoodTrackerJava/src/SQL/databases/FoodRecipeDatabase.db");
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/fayes/OneDrive/Documents/GitHub/FoodTrackerJava/src/SQL/databases/FoodRecipeDatabase.db", config.toProperties());
             System.out.println("Yay");
             
         } catch (SQLException e) {
@@ -27,7 +32,7 @@ public class GetFoodsDB {
     }
 
     public static User getUser() {
-        String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate FROM UserData";
+        String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate, Water FROM UserData";
         Connection conn = null;
         Statement userStmt = null;
         ResultSet urs = null;
@@ -46,8 +51,9 @@ public class GetFoodsDB {
                 String DOB = urs.getString("DOB");
                 String goal = urs.getString("Goal");
                 double rate = urs.getDouble("Rate");
+                int water = urs.getInt("Water");
 
-                user = new User(name, gender, weight, height, DOB, goal, rate);
+                user = new User(name, gender, weight, height, DOB, goal, rate, water);
 
                 Database data = user.accessDatabase();
                 Diary diary = user.accessDiary();
@@ -80,7 +86,7 @@ public class GetFoodsDB {
         ResultSet rrs = null;
 
         try {
-            conn = connect();
+            //conn = connect();
             stmt = conn.createStatement();
             frs = stmt.executeQuery(foods);
             
@@ -136,9 +142,9 @@ public class GetFoodsDB {
     }
 
     public static void getDiary(Connection conn, Diary diary) {
-        String dayString = "SELECT Date, Day, Month, Year, Water FROM Days";
-        String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date, Day, Month, Year FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
-        String exercises = "SELECT WorkoutName, Time, Calories, Days.Date, Day, Month, Year FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
+        String dayString = "SELECT Date, Water FROM Days";
+        String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
+        String exercises = "SELECT WorkoutName, Time, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 
         Statement dayStmt = null, foodStmt = null, exStmt = null;
         ResultSet drs = null, frs = null, ers = null;
@@ -149,14 +155,12 @@ public class GetFoodsDB {
 
             while (drs.next()) {
                 String dateString = drs.getString("Date");
-                int day = drs.getInt("Day");
-                int month = drs.getInt("Month");
-                int year = drs.getInt("Year");
+                
                 int water = drs.getInt("Water");
 
                 //LocalDate date = LocalDate.of(year, month, day);
                 LocalDate date = LocalDate.parse(dateString);
-                Day dayObj = diary.getDay(date);
+                Day dayObj = diary.addSavedDays(date);
 
                 dayObj.addWater(water);
             }
@@ -171,11 +175,7 @@ public class GetFoodsDB {
                 int amount = frs.getInt("Amount");
 
                 String dateString = frs.getString("Date");
-                /*int day = frs.getInt("Day");
-                int month = frs.getInt("Month");
-                int year = frs.getInt("Year");*/
-
-                //LocalDate date = LocalDate.of(year, month, day);
+                
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.getDay(date);
 
@@ -196,11 +196,7 @@ public class GetFoodsDB {
                 int exCals = ers.getInt("Calories");
 
                 String dateString = ers.getString("Date");
-                int day = ers.getInt("Day");
-                int month = ers.getInt("Month");
-                int year = ers.getInt("Year");
-
-                //LocalDate date = LocalDate.of(year, month, day);
+                
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.getDay(date);
                 
