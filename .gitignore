@@ -1,5 +1,5 @@
 *.class
 *.db
 
-
+DatabaseCSV.csv
 src/SQL/databases/FoodRecipeDatabase.db

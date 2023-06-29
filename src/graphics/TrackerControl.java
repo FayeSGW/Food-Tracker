@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 
 import src.db.*;
 import src.diary.*;
@@ -54,7 +55,7 @@ class TrackerControl {
         diary.getDay(date);
         updateDate(date);
         updateNutrition();
-        System.out.println(diary.showDays().size());
+        //System.out.println(diary.showDays().size());
     }
 
     LocalDate showCurrentDate() {
@@ -104,6 +105,8 @@ class TrackerControl {
         showGoals();
 
         dGUI.updateSummary(nutrition, remaining);
+        dGUI.populateMealPanels();
+
     }
 
     void showGoals() {
@@ -119,13 +122,7 @@ class TrackerControl {
         sGUI.setFatGoal(goals[1]);
     }
 
-    void addFoodTest() {
-        Day day = diary.getDay(showCurrentDate());
-        day.addFood("breakfast", "Banana", 100);
-        updateNutrition();
-    }
-
-    void addFoodToDiary(String meal, String name, int amount) {
+    void addFoodToDiary(String meal, String name, double amount) {
         Day day = diary.getDay(showCurrentDate());
         day.addFoodFromGUI(meal, name, amount);
         updateNutrition();
@@ -135,9 +132,50 @@ class TrackerControl {
         AddFoodControl aControl = new AddFoodControl(this, index);
     }
 
+    String showFoodDisplayName(String fullName) {
+        SupFood food = user.accessDatabase().findItem(fullName);
+        return food.showDisplayName();
+    }
+
     void addWater() {
         Day day = diary.getDay(showCurrentDate());
         day.addWaterFromGUI();
         updateNutrition();
     }
+
+    ArrayList<String> showFoodsinMeal(String mealName) {
+        Day day = diary.getDay(showCurrentDate());
+        Meal meal = day.showMeal(mealName);
+        return meal.showFoodNames();
+    }
+
+    String[] showFoodItemNutrition(String mealName, String foodName) {
+        Day day = diary.getDay(showCurrentDate());
+        Meal meal = day.showMeal(mealName);
+        double[] nutrition = meal.showFoodItemNutrition(foodName);
+        String[] nutritionString = new String[8];
+        for (int i = 0; i < 8; i++) {
+            nutritionString[i] = Integer.toString((int)nutrition[i]);
+        }
+
+        return nutritionString;
+
+    }
+
+    String showFoodItemAmount(String mealName, String foodName) {
+        Day day = diary.getDay(showCurrentDate());
+        Meal meal = day.showMeal(mealName);
+        return meal.showFoodItemAmount(foodName);
+    }
+
+    void updateWeightDialogue(LocalDate date) {
+        UpdateWeightGUI wGUI = new UpdateWeightGUI(this, date);
+    }
+
+    void updateWeight(LocalDate date, double weight) {
+        Day day = diary.getDay(date);
+        day.addWeightFromGUI(weight);
+    }
+
+
 }

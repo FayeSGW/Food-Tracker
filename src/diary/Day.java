@@ -14,6 +14,7 @@ public class Day {
     private HashMap<String, Exercise> exercise;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private double calorieGoal, carbGoal, fatGoal, proteinGoal;
+    private double todaysWeight = 0;
     private User user;
     private Database database;
 
@@ -24,6 +25,7 @@ public class Day {
         lunch = new Meal("Lunch", date);
         dinner = new Meal("Dinner", date);
         snacks = new Meal("Snacks", date);
+
         nutrition = new double[8];
         remainingNutrition = new double[8];
         for (int i = 0; i < nutrition.length; i++) {
@@ -44,7 +46,7 @@ public class Day {
         return date;
     }
 
-    public void addFood(String meal, String item, int amount) {
+    public void addFood(String meal, String item, double amount) {
         String name = meal.toLowerCase().trim();
         double[] foodNutrition = new double[8];
         if (name.equals("breakfast")) {
@@ -56,14 +58,14 @@ public class Day {
         } else if (name.equals("snacks")) {
             foodNutrition = snacks.add(item, amount, database);
         }
-        for (int i = 0; i < this.nutrition.length; i++) {
+        for (int i = 0; i < nutrition.length; i++) {
             nutrition[i] = nutrition[i] + foodNutrition[i];
             remainingNutrition[i] = remainingNutrition[i] - foodNutrition[i];
 
         }
     }
 
-    public void addFoodFromGUI(String meal, String item, int amount) {
+    public void addFoodFromGUI(String meal, String item, double amount) {
         addFood(meal, item, amount);
         SupFood food = database.findItem(item);
         String fullName = food.showName();
@@ -200,6 +202,23 @@ public class Day {
         return remainingWater;
     }
 
+    public double showWeight() {
+        return todaysWeight;
+    }
+
+    public void addWeight(double weight) {
+        todaysWeight = weight;
+        if (weight > 0) {
+            user.updateWeight(weight);
+        }
+        
+    }
+
+    public void addWeightFromGUI(double weight) {
+        addWeight(weight);
+        AddToDiary.updateWeight(this, user);
+    }
+
     public String exerciseToString() {
         ArrayList<String> list = new ArrayList<>();
         for (String workout: exercise.keySet()) {
@@ -218,6 +237,18 @@ public class Day {
 
     public double showRemainingCalories() {
         return remainingNutrition[0];
+    }
+
+    public Meal showMeal(String meal) {
+        if (meal.equals("Breakfast")) {
+            return breakfast;
+        } else if (meal.equals("Lunch")) {
+            return lunch;
+        } else if (meal.equals("Dinner")) {
+            return dinner;
+        } else {
+            return snacks;
+        }
     }
 
 

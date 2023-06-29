@@ -11,7 +11,7 @@ public class Food extends SupFood{
     private ArrayList<String> foodType;
     //double[] nutrition = new double[8];
 
-    public Food(Database data, String name, String displayName, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public Food(Database data, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         super(data, name, weight);
         this.displayName = displayName;
         this.barcode = barcode;

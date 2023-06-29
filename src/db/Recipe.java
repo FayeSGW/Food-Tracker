@@ -7,13 +7,13 @@ import src.SQL.java.connect.sql.code.*;
 
 public class Recipe extends SupFood {
     private HashMap<String, Food> ingredients;
-    private HashMap<String, Integer> ingredientsList;
+    private HashMap<String, Double> ingredientsList;
     private HashSet<String> foodTypes;
     private HashSet<String> recipeType;
     private HashSet<String> mealType;
     //private double nutrition[];
 
-    public Recipe(Database data, String name, int servings) {
+    public Recipe(Database data, String name, double servings) {
         super(data, name, servings);
         this.ingredients = new HashMap<>();
         this.ingredientsList = new HashMap<>();
@@ -71,7 +71,7 @@ public class Recipe extends SupFood {
     }
 
 
-    public void addIngredient(String name, int weight) {
+    public void addIngredient(String name, double weight) {
         SupFood ingredient;
         try {
             ingredient = data.addFromDatabase(name);
@@ -95,13 +95,13 @@ public class Recipe extends SupFood {
         } 
     }
 
-    public void addFromRecipe(Recipe rec, int servings) {
+    public void addFromRecipe(Recipe rec, double servings) {
         for (String name: rec.showIngredients().keySet()) {
             System.out.println(name);
-            int weight = rec.showIngredientList().get(name);
-            int totalServings = rec.weight();
+            double weight = rec.showIngredientList().get(name);
+            double totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
-            weight = (int) newWeight;
+            weight = (double) newWeight;
             addIngredient(name, weight);
         }
     }
@@ -118,7 +118,7 @@ public class Recipe extends SupFood {
     public void removeIngredient(String name) {
         Food food = ingredients.get(name);
         double[] weighted = new double[8];
-        int weight = ingredientsList.get(name);
+        double weight = ingredientsList.get(name);
         for (int i = 0; i < nutrition.length; i++) {
             weighted[i] = food.unitNutrition()[i] * weight; 
             nutrition[i] = nutrition[i] - weighted[i];
@@ -146,7 +146,7 @@ public class Recipe extends SupFood {
         return ingredients;
     }
 
-    public HashMap<String, Integer> showIngredientList() {
+    public HashMap<String, Double> showIngredientList() {
         return ingredientsList;
     }
 

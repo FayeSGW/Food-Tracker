@@ -74,6 +74,40 @@ public class AddToDiary {
         }
     }
 
+
+    public static void updateWeight(Day day, User user) {
+        Connection conn = null;
+        PreparedStatement dayStmt = null, userStmt = null;
+        String dayWeight = "UPDATE Days SET Weight = ? WHERE Date = ?";
+        String userWeight = "UPDATE UserData SET Weight = ?";
+
+        try {
+            conn = connect();
+            dayStmt = conn.prepareStatement(dayWeight);
+            
+            dayStmt.setDouble(1, day.showWeight());
+            dayStmt.setString(2, day.showDate().toString());
+
+            dayStmt.executeUpdate();
+
+            userStmt = conn.prepareStatement(userWeight);
+
+            userStmt.setDouble(1, user.showWeight());
+
+            userStmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(":( weight " + e.getMessage());
+        } finally {
+            try {
+                userStmt.close();
+                dayStmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
+
     public static void addWater(Day day) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -125,7 +159,7 @@ public class AddToDiary {
         }
     }
 
-    public static void addFood(User user, Day day, String meal, String name, int amount) {
+    public static void addFood(User user, Day day, String meal, String name, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String string = "";
@@ -148,7 +182,7 @@ public class AddToDiary {
 
             stmt.setString(1, meal);
             stmt.setString(2, name);
-            stmt.setInt(3, amount);
+            stmt.setDouble(3, amount);
             stmt.setString(4, date);
 
             stmt.executeUpdate();

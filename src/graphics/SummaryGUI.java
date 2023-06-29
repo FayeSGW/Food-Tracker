@@ -33,16 +33,18 @@ class SummaryGUI extends JPanel {
         nextDay = new JButton(">"); nextDay.addActionListener(new goToNext());
         summaryDateButtons.add(prevDay); summaryDateButtons.add(chooseDay); summaryDateButtons.add(nextDay);
 
+        this.add(Box.createRigidArea(new Dimension(0,10))); 
         summaryAddButtons = new JPanel(new FlowLayout());
         this.add(summaryAddButtons);
         addFood = new JButton("Add Food"); addFood.addActionListener(new addFood(0));
         addWater = new JButton("Add Water"); addWater.addActionListener(new addWaterC());
         addExercise = new JButton("Add Exercise");
-        updateWeight = new JButton("Update Weight");
+        updateWeight = new JButton("Update Weight"); updateWeight.addActionListener(new updateWeight());
         summaryAddButtons.add(addFood); summaryAddButtons.add(addWater); summaryAddButtons.add(addExercise); summaryAddButtons.add(updateWeight);
+        this.add(Box.createRigidArea(new Dimension(0,10))); 
 
         caloriesPanel = new JPanel(new BorderLayout()); this.add(caloriesPanel);
-        caloriesTitle = new JLabel("Calories", SwingConstants.CENTER); 
+        caloriesTitle = new JLabel("Calories", SwingConstants.CENTER); caloriesTitle.setFont(new Font(caloriesTitle.getFont().toString(), Font.BOLD, 20));
         caloriesPanel.add(caloriesTitle, BorderLayout.NORTH); 
 
         caloriesText = new JPanel(); caloriesText.setPreferredSize(new Dimension(200, 25));
@@ -56,10 +58,8 @@ class SummaryGUI extends JPanel {
         calsGoal = new JLabel(); calsGoal.setPreferredSize(new Dimension(50, 26)); caloriesGraphic.add(calsGoal);
 
         macrosPanel = new JPanel(new BorderLayout()); this.add(macrosPanel);
-        macrosTitle = new JLabel("Macros", SwingConstants.CENTER); macrosPanel.add(macrosTitle, BorderLayout.NORTH);
-
-        //macros = new JPanel(); macros.setLayout(new BoxLayout(macros, BoxLayout.Y_AXIS));
-        //this.add(macros);
+        macrosTitle = new JLabel("Macros", SwingConstants.CENTER); macrosTitle.setFont(new Font(caloriesTitle.getFont().toString(), Font.BOLD, 20));
+        macrosPanel.add(macrosTitle, BorderLayout.NORTH);
 
         macrosText = new JPanel(); macrosText.setLayout(new BoxLayout(macrosText, BoxLayout.Y_AXIS));
         macrosGraphic = new JPanel(); macrosGraphic.setLayout(new BoxLayout(macrosGraphic, BoxLayout.Y_AXIS));
@@ -96,7 +96,8 @@ class SummaryGUI extends JPanel {
 
         waterPanel = new JPanel(new BorderLayout()); this.add(waterPanel);
 
-        waterTitle = new JLabel("Water", SwingConstants.CENTER); waterPanel.add(waterTitle, BorderLayout.NORTH);
+        waterTitle = new JLabel("Water", SwingConstants.CENTER); waterTitle.setFont(new Font(caloriesTitle.getFont().toString(), Font.BOLD, 20));
+        waterPanel.add(waterTitle, BorderLayout.NORTH);
 
         waterAll = new JPanel();
         waterPanel.add(waterAll, BorderLayout.SOUTH);
@@ -190,6 +191,13 @@ class SummaryGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             control.addWater();
+        }
+    }
+
+    class updateWeight implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.updateWeightDialogue(control.showCurrentDate());
         }
     }
 

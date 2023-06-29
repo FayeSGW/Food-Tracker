@@ -11,35 +11,38 @@ public class Meal {
     private String name;
     private LocalDate date;
     private HashMap<String, ArrayList<Object>> foodlst;
+    private ArrayList<String> foodNamesList;
     private double[] nutrition;
 
     public Meal(String name, LocalDate date) {
         this.name = name;
         this.date = date;
-        this.foodlst = new HashMap<>();
-        this.nutrition = new double[8];
+        foodlst = new HashMap<>();
+        foodNamesList = new ArrayList<>();
+        nutrition = new double[8];
     }
     
-    public double[] add(String name, int weight, Database data) {
+    public double[] add(String name, double weight, Database data) {
         double [] weighted = new double[8];
         ArrayList<Object> arr;
         try {
             SupFood food = data.findItem(name);
             String unit = food.showUnit();
             double[] unitNutrition = food.unitNutrition();
-            if (foodlst.containsKey(name)) {
+            if (foodNamesList.contains(name)) {
                 arr = foodlst.get(name);
-                int oldWeight = (int) arr.get(1);
-                int newWeight = oldWeight + weight;
+                double oldWeight = (double) arr.get(1);
+                double newWeight = oldWeight + weight;
                 arr.set(1, newWeight);
             } else {
                 arr = new ArrayList<>();
                 arr.add(food); arr.add(weight); arr.add(unit);
                 foodlst.put(name, arr);
+                foodNamesList.add(name);
             }
-            for (int i = 0; i < this.nutrition.length; i++) {
+            for (int i = 0; i < nutrition.length; i++) {
                 weighted[i] = unitNutrition[i] * weight;
-                this.nutrition[i] = this.nutrition[i] + weighted[i];
+                nutrition[i] = nutrition[i] + weighted[i];
             }
         } catch (NullPointerException e) {
             System.out.println("Not in database! ");
@@ -94,6 +97,37 @@ public class Meal {
         return foodlst;
     }
 
+    public ArrayList<String> showFoodNames() {
+        return foodNamesList;
+    }
+
+    public ArrayList<Object> showFood(String name) {
+        return foodlst.get(name);
+    }
+
+    public String showFoodItemAmount(String name) {
+        ArrayList<Object> details = foodlst.get(name);
+        double weight = (double)details.get(1);
+        String unit = (String)details.get(2);
+        if (((weight * 10)%10) == 0) {
+            return String.format("%.0f %s", weight, unit);
+        }
+        return String.format("%.1f %s", weight, unit);
+    }
+
+    public double[] showFoodItemNutrition(String name) {
+        ArrayList<Object> details = foodlst.get(name);
+        SupFood food = (SupFood)details.get(0);
+        double weight = (double)details.get(1);
+        double[] unitNutrition = food.unitNutrition();
+        double[] weightedNutrition = new double[8];
+        for (int i = 0; i < 8; i++) {
+            weightedNutrition[i] = unitNutrition[i] * weight;
+        }
+
+        return weightedNutrition;
+    }
+
     public String showName() {
         return name;
     }
@@ -103,7 +137,7 @@ public class Meal {
         ArrayList<Object> lst;
         for (String food: foodlst.keySet()) {
             lst = foodlst.get(food);
-            int weight = (int) lst.get(1);
+            double weight = (double) lst.get(1);
             String unit = (String) lst.get(2);
             String strng = String.valueOf(weight) + " " + unit + " " + food;
             stringList.add(strng);

@@ -106,4 +106,12 @@ public class Diary implements java.io.Serializable {
         return diary.get(today);
     }
 
+    public String toString() {
+        String s = "";
+        for (LocalDate date: diary.keySet()) {
+            s += diary.get(date).showDate() + " " + diary.get(date).showWaterDrunk() + " ";
+        }
+        return s;
+    }
+
 }

@@ -117,9 +117,9 @@ public class GetFoodsDB {
             rrs = stmt.executeQuery(recipes);
             while (rrs.next()) {
                 String recipeName = rrs.getString("RecipeName");
-                int servings = rrs.getInt("Servings");
+                double servings = rrs.getDouble("Servings");
                 String ingredient = rrs.getString("FoodName");
-                int ingredientAmount = rrs.getInt("IngredientAmount");
+                double ingredientAmount = rrs.getDouble("IngredientAmount");
                 
                 Recipe rec = (Recipe)d.findItem(recipeName);
                 if (rec == null) {
@@ -142,7 +142,7 @@ public class GetFoodsDB {
     }
 
     public static void getDiary(Connection conn, Diary diary) {
-        String dayString = "SELECT Date, Water FROM Days";
+        String dayString = "SELECT Date, Water , Weight FROM Days";
         String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
         String exercises = "SELECT WorkoutName, Time, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 
@@ -157,12 +157,14 @@ public class GetFoodsDB {
                 String dateString = drs.getString("Date");
                 
                 int water = drs.getInt("Water");
+                double weight = drs.getDouble("Weight");
 
                 //LocalDate date = LocalDate.of(year, month, day);
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.addSavedDays(date);
 
                 dayObj.addWater(water);
+                dayObj.addWeight(weight);
             }
 
             foodStmt = conn.createStatement();
@@ -172,7 +174,7 @@ public class GetFoodsDB {
                 String meal = frs.getString("Meal");
                 String food = frs.getString("FoodName");
                 String recipe = frs.getString("RecipeName");
-                int amount = frs.getInt("Amount");
+                double amount = frs.getDouble("Amount");
 
                 String dateString = frs.getString("Date");
                 

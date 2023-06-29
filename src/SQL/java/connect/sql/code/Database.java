@@ -20,14 +20,14 @@ public class Database implements java.io.Serializable {
         this.name = name;
     }
 
-    public void addFood(String name, String nickname, int weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public void addFood(String name, String nickname, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         if (addCheck(name)) {
             Food food = new Food(this, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
         }
     }
 
-    public Recipe addRecipe(String name, int servings) {
+    public Recipe addRecipe(String name, double servings) {
         if (!addCheck(name)) {
             System.out.println("OK!");
         }

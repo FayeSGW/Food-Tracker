@@ -18,6 +18,7 @@ class Test {
         Database data = user.accessDatabase();
         //GetFoodsDB.getFoods(data);
         control.start();
+        System.out.println(diary);
         
 
         //TrackerGUI gui = new TrackerGUI(control);
@@ -86,12 +87,12 @@ class TrackerGUI {
 
 
         window.pack();
-        window.setSize(500, 400);
+        window.setSize(500, 500);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         //window.setResizable(false);
 
-        System.out.println(String.format("%s, %s, %s, %s, %s, %s, %s, %s", dGUI.overviewCalories.getWidth(), dGUI.overviewCarbs.getWidth(), dGUI.overviewSugar.getWidth(), dGUI.overviewFat.getWidth(), dGUI.overviewSatFat.getWidth(), dGUI.overviewProtein.getWidth(), dGUI.overviewFibre.getWidth(), dGUI.overviewSalt.getWidth()));
+        //System.out.println(String.format("%s, %s, %s, %s, %s", dGUI.breakfastCalories.getWidth(), dGUI.breakfastCarbs.getWidth(), dGUI.breakfastFat.getWidth(), dGUI.breakfastProtein.getWidth(), dGUI.breakfastFibre.getWidth()));
     }
 
 }

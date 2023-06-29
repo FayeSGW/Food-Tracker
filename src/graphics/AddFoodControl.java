@@ -31,12 +31,13 @@ class AddFoodControl {
 
     String showUnit(String name) {
         SupFood item = data.findItem(name);
-        System.out.println(data.isRecipe(name));
+        //System.out.println(data.isRecipe(name));
         //System.out.println(item);
         return item.showUnit();
     }
 
-    void addFoodToDiary(String meal, String name, int amount) {
+    void addFoodToDiary(String meal, String name, double amount) {
         tControl.addFoodToDiary(meal, name, amount);
     }
+
 }

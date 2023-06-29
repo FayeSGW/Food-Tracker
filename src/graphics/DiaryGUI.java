@@ -5,17 +5,22 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.time.LocalDate;
 import java.lang.Math;
+import java.util.ArrayList;
 
 class DiaryGUI extends JPanel {
     TrackerControl control;
+    String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
+    JPanel[] mealPanels = new JPanel[4];
 
-    JPanel dateButtonsPanel, addButtonsPanel, overviewPanel, overviewLabels, eatenPanel, remainingPanel, waterPanel;
+
+    JPanel dateButtonsPanel, addButtonsPanel, overviewPanel, overviewLabels, eatenPanel, remainingPanel, mealsPanel, waterPanel;
     JPanel overviewTitlePanel, overviewCaloriesPanel, overviewCarbsPanel, overviewSugarPanel, overviewFatPanel, overviewSatFatPanel, overviewProteinPanel, overviewFibrePanel, overviewSaltPanel;
-    JPanel breakfastPanel, breakfastTitlePanel, breakfastLabelsPanel;
-    JPanel lunchPanel, lunchTitlePanel, lunchLabelsPanel;
-    JPanel dinnerPanel, dinnerTitlePanel, dinnerLabelsPanel;
-    JPanel snacksPanel, snacksTitlePanel, snacksLabelsPanel;
-    JPanel exercisePanel, exerciseTitlePanel, exerciseLabelsPanel;
+    JScrollPane scroll;
+    JPanel breakfastPanel, breakfastTitlePanel, breakfastLabelsPanel, breakfastFoodsPanel;
+    JPanel lunchPanel, lunchTitlePanel, lunchLabelsPanel, lunchFoodsPanel;
+    JPanel dinnerPanel, dinnerTitlePanel, dinnerLabelsPanel, dinnerFoodsPanel;
+    JPanel snacksPanel, snacksTitlePanel, snacksLabelsPanel, snacksFoodsPanel;
+    JPanel exercisePanel, exerciseTitlePanel, exerciseLabelsPanel, exerciseWorkoutsPanel;
 
     JButton prevDay, chooseDay, nextDay;
     JButton addFoodButton, addWaterButton, addExerciseButton;
@@ -105,28 +110,39 @@ class DiaryGUI extends JPanel {
         eatenSalt = new JLabel(""); eatenSalt.setAlignmentX(Component.CENTER_ALIGNMENT); overviewSaltPanel.add(eatenSalt);
         remainingSalt = new JLabel(""); remainingSalt.setAlignmentX(Component.CENTER_ALIGNMENT); overviewSaltPanel.add(remainingSalt);
 
+        mealsPanel = new JPanel(); mealsPanel.setLayout(new BoxLayout(mealsPanel, BoxLayout.Y_AXIS));
+
+
+        scroll = new JScrollPane(mealsPanel); scroll.getVerticalScrollBar().setUnitIncrement(10);
+        this.add(scroll);
+
         breakfastPanel = new JPanel(); breakfastPanel.setLayout(new BoxLayout(breakfastPanel, BoxLayout.Y_AXIS));
         lunchPanel = new JPanel(); lunchPanel.setLayout(new BoxLayout(lunchPanel, BoxLayout.Y_AXIS));
         dinnerPanel = new JPanel(); dinnerPanel.setLayout(new BoxLayout(dinnerPanel, BoxLayout.Y_AXIS));
         snacksPanel = new JPanel(); snacksPanel.setLayout(new BoxLayout(snacksPanel, BoxLayout.Y_AXIS));
         exercisePanel = new JPanel(); exercisePanel.setLayout(new BoxLayout(exercisePanel, BoxLayout.Y_AXIS));
         waterPanel = new JPanel(); waterPanel.setLayout(new BoxLayout(waterPanel, BoxLayout.Y_AXIS));
-        this.add(breakfastPanel); this.add(lunchPanel); this.add(dinnerPanel); this.add(snacksPanel); this.add(exercisePanel); this.add(waterPanel);
+        mealsPanel.add(breakfastPanel); mealsPanel.add(lunchPanel); mealsPanel.add(dinnerPanel); mealsPanel.add(snacksPanel); mealsPanel.add(exercisePanel); mealsPanel.add(waterPanel);
 
-        breakfastTitlePanel = new JPanel(); breakfastPanel.add(breakfastTitlePanel);
-        breakfastTitle = new JLabel("Breakfast"); breakfastTitlePanel.add(breakfastTitle);
+        breakfastTitlePanel = new JPanel(); breakfastTitlePanel.setAlignmentX(CENTER_ALIGNMENT); breakfastPanel.add(breakfastTitlePanel);
+        breakfastTitle = new JLabel("Breakfast"); breakfastTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15));
+        breakfastTitle.setPreferredSize(new Dimension(100, 30)); breakfastTitlePanel.add(breakfastTitle);
         addToBreakfast = new JButton("Add food"); breakfastTitlePanel.add(addToBreakfast);
         addToBreakfast.addActionListener(new addFood(0));
         breakfastLabelsPanel = new JPanel(); breakfastPanel.add(breakfastLabelsPanel);
-        breakfastBlank = new JLabel(""); breakfastLabelsPanel.add(breakfastBlank);
+        breakfastBlank = new JLabel(""); breakfastBlank.setPreferredSize(new Dimension(200, 26));
+        breakfastLabelsPanel.add(breakfastBlank);
         breakfastCalories = new JLabel("Calories"); breakfastLabelsPanel.add(breakfastCalories);
         breakfastCarbs = new JLabel("Carbs"); breakfastLabelsPanel.add(breakfastCarbs);
         breakfastFat = new JLabel("Fat"); breakfastLabelsPanel.add(breakfastFat);
         breakfastProtein = new JLabel("Protein"); breakfastLabelsPanel.add(breakfastProtein);
         breakfastFibre = new JLabel("Fibre"); breakfastLabelsPanel.add(breakfastFibre);
+        breakfastFoodsPanel = new JPanel(); breakfastFoodsPanel.setLayout(new BoxLayout(breakfastFoodsPanel, BoxLayout.Y_AXIS));
+        breakfastPanel.add(breakfastFoodsPanel);
 
-        lunchTitlePanel = new JPanel(); lunchPanel.add(lunchTitlePanel);
-        lunchTitle = new JLabel("Lunch"); lunchTitlePanel.add(lunchTitle);
+        lunchTitlePanel = new JPanel(); lunchTitlePanel.setAlignmentX(CENTER_ALIGNMENT); lunchPanel.add(lunchTitlePanel);
+        lunchTitle = new JLabel("Lunch"); lunchTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15));
+        lunchTitle.setPreferredSize(new Dimension(100, 30)); lunchTitlePanel.add(lunchTitle);
         addToLunch = new JButton("Add Food"); lunchTitlePanel.add(addToLunch);
         addToLunch.addActionListener(new addFood(1));
         lunchLabelsPanel = new JPanel(); lunchPanel.add(lunchLabelsPanel);
@@ -136,9 +152,12 @@ class DiaryGUI extends JPanel {
         lunchFat = new JLabel("Fat"); lunchLabelsPanel.add(lunchFat);
         lunchProtein = new JLabel("Protein"); lunchLabelsPanel.add(lunchProtein);
         lunchFibre = new JLabel("Fibre"); lunchLabelsPanel.add(lunchFibre);
+        lunchFoodsPanel = new JPanel(); lunchFoodsPanel.setLayout(new BoxLayout(lunchFoodsPanel, BoxLayout.Y_AXIS));
+        lunchPanel.add(lunchFoodsPanel);
 
-        dinnerTitlePanel = new JPanel(); dinnerPanel.add(dinnerTitlePanel);
-        dinnerTitle = new JLabel("Dinner"); dinnerTitlePanel.add(dinnerTitle);
+        dinnerTitlePanel = new JPanel(); dinnerTitlePanel.setAlignmentX(CENTER_ALIGNMENT); dinnerPanel.add(dinnerTitlePanel);
+        dinnerTitle = new JLabel("Dinner"); dinnerTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15));
+        dinnerTitle.setPreferredSize(new Dimension(100, 30)); dinnerTitlePanel.add(dinnerTitle);
         addToDinner = new JButton("Add Food"); dinnerTitlePanel.add(addToDinner);
         addToDinner.addActionListener(new addFood(2));
         dinnerLabelsPanel = new JPanel(); dinnerPanel.add(dinnerLabelsPanel);
@@ -148,9 +167,12 @@ class DiaryGUI extends JPanel {
         dinnerFat = new JLabel("Fat"); dinnerLabelsPanel.add(dinnerFat);
         dinnerProtein = new JLabel("Protein"); dinnerLabelsPanel.add(dinnerProtein);
         dinnerFibre = new JLabel("Fibre"); dinnerLabelsPanel.add(dinnerFibre);
+        dinnerFoodsPanel = new JPanel(); dinnerFoodsPanel.setLayout(new BoxLayout(dinnerFoodsPanel, BoxLayout.Y_AXIS));
+        dinnerPanel.add(dinnerFoodsPanel);
 
-        snacksTitlePanel = new JPanel(); snacksPanel.add(snacksTitlePanel);
-        snacksTitle = new JLabel("Snacks"); snacksTitlePanel.add(snacksTitle);
+        snacksTitlePanel = new JPanel(); snacksTitlePanel.setAlignmentX(CENTER_ALIGNMENT); snacksPanel.add(snacksTitlePanel);
+        snacksTitle = new JLabel("Snacks"); snacksTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15));
+        snacksTitle.setPreferredSize(new Dimension(100, 30)); snacksTitlePanel.add(snacksTitle);
         addToSnacks = new JButton("Add Food"); snacksTitlePanel.add(addToSnacks);
         addToSnacks.addActionListener(new addFood(3));
         snacksLabelsPanel = new JPanel(); snacksPanel.add(snacksLabelsPanel);
@@ -160,6 +182,8 @@ class DiaryGUI extends JPanel {
         snacksFat = new JLabel("Fat"); snacksLabelsPanel.add(snacksFat);
         snacksProtein = new JLabel("Protein"); snacksLabelsPanel.add(snacksProtein);
         snacksFibre = new JLabel("Fibre"); snacksLabelsPanel.add(snacksFibre);
+        snacksFoodsPanel = new JPanel(); snacksFoodsPanel.setLayout(new BoxLayout(snacksFoodsPanel, BoxLayout.Y_AXIS));
+        snacksPanel.add(snacksFoodsPanel);
 
         exerciseTitlePanel = new JPanel(); exercisePanel.add(exerciseTitlePanel);
         exerciseTitle = new JLabel("Exercise"); exerciseTitlePanel.add(exerciseTitle);
@@ -168,6 +192,10 @@ class DiaryGUI extends JPanel {
         exerciseTime = new JLabel("Duration"); exerciseLabelsPanel.add(exerciseTime);
         exerciseCals = new JLabel("Calories Burned"); exerciseLabelsPanel.add(exerciseCals);
         
+        mealPanels[0] = breakfastFoodsPanel; mealPanels[1] = lunchFoodsPanel; mealPanels[2] = dinnerFoodsPanel; mealPanels[3] = snacksFoodsPanel;
+
+        populateMealPanels();
+        clearMealPanels();
     }
 
     void changeDate(String day, int date, String month) {
@@ -193,6 +221,59 @@ class DiaryGUI extends JPanel {
         remainingProtein.setText(Integer.toString((int)Math.round(remaining[6])) + " g");
         remainingFibre.setText(Integer.toString((int)Math.round(remaining[5])) + " g");
         remainingSalt.setText(Integer.toString((int)Math.round(remaining[7])) + " g");
+    }
+
+    void clearMealPanels() {
+        
+
+        //System.out.println("." + breakfastFoodsPanel.getComponentCount());
+        for (JPanel panel: mealPanels) {
+            Component[] foodPanels = panel.getComponents();
+            for (Component foodPanel: foodPanels) {
+                panel.remove(foodPanel);
+            }
+            panel.repaint();
+        }
+    }
+
+    void populateMealPanels() {
+        clearMealPanels();
+        for (String meal:mealsList) {
+            updateMealPanels(meal);
+        }
+    }
+
+    void updateMealPanels(String mealName) {
+        ArrayList<String> foodsList = control.showFoodsinMeal(mealName);
+        for (int i = 0; i < foodsList.size(); i++) {
+            String foodName = foodsList.get(i);
+            String displayName = control.showFoodDisplayName(foodName);
+            String foodAmount = control.showFoodItemAmount(mealName, foodName);
+            String[] foodNutrition = control.showFoodItemNutrition(mealName, foodName);
+            JPanel foodItem = new JPanel();
+            
+            if (mealName.equals("Breakfast")) {
+                breakfastFoodsPanel.add(foodItem);
+            } else if (mealName.equals("Lunch")) {
+                lunchFoodsPanel.add(foodItem);
+            } else if (mealName.equals("Dinner")) {
+                dinnerFoodsPanel.add(foodItem);
+            } else {
+                snacksFoodsPanel.add(foodItem);
+            }
+            
+            JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 26));
+            JLabel calories = new JLabel(foodNutrition[0]); calories.setPreferredSize(new Dimension(47, 26));
+            JLabel carbs = new JLabel(foodNutrition[3]); carbs.setPreferredSize(new Dimension(34, 26));
+            JLabel fat = new JLabel(foodNutrition[1]); fat.setPreferredSize(new Dimension(18, 26));
+            JLabel protein = new JLabel(foodNutrition[6]); protein.setPreferredSize(new Dimension(42, 26));
+            JLabel fibre = new JLabel(foodNutrition[5]); fibre.setPreferredSize(new Dimension(30, 26));
+            foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
+
+            for (JPanel panel: mealPanels) {
+                panel.repaint();
+            }
+        }
     }
 
     class chooseDate implements ActionListener {

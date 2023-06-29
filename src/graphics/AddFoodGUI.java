@@ -169,7 +169,8 @@ class AddFoodGUI {
                 }
                 
             } catch (NullPointerException n) {
-                System.out.println("Oops");
+                System.out.println("Oops" + n.getMessage());
+                actionPerformed(e);
             }
         }
     }
@@ -179,7 +180,7 @@ class AddFoodGUI {
         public void valueChanged (ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 String name = foodsList.getSelectedValue();
-                System.out.println(name);
+                //System.out.println(name);
                 String unit = control.showUnit(name);
                 unitLabel.setText(unit);
             }
@@ -201,7 +202,7 @@ class AddFoodGUI {
             try {
                 String meal = (String)mealChooser.getSelectedItem();
                 String itemName = foodsList.getSelectedValue();
-                int amount = Integer.valueOf(amountInput.getText());
+                double amount = Double.valueOf(amountInput.getText());
                 control.addFoodToDiary(meal, itemName, amount);
                 amountInput.setText("");
                 searchBar.requestFocusInWindow();

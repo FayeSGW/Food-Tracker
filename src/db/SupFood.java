@@ -7,10 +7,10 @@ public abstract class SupFood {
     Scanner scanner = new Scanner(System.in);
     protected String name;
     protected double nutrition[];
-    protected int weight;
+    protected double weight;
     protected Database data;
 
-    public SupFood(Database data, String name, int weight) {
+    public SupFood(Database data, String name, double weight) {
         this.name = name;
         this.weight = weight;
         nutrition = new double[8];
@@ -29,7 +29,7 @@ public abstract class SupFood {
         return nutrition;
     }
 
-    public int weight() {
+    public double weight() {
         return weight;
     }
 
