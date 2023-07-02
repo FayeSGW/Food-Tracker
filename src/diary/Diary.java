@@ -94,7 +94,6 @@ public class Diary implements java.io.Serializable {
             prev = prevDay.toString();
             this.addDay(prev);*/
         }
-        //System.out.println(prev);
         current = prev;
         return diary.get(prev);
     }
