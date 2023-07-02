@@ -11,6 +11,7 @@ public class Recipe extends SupFood {
     private HashSet<String> foodTypes;
     private HashSet<String> recipeType;
     private HashSet<String> mealType;
+    private HashMap<String, Double> newIngredients;
     //private double nutrition[];
 
     public Recipe(Database data, String name, double servings) {
@@ -20,6 +21,7 @@ public class Recipe extends SupFood {
         foodTypes = new HashSet<>();
         recipeType = new HashSet<>();
         mealType = new HashSet<>();
+
         //this.nutrition = new double[8];
 
     }
@@ -85,7 +87,12 @@ public class Recipe extends SupFood {
                 for (int i = 0; i < nutrition.length; i++) {
                     weighted[i] = nutr[i] * weight;
                     nutrition[i] = nutrition[i] + weighted[i];
-                }   
+                } 
+
+                try {
+                    newIngredients.put(ingredient.showName(), weight);
+                } catch (NullPointerException e) {};
+                
             } else {
                 Recipe rec = (Recipe) ingredient;
                 addFromRecipe(rec, weight);
@@ -93,6 +100,15 @@ public class Recipe extends SupFood {
         } catch (NullPointerException e) {
             //System.out.println("Not in database! ");
         } 
+    }
+
+    public void addIngredientFromGUI(String foodName, double amount) {
+        newIngredients = new HashMap<>();
+        addIngredient(foodName, amount);
+        for (String itemName: newIngredients.keySet()) {
+            EditFoodRecipeDatabase.addRecipeIngredient(name, itemName, newIngredients.get(itemName)); 
+        }
+         
     }
 
     public void addFromRecipe(Recipe rec, double servings) {

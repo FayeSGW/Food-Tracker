@@ -4,13 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.Locale;
-import java.time.DayOfWeek;
-import java.util.ArrayList;
-
-import src.db.*;
-import src.diary.*;
 
 class UpdateWeightGUI {
     TrackerControl control;

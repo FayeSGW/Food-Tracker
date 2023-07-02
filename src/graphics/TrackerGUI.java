@@ -13,12 +13,15 @@ class Test {
         User user = GetFoodsDB.getUser();
         //User user = new User("Faye", "F", 81, 165, "24.07.1989", "L", 1);
         Diary diary = user.accessDiary();
-        TrackerControl control = new TrackerControl(user, diary);
+        
 
         Database data = user.accessDatabase();
+        TrackerControl control = new TrackerControl(user, diary, data);
         //GetFoodsDB.getFoods(data);
         control.start();
-        System.out.println(diary);
+        //System.out.println(diary);
+
+        //NewFoodControl c = new NewFoodControl(control);
         
 
         //TrackerGUI gui = new TrackerGUI(control);
@@ -32,7 +35,7 @@ class TrackerGUI {
     JFrame window;
     JTabbedPane tabbedPane;
 
-    JPanel summary, diary, history, profile; //tab panels
+    JPanel summary, diary, history, database, profile; //tab panels
 
     //Components for summary tab
     
@@ -67,6 +70,9 @@ class TrackerGUI {
 
         history = new JPanel();
         tabbedPane.add("History", history);
+
+        database = new JPanel();
+        tabbedPane.add("Database", database);
 
         profile = new JPanel();
         tabbedPane.add("Profile", profile);

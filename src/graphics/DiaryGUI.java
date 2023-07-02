@@ -3,7 +3,6 @@ package src.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.time.LocalDate;
 import java.lang.Math;
 import java.util.ArrayList;
 
@@ -224,8 +223,6 @@ class DiaryGUI extends JPanel {
     }
 
     void clearMealPanels() {
-        
-
         //System.out.println("." + breakfastFoodsPanel.getComponentCount());
         for (JPanel panel: mealPanels) {
             Component[] foodPanels = panel.getComponents();
@@ -307,7 +304,7 @@ class DiaryGUI extends JPanel {
 
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addFoodDialogue(index);
+            control.addFoodDialogue(index, "diary");
         }
     }
 

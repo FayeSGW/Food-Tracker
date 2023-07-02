@@ -8,8 +8,6 @@ import java.sql.ResultSet;
 import org.sqlite.SQLiteConfig;
 import java.time.LocalDate;
 
-import org.sqlite.SQLiteConfig;
-
 import src.db.*;
 import src.diary.*;
 

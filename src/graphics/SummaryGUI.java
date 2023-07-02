@@ -3,7 +3,6 @@ package src.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.time.LocalDate;
 
 class SummaryGUI extends JPanel {
     TrackerControl control;
@@ -182,8 +181,9 @@ class SummaryGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             //AddFoodControl aControl = new AddFoodControl(control);
-            control.addFoodDialogue(index);
-            //control.addFoodTest();
+            //control.addFoodDialogue(index, "recipe");
+            control.newRecipeGUI();
+            //control.editFoodorRecipeGUI("a");
         }
     }
 

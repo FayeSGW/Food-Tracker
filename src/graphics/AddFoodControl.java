@@ -11,10 +11,12 @@ class AddFoodControl {
     AddFoodGUI gui;
     Database data;
 
-    AddFoodControl(TrackerControl tControl, int index) {
+
+    AddFoodControl(TrackerControl tControl, int index, String type) {
         this.tControl = tControl;
-        gui = new AddFoodGUI(this, index);
+        gui = new AddFoodGUI(this, index, type);
         data = tControl.showUser().accessDatabase();
+
     }
 
     ArrayList<String> searchDatabase(String string) {
@@ -38,6 +40,10 @@ class AddFoodControl {
 
     void addFoodToDiary(String meal, String name, double amount) {
         tControl.addFoodToDiary(meal, name, amount);
+    }
+
+    void addFoodToRecipe(String name, double amount) {
+        tControl.addIngredientToRecipe(name, amount);
     }
 
 }

@@ -13,6 +13,7 @@ public class Database implements java.io.Serializable {
     protected String name;
     //private ArrayList<Food> database = new ArrayList<>();
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();
+    protected HashMap<String, SupFood> displayDatabase = new HashMap<>();
     //protected HashMap<String, Recipe> rdata = new HashMap<String, Recipe>();
     private ArrayList<SupFood> searchResults;
 
@@ -24,6 +25,7 @@ public class Database implements java.io.Serializable {
         if (addCheck(name)) {
             Food food = new Food(this, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
+            displayDatabase.put(nickname, food);
         }
     }
 
@@ -33,6 +35,7 @@ public class Database implements java.io.Serializable {
         }
         Recipe recipe = new Recipe(this, name, servings);
         database.put(name, recipe);
+        displayDatabase.put(name, recipe);
         return recipe;
     }
 
@@ -74,8 +77,8 @@ public class Database implements java.io.Serializable {
 
 
     public SupFood addFromDatabase(String name) {
-        if (!database.containsKey(name)) {
-            System.out.println("Not in database!");
+        if (!database.containsKey(name) && !displayDatabase.containsKey(name)) {
+            System.out.println(name + " Not in database!");
             return null;
         }
         return findItem(name);
@@ -83,11 +86,25 @@ public class Database implements java.io.Serializable {
 
     public SupFood findItem(String name) {
         SupFood item = null;
-        for (String fullName: database.keySet()) {
+        //System.out.println(name);
+        
+        //item = displayDatabase.get(name);
+
+        if (database.keySet().contains(name)) {
+            item = database.get(name);
+        } else if (displayDatabase.keySet().contains(name)) {
+            item = displayDatabase.get(name);
+        }
+
+
+        /*for (String fullName: database.keySet()) {
             if (fullName.contains(name)) {
                 item = database.get(fullName);
+                if (item.showDisplayName().equals(name)) {
+                    return item;
+                }
             }
-        }
+        }*/
         return item;        
     }
 

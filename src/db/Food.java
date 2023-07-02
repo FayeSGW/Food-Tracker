@@ -72,6 +72,10 @@ public class Food extends SupFood{
         String show = weight +" " + unit;
         return show;
     }
+
+    public double showAmount() {
+        return weight;
+    }
     
     @Override
     public String showUnit() {
@@ -93,6 +97,14 @@ public class Food extends SupFood{
                 nutrition[i] = nut;
             }
         }
+    }
+
+    public void edit(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        this.name = name;
+        this.displayName = displayName;
+        this.weight = amount;
+        this.unit = unit;
+        nutrition[0] = calories; nutrition[1] = fat; nutrition[2] = satfat; nutrition[3] = carbs; nutrition[4] = sugar; nutrition[5] = fibre; nutrition[6] = protein; nutrition[7] = salt;
     }
  
 }

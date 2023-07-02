@@ -77,27 +77,6 @@ public class Day {
         return goals;
     }
 
-    /*public void addRecipe(String meal, String item, int amount, RecipeDatabase database) {
-        String name = meal.toLowerCase().trim();
-        double[] recipeNutrition = new double[8];
-        if (name.equals("breakfast")) {
-            recipeNutrition = breakfast.addRecipe(item, amount, database);
-        } else if (name.equals("lunch")) {
-            recipeNutrition = lunch.addRecipe(item, amount, database);
-        } else if (name.equals("dinner")) {
-            recipeNutrition = dinner.addRecipe(item, amount, database);
-        } else if (name.equals("snacks")) {
-            recipeNutrition = snacks.addRecipe(item, amount, database);
-        }
-        for (int i = 0; i < nutrition.length; i++) {
-            nutrition[i] = nutrition[i] + recipeNutrition[i];
-            remainingNutrition[i] = remainingNutrition[i] - recipeNutrition[i];
-
-        }
-    }*/
-
-
-
     public void remove(String meal, String item) {
         String name = meal.toLowerCase().trim();
         double[] nutr = new double[8];
@@ -209,7 +188,7 @@ public class Day {
     public void addWeight(double weight) {
         todaysWeight = weight;
         if (weight > 0) {
-            user.updateWeight(weight);
+            user.updateWeight(date, weight);
         }
         
     }

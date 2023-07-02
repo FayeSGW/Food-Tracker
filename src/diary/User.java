@@ -2,7 +2,6 @@ package src.diary;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.TreeMap;
 
 import src.db.SupFood;
 import src.db.Food;
@@ -16,7 +15,7 @@ public class User implements java.io.Serializable {
     private double[] nutrition = new double[8];
     private Database data;
     private Diary diary;
-    //private TreeMap<LocalDate, Double> weightRecord;
+
 
     //Gender = M/F, weight in kg, height in cm, DOB as DD.MM.YYYY, goal = loss,
     public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate, int water) {
@@ -30,8 +29,6 @@ public class User implements java.io.Serializable {
         this.water = water;
         this.data = new Database(name + "'s Database");
         this.diary = new Diary(name, this);
-        //this.weightRecord = new TreeMap<>();
-        //weightRecord.put(LocalDate.now(), weight);
         age = calculateAge();
         updateNutrition();
         
@@ -105,7 +102,13 @@ public class User implements java.io.Serializable {
     }
 
 
-    public void updateWeight(double weight) {
+    public void updateWeight(LocalDate date, double weight) {
+        for (LocalDate day: diary.showDays()) {
+            if (day.isAfter(date) == true && diary.getDay(day).showWeight() > 0) {
+                return;
+            }
+        }
+        
         this.weight = weight;
         updateNutrition();
 

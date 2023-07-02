@@ -9,8 +9,6 @@ import javax.swing.event.ListSelectionListener;
 
 import java.util.ArrayList;
 
-import src.diary.*;
-import src.SQL.java.connect.sql.code.*;
 
 class AddFoodTest {
     /*public static void main (String [] args) {
@@ -28,6 +26,7 @@ class AddFoodTest {
 class AddFoodGUI {
     AddFoodControl control;
     int index;
+    String type;
 
     JFrame window;
     JPanel whole, searchPanel, listPanel, foodButtons, amountPanel, spare, space;
@@ -42,10 +41,11 @@ class AddFoodGUI {
     String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
     ArrayList<String> searchResult;
 
-    AddFoodGUI (AddFoodControl control, int index) {
+    AddFoodGUI (AddFoodControl control, int index, String type) {
         this.control = control;
         searchResult = new ArrayList<>();
         this.index = index;
+        this.type = type;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -96,13 +96,17 @@ class AddFoodGUI {
         //foodButtons.add(Box.createRigidArea(new Dimension(0, 50)));
         showDetailsButton = new JButton("Details"); showDetailsButton.setMaximumSize(new Dimension(75, 26));
         showDetailsButton.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(showDetailsButton);
-        mealLabel = new JLabel("Choose meal:"); mealLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        foodButtons.add(Box.createRigidArea(new Dimension(0,10))); foodButtons.add(mealLabel);
+        foodButtons.add(Box.createRigidArea(new Dimension(0,10)));
 
-        mealChooser = new JComboBox<>(mealsList); mealChooser.setMaximumSize(new Dimension(100, 30));
-        mealChooser.setSelectedIndex(index);
-        mealChooser.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(mealChooser);
-        foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
+        if (type.equals("diary")) {
+            mealLabel = new JLabel("Choose meal:"); mealLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            foodButtons.add(mealLabel);
+
+            mealChooser = new JComboBox<>(mealsList); mealChooser.setMaximumSize(new Dimension(100, 30));
+            mealChooser.setSelectedIndex(index);
+            mealChooser.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(mealChooser);
+            foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
+        }
 
         amountLabel = new JLabel("Amount to add:"); amountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         foodButtons.add(amountLabel);
@@ -132,7 +136,6 @@ class AddFoodGUI {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        System.out.println(window.getHeight());
     }
 
     class focusSearchBar implements FocusListener {
@@ -200,10 +203,19 @@ class AddFoodGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
-                String meal = (String)mealChooser.getSelectedItem();
-                String itemName = foodsList.getSelectedValue();
+                
                 double amount = Double.valueOf(amountInput.getText());
-                control.addFoodToDiary(meal, itemName, amount);
+                String itemName = foodsList.getSelectedValue();
+                if (type.equals("diary")) {
+                    String meal = (String)mealChooser.getSelectedItem();
+                    control.addFoodToDiary(meal, itemName, amount);
+                } else {
+                    control.addFoodToRecipe(itemName, amount);
+                }
+                
+                //System.out.println(itemName);
+                
+                
                 amountInput.setText("");
                 searchBar.requestFocusInWindow();
             } catch (NumberFormatException n) {}
