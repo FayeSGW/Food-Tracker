@@ -181,8 +181,9 @@ class SummaryGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             //AddFoodControl aControl = new AddFoodControl(control);
-            //control.addFoodDialogue(index, "recipe");
-            control.newRecipeGUI();
+            //control.addFoodDialogue(index, "food", null);
+            ChangeDatabaseControl cControl = new ChangeDatabaseControl(control);
+            cControl.editFoodorRecipeGUI("a");
             //control.editFoodorRecipeGUI("a");
         }
     }

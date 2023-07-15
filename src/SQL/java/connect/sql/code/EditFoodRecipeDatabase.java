@@ -126,5 +126,49 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    
+    public static void deleteFood(String name, String type) {
+        Connection conn = null;
+        PreparedStatement stmt = null, stmt2 = null;
+        String foodString = "DELETE FROM Foods WHERE FoodName = ?";
+        String ingredientsString = "DELETE FROM RecipeIngredients WHERE RecipeName = ?";
+        String recipeString = "DELETE FROM Recipes WHERE RecipeName = ?";
+
+        try {
+            conn = connect();
+
+            if (type.equals("food")) {
+                stmt = conn.prepareStatement(foodString);
+            } else {
+                stmt = conn.prepareStatement(ingredientsString);
+            }
+            
+            stmt.setString(1, name);
+            stmt.executeUpdate();
+
+            if (type.equals("recipe")) {
+                stmt2 = conn.prepareStatement(recipeString);
+                stmt2.setString(1, name);
+                stmt2.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("aa nei " + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+
+                if (stmt2 != null) {
+                    stmt2.close();
+                }
+                
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            } 
+        }
+    }
+
+    public static void deleteRecipe(String name) {
+
+    }
+
 }

@@ -21,10 +21,11 @@ public class Day {
     public Day(LocalDate date, User user) {
         this.date = date;
         this.user = user;
-        breakfast = new Meal("Breakfast", date);
-        lunch = new Meal("Lunch", date);
-        dinner = new Meal("Dinner", date);
-        snacks = new Meal("Snacks", date);
+        this.database = user.accessDatabase();
+        breakfast = new Meal("Breakfast", date, database);
+        lunch = new Meal("Lunch", date, database);
+        dinner = new Meal("Dinner", date, database);
+        snacks = new Meal("Snacks", date, database);
 
         nutrition = new double[8];
         remainingNutrition = new double[8];
@@ -39,7 +40,7 @@ public class Day {
 
         this.exercise = new HashMap<>();
         remainingWater = user.showWater();
-        this.database = user.accessDatabase();
+        
     }
 
     public LocalDate showDate() {
@@ -50,13 +51,13 @@ public class Day {
         String name = meal.toLowerCase().trim();
         double[] foodNutrition = new double[8];
         if (name.equals("breakfast")) {
-            foodNutrition = breakfast.add(item, amount, database);
+            foodNutrition = breakfast.add(item, amount);
         } else if (name.equals("lunch")) {
-            foodNutrition = lunch.add(item, amount, database);
+            foodNutrition = lunch.add(item, amount);
         } else if (name.equals("dinner")) {
-            foodNutrition = dinner.add(item, amount, database);
+            foodNutrition = dinner.add(item, amount);
         } else if (name.equals("snacks")) {
-            foodNutrition = snacks.add(item, amount, database);
+            foodNutrition = snacks.add(item, amount);
         }
         for (int i = 0; i < nutrition.length; i++) {
             nutrition[i] = nutrition[i] + foodNutrition[i];
@@ -66,9 +67,9 @@ public class Day {
     }
 
     public void addFoodFromGUI(String meal, String item, double amount) {
-        addFood(meal, item, amount);
         SupFood food = database.findItem(item);
         String fullName = food.showName();
+        addFood(meal, fullName, amount);
         AddToDiary.addFood(user, this, meal, fullName, amount);
     }
 
@@ -86,13 +87,33 @@ public class Day {
             nutr = lunch.remove(item);
         } else if (name.equals("dinner")) {
             nutr = dinner.remove(item);
-        } else if (name.equals("sncakc")) {
+        } else if (name.equals("snacks")) {
             nutr = snacks.remove(item);
         }
         for (int i = 0; i < nutrition.length; i++) {
             nutrition[i] = nutrition[i] - nutr[i];
             remainingNutrition[i] = remainingNutrition[i] + nutr[i];
         }
+    }
+
+    public void edit(String meal, String item, double weight) {
+        String name = meal.toLowerCase().trim();
+        double[] nutr = new double[8];
+
+        /*if (name.equals("breakfast")) {
+            nutr = breakfast.edit(item, weight);
+        } else if (name.equals("lunch")) {
+            nutr = lunch.edit(item, weight);
+        } else if (name.equals("dinner")) {
+            nutr = dinner.edit(item, weight);
+        } else if (name.equals("snacks")) {
+            nutr = snacks.edit(item, weight);
+        }*/
+
+        remove(meal, item);
+        addFood(meal, item, weight);
+
+
     }
 
     public void clearMeal(String meal) {

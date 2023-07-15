@@ -2,23 +2,27 @@ package src.graphics;
 
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.sound.midi.Track;
 import javax.swing.*;
 
 import java.util.HashMap;
 
 class NewRecipeGUI {
-    TrackerControl control;
+    ChangeDatabaseControl control;
+    TrackerControl tControl;
     String recipeName;
 
     JFrame window;
-    JPanel whole, titlePanel, namePanel, amountPanel, ingredientsPanel, buttonsPanel;
+    JPanel whole, titlePanel, namePanel, amountPanel, ingredientsPanel, buttonsPanel, donePanel;
     JPanel totalNutritionPanel, perServingNutritionPanel;
     JTextField nameField, amountField;
     JLabel titleLabel, nameLabel, amountLabel, servingsLabel, ingredientsLabel;
-    JButton createRecipeButton, addIngredientButton, saveButton;
+    JButton createRecipeButton, addIngredientButton, deleteButton, doneButton;
 
-    NewRecipeGUI (TrackerControl control) {
+    NewRecipeGUI (ChangeDatabaseControl control, TrackerControl tControl) {
         this.control = control;
+        this.tControl = tControl;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -52,16 +56,28 @@ class NewRecipeGUI {
         buttonsPanel = new JPanel(); whole.add(buttonsPanel);
         addIngredientButton = new JButton("Add Ingredient"); addIngredientButton.setEnabled(false); 
         addIngredientButton.addActionListener(new addIngredient()); buttonsPanel.add(addIngredientButton);
-        saveButton = new JButton("Save Recipe"); saveButton.setEnabled(false); buttonsPanel.add(saveButton);
+        deleteButton = new JButton("Delete"); deleteButton.setEnabled(false);
+        deleteButton.addActionListener(new deleteRecipe()); buttonsPanel.add(deleteButton);
+        donePanel = new JPanel(); whole.add(donePanel);
+        doneButton = new JButton("Done"); doneButton.setEnabled(false); 
+        doneButton.addActionListener(new finished()); donePanel.add(doneButton);
+
 
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
     }
 
+    void setRecipeName(String name) {
+        recipeName = name;
+        createRecipeButton.setEnabled(false);
+        addIngredientButton.setEnabled(true);
+        deleteButton.setEnabled(true);
+        doneButton.setEnabled(true);
+    }
+
     void addIngredient() {
-        
-        control.addFoodDialogue(0, "recipe");
+        tControl.addFoodDialogue(0, "recipe");
         
     }
 
@@ -85,6 +101,12 @@ class NewRecipeGUI {
         ingredientsPanel.repaint();
     }
 
+    void existingRecipeData(String name, double servings, HashMap<String, Double> ingredients) {
+        nameField.setText(name);
+        amountField.setText(Double.toString(servings));
+        updateIngredientsPanel();
+    }
+
     class create implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
@@ -100,18 +122,33 @@ class NewRecipeGUI {
                 System.out.println(name);
                 control.saveNewRecipe(name, servings);
                 control.recipe(name);
-                recipeName = name;
+                setRecipeName(name);
             }
 
-            addIngredientButton.setEnabled(true);
-            saveButton.setEnabled(true);
+            //addIngredientButton.setEnabled(true);
+            //saveButton.setEnabled(true);
         }
     }
 
     class addIngredient implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addFoodDialogue(0, "recipe");
+            tControl.addFoodDialogue(0, "recipe");
+        }
+    }
+
+    class deleteRecipe implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.delete(recipeName);
+            window.dispose();
+        }
+    }
+
+    class finished implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            window.dispose();
         }
     }
 }

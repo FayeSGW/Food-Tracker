@@ -10,19 +10,21 @@ import src.db.*;
 public class Meal {
     private String name;
     private LocalDate date;
+    private Database data;
     private HashMap<String, ArrayList<Object>> foodlst;
     private ArrayList<String> foodNamesList;
     private double[] nutrition;
 
-    public Meal(String name, LocalDate date) {
+    public Meal(String name, LocalDate date, Database data) {
         this.name = name;
         this.date = date;
+        this.data = data;
         foodlst = new HashMap<>();
         foodNamesList = new ArrayList<>();
         nutrition = new double[8];
     }
     
-    public double[] add(String name, double weight, Database data) {
+    public double[] add(String name, double weight) {
         double [] weighted = new double[8];
         ArrayList<Object> arr;
         try {
@@ -51,12 +53,19 @@ public class Meal {
     }
 
     public void copy(Meal meal) {
-        removeAll();
-        foodlst = meal.showFoods();
-        nutrition = meal.showNutrition();
+        //removeAll();
+
+        for (String key: meal.showFoods().keySet()) {
+            ArrayList<Object> details = meal.showFoods().get(key);
+            double weight = (double) details.get(1);
+            add(key, weight);
+        }
+
+        //foodlst = meal.showFoods();
+        //nutrition = meal.showNutrition();
     }
 
-    public void edit(String name, int weight) {
+    public double[] edit(String name, double weight) {
         double[] weighted = new double[8];
         ArrayList<Object> lst = foodlst.get(name);
         lst.set(1, weight);
@@ -64,23 +73,27 @@ public class Meal {
         SupFood food = (SupFood) lst.get(0);
         double[] removed = remove(name);
         foodlst.put(name, lst);
+        foodNamesList.add(name);
 
         for (int i = 0; i < nutrition.length; i++) {
             weighted[i] = food.unitNutrition()[i] * weight;
             nutrition[i] = nutrition[i] + weighted[i];
         }
+
+        return weighted;
     }
 
     public double[] remove(String name) {
         double[] weighted = new double[8];
         ArrayList<Object> lst = foodlst.get(name);
-        int weight = (int) lst.get(1);
+        double weight = (double) lst.get(1);
         SupFood food = (SupFood) lst.get(0);
         for (int i = 0; i < nutrition.length; i++) {
             weighted[i] = food.unitNutrition()[i] * weight;
             nutrition[i] = nutrition[i] - weighted[i];
         }
         foodlst.remove(name);
+        foodNamesList.remove(name);
         return weighted;
     }
    

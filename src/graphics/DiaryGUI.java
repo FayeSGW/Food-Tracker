@@ -238,6 +238,7 @@ class DiaryGUI extends JPanel {
         for (String meal:mealsList) {
             updateMealPanels(meal);
         }
+        this.repaint();
     }
 
     void updateMealPanels(String mealName) {
@@ -248,16 +249,23 @@ class DiaryGUI extends JPanel {
             String foodAmount = control.showFoodItemAmount(mealName, foodName);
             String[] foodNutrition = control.showFoodItemNutrition(mealName, foodName);
             JPanel foodItem = new JPanel();
+            JPanel mp;
             
             if (mealName.equals("Breakfast")) {
-                breakfastFoodsPanel.add(foodItem);
+                mp = breakfastFoodsPanel;
+                //breakfastFoodsPanel.add(foodItem);
             } else if (mealName.equals("Lunch")) {
-                lunchFoodsPanel.add(foodItem);
+                mp = lunchFoodsPanel;
+                //lunchFoodsPanel.add(foodItem);
             } else if (mealName.equals("Dinner")) {
-                dinnerFoodsPanel.add(foodItem);
+                mp = dinnerFoodsPanel;
+                //dinnerFoodsPanel.add(foodItem);
             } else {
-                snacksFoodsPanel.add(foodItem);
+                mp = snacksFoodsPanel;
+                //snacksFoodsPanel.add(foodItem);
             }
+
+            mp.add(foodItem);
             
             JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 26));
             JLabel calories = new JLabel(foodNutrition[0]); calories.setPreferredSize(new Dimension(47, 26));
@@ -267,9 +275,17 @@ class DiaryGUI extends JPanel {
             JLabel fibre = new JLabel(foodNutrition[5]); fibre.setPreferredSize(new Dimension(30, 26));
             foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
 
-            for (JPanel panel: mealPanels) {
+            name.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.editMealDialogue(mealName, foodName);
+                }
+            });
+
+            /*for (JPanel panel: mealPanels) {
                 panel.repaint();
-            }
+            }*/
+            //mp.repaint();
         }
     }
 
@@ -314,4 +330,6 @@ class DiaryGUI extends JPanel {
             control.addWater();
         }
     }
+
+    
 }

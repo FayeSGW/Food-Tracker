@@ -31,7 +31,7 @@ class AddFoodGUI {
     JFrame window;
     JPanel whole, searchPanel, listPanel, foodButtons, amountPanel, spare, space;
     JScrollPane listScroll;
-    JButton searchButton, showDetailsButton, addButton, finished;
+    JButton searchButton, showDetailsButton, addButton, finished, editButton, deleteButton;
     JComboBox<String> mealChooser;
     DefaultListModel<String> model;
     JList<String> foodsList;
@@ -96,6 +96,10 @@ class AddFoodGUI {
         //foodButtons.add(Box.createRigidArea(new Dimension(0, 50)));
         showDetailsButton = new JButton("Details"); showDetailsButton.setMaximumSize(new Dimension(75, 26));
         showDetailsButton.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(showDetailsButton);
+
+        editButton = new JButton("Edit"); editButton.setMaximumSize(new Dimension(75, 26));
+        editButton.setAlignmentX(Component.LEFT_ALIGNMENT); 
+        editButton.addActionListener(new editItem()); foodButtons.add(editButton);
         foodButtons.add(Box.createRigidArea(new Dimension(0,10)));
 
         if (type.equals("diary")) {
@@ -108,24 +112,33 @@ class AddFoodGUI {
             foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
         }
 
-        amountLabel = new JLabel("Amount to add:"); amountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        foodButtons.add(amountLabel);
-        amountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); amountPanel.setPreferredSize(new Dimension(150, 30));
-        amountPanel.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(amountPanel);
-        amountInput = new JTextField(); amountInput.setPreferredSize(new Dimension(50,26));
-        amountInput.addActionListener(new AddFood());
-        amountPanel.add(amountInput); 
-        unitLabel = new JLabel(); amountPanel.add(unitLabel);
-        //foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
+        if (!type.equals("edit")) {
+            amountLabel = new JLabel("Amount to add:"); amountLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            foodButtons.add(amountLabel);
+            amountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); amountPanel.setPreferredSize(new Dimension(150, 30));
+            amountPanel.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(amountPanel);
+            amountInput = new JTextField(); amountInput.setPreferredSize(new Dimension(50,26));
+            amountInput.addActionListener(new AddFood());
+            amountPanel.add(amountInput); 
+            unitLabel = new JLabel(); amountPanel.add(unitLabel);
+            //foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
+            
+            addButton = new JButton("Add"); //addButton.setMaximumSize(new Dimension(75, 26));
+            addButton.setAlignmentX(Component.LEFT_ALIGNMENT); addButton.addActionListener(new AddFood());
+            foodButtons.add(addButton);
+            foodButtons.add(Box.createGlue()); 
+            finished = new JButton("Done"); 
+            finished.setAlignmentX(Component.LEFT_ALIGNMENT); finished.setMaximumSize(new Dimension(75, 26));
+            finished.addActionListener(new Exit());
+            foodButtons.add(finished);
+        } else {
+            deleteButton = new JButton("Delete"); deleteButton.setMaximumSize(new Dimension(75, 26));
+            deleteButton.setAlignmentX(Component.LEFT_ALIGNMENT); deleteButton.addActionListener(new deleteItem());
+            foodButtons.add(deleteButton);
+        }
         
-        addButton = new JButton("Add"); //addButton.setMaximumSize(new Dimension(75, 26));
-        addButton.setAlignmentX(Component.LEFT_ALIGNMENT); addButton.addActionListener(new AddFood());
-        foodButtons.add(addButton);
-        foodButtons.add(Box.createGlue()); 
-        finished = new JButton("Done"); 
-        finished.setAlignmentX(Component.LEFT_ALIGNMENT); finished.setMaximumSize(new Dimension(75, 26));
-        finished.addActionListener(new Exit());
-        foodButtons.add(finished);
+
+        
         
         //spare = new JPanel(); foodButtons.add(spare);
         
@@ -184,10 +197,14 @@ class AddFoodGUI {
             if (!e.getValueIsAdjusting()) {
                 String name = foodsList.getSelectedValue();
                 //System.out.println(name);
-                String unit = control.showUnit(name);
-                unitLabel.setText(unit);
+                if (!type.equals("edit")) {
+                    String unit = control.showUnit(name);
+                    unitLabel.setText(unit);
+                }
             }
-            amountInput.requestFocusInWindow();
+            if (!type.equals("edit")) {
+                amountInput.requestFocusInWindow();
+            }
         }
     }
 
@@ -195,6 +212,24 @@ class AddFoodGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             int choice = foodsList.getSelectedIndex();
+        }
+    }
+
+    class editItem implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            String name = foodsList.getSelectedValue();
+            control.editItem(name);
+        }
+    }
+
+    class deleteItem implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            String name = foodsList.getSelectedValue();
+            int index = foodsList.getSelectedIndex();
+            control.deleteFromDatabase(name);
+            model.remove(index);
         }
     }
 
@@ -214,8 +249,6 @@ class AddFoodGUI {
                 }
                 
                 //System.out.println(itemName);
-                
-                
                 amountInput.setText("");
                 searchBar.requestFocusInWindow();
             } catch (NumberFormatException n) {}

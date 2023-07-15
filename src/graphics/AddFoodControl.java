@@ -8,12 +8,14 @@ import src.db.*;
 
 class AddFoodControl {
     TrackerControl tControl;
+    ChangeDatabaseControl cControl;
     AddFoodGUI gui;
     Database data;
 
 
-    AddFoodControl(TrackerControl tControl, int index, String type) {
+    AddFoodControl(TrackerControl tControl, int index, String type, ChangeDatabaseControl cControl) {
         this.tControl = tControl;
+        this.cControl = cControl;
         gui = new AddFoodGUI(this, index, type);
         data = tControl.showUser().accessDatabase();
 
@@ -43,7 +45,15 @@ class AddFoodControl {
     }
 
     void addFoodToRecipe(String name, double amount) {
-        tControl.addIngredientToRecipe(name, amount);
+        cControl.addIngredientToRecipe(name, amount);
+    }
+
+    void editItem(String name) {
+        cControl.editFoodorRecipeGUI(name);
+    }
+
+    void deleteFromDatabase(String name) {
+        cControl.delete(name);
     }
 
 }

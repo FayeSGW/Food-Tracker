@@ -103,11 +103,12 @@ public class Recipe extends SupFood {
     }
 
     public void addIngredientFromGUI(String foodName, double amount) {
-        newIngredients = new HashMap<>();
+        //newIngredients = new HashMap<>();
         addIngredient(foodName, amount);
-        for (String itemName: newIngredients.keySet()) {
-            EditFoodRecipeDatabase.addRecipeIngredient(name, itemName, newIngredients.get(itemName)); 
-        }
+        EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, ingredientsList.get(foodName)); 
+        /*for (String itemName: newIngredients.keySet()) {
+            
+        }*/
          
     }
 
@@ -148,6 +149,11 @@ public class Recipe extends SupFood {
         
         ingredients.remove(name);
         ingredientsList.remove(name);
+    }
+
+    public void editIngredient(String name, double amount) {
+        removeIngredient(name);
+
     }
 
     public String perServing() {

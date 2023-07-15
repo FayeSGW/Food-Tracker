@@ -8,7 +8,7 @@ import src.db.SupFood;
 import src.db.Recipe;
 //mport sql.code.*;
 
-public class Database implements java.io.Serializable {
+public class Database {
     transient Scanner input = new Scanner(System.in);
     protected String name;
     //private ArrayList<Food> database = new ArrayList<>();
@@ -57,8 +57,9 @@ public class Database implements java.io.Serializable {
     }
 
 
-    public void delete(String item) {
-        database.remove(item);
+    public void delete(String fullName, String displayName) {
+        database.remove(fullName);
+        displayDatabase.remove(displayName);
     }
 
     public ArrayList<SupFood> searchDatabase(String item) {

@@ -1,6 +1,5 @@
 package src.graphics;
 
-
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -16,13 +15,14 @@ class TrackerControl {
     TrackerGUI tGUI;
     SummaryGUI sGUI;
     DiaryGUI dGUI;
-    NewRecipeGUI rGUI;
+    ChangeDatabaseControl dbControl;
+    ChangeDatabaseGUI dbGUI;
     //DiaryControl dCont;
     //CalendarGUI cGUI;
     User user;
     Diary diary;
     Database data;
-    String recipeName;
+
 
     TrackerControl(User user, Diary diary, Database data) {
         this.user = user;
@@ -31,16 +31,14 @@ class TrackerControl {
         sGUI = new SummaryGUI(this);
         //dCont = new DiaryControl(this);
         dGUI = new DiaryGUI(this);
-        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI);
+        dbControl = new ChangeDatabaseControl(this);
+        dbGUI = dbControl.showDbGUI();
+        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI);
              
     }
 
     public User showUser() {
         return user;
-    }
-
-    public void recipe(String name) {
-        recipeName = name;
     }
 
 
@@ -139,7 +137,7 @@ class TrackerControl {
     }
 
     void addFoodDialogue(int index, String type) {
-        AddFoodControl aControl = new AddFoodControl(this, index, type);
+        AddFoodControl aControl = new AddFoodControl(this, index, type, dbControl);
     }
 
     String showFoodDisplayName(String fullName) {
@@ -169,7 +167,6 @@ class TrackerControl {
         }
 
         return nutritionString;
-
     }
 
     String showFoodItemAmount(String mealName, String foodName) {
@@ -188,66 +185,48 @@ class TrackerControl {
         day.addWeightFromGUI(weight);
     }
 
-    //Functionality for adding new foods to database/editing foods
-    void newFoodGUI() {
-        NewFoodGUI nGUI = new NewFoodGUI(this);
+    void newFood() {
+        //ChangeDatabaseControl cControl = new ChangeDatabaseControl(this);
+        dbControl.newFoodGUI();
     }
 
-    void newRecipeGUI() {
-        rGUI = new NewRecipeGUI(this);
+    void newRecipe() {
+        //ChangeDatabaseControl cControl = new ChangeDatabaseControl(this);
+        dbControl.newRecipeGUI();
     }
 
-    void editFoodorRecipeGUI(String foodName) {
-        SupFood supFood = data.findItem(foodName);
-        if (supFood instanceof Food) {
-            Food food = (Food)supFood;
-            NewFoodGUI nGUI = new NewFoodGUI(this);
-            double[] nutrition = food.showNutrition();
-            nGUI.existingFoodData(food.showName(), food.showDisplayName(), food.showAmount(), food.showUnit(), nutrition[0], nutrition[1], nutrition[2], nutrition[3], nutrition[4], nutrition[5], nutrition[6], nutrition[7], food.showBarcode());
-        } else {
-            Recipe recipe = (Recipe)supFood;
-            //
-        }
+    void removeFromMeal(String mealName, String foodName) {
+        SupFood food = data.findItem(foodName);
+        Day day = diary.getDay(showCurrentDate());
+        //Meal meal = day.showMeal(mealName);
+        //meal.remove(food.showName());
+        day.remove(mealName, food.showName());
     }
 
-    void saveEdited(String oldName, String newName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        SupFood supFood = data.findItem(oldName);
-        if (supFood instanceof Food) {
-            Food food = (Food)supFood;
-            food.edit(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-            EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-        } else {
-            Recipe recipe = (Recipe)supFood;
-            //edit recipe
-            //save to DB
-        }
-
+    void clearMeal(String mealName) {
+        Day day = diary.getDay(showCurrentDate());
+        //Meal meal = day.showMeal(mealName);
+        //meal.removeAll();
+        day.clearMeal(mealName);
+        updateNutrition();
     }
 
-    void saveNewFood(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        data.addFood(name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-        EditFoodRecipeDatabase.addFood(null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+    void editMealDialogue(String mealName, String foodName) {
+        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "diary", mealName);
+        SupFood food = data.findItem(foodName);
+        Day day = diary.getDay(showCurrentDate());
+        Meal meal = day.showMeal(mealName);
+
+        ArrayList<Object> data = meal.showFood(foodName);
+        fGUI.existingData(food.showDisplayName(), (double)data.get(1), (String)data.get(2));
     }
 
-    void saveNewRecipe(String name, double amount) {
-        data.addRecipe(name, amount);
-        EditFoodRecipeDatabase.addRecipe(name, amount);
+    void editMeal(String mealName, String foodName, double newAmount) {
+        SupFood food = data.findItem(foodName);
+        Day day = diary.getDay(showCurrentDate());
+        //Meal meal = day.showMeal(mealName);
+        //meal.edit(food.showName(), newAmount);
+        day.edit(mealName, foodName, newAmount);
+
     }
-
-    void addIngredientToRecipe(String foodName, double amount) {
-        System.out.println(recipeName);
-        Recipe recipe = (Recipe)data.findItem(recipeName);
-        SupFood ingredient = data.findItem(foodName);
-
-        recipe.addIngredientFromGUI(ingredient.showName(), amount);
-        rGUI.updateIngredientsPanel();
-    }
-
-    HashMap<String, Double> showIngredientsInRecipe() {
-        Recipe recipe = (Recipe)data.findItem(recipeName);
-        HashMap<String, Double> list = recipe.showIngredientList();
-        return list;
-    }
-
-    void updateIngredientsList() {}
 }

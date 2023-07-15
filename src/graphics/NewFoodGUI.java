@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 class NewFoodGUI {
-    TrackerControl control;
+    ChangeDatabaseControl control;
     String foodName;
 
     JFrame window;
@@ -14,7 +14,7 @@ class NewFoodGUI {
     JLabel titleLabel, nameLabel, displayNameLabel, amountLabel, caloriesLabel, fatLabel, satfatLabel, carbsLabel, sugarLabel, fibreLabel, proteinLabel, saltLabel;
     JButton button;
 
-    NewFoodGUI (TrackerControl control) {
+    NewFoodGUI (ChangeDatabaseControl control) {
         this.control = control;
 
         try {
