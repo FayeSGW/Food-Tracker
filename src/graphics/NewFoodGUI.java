@@ -9,10 +9,10 @@ class NewFoodGUI {
     String foodName;
 
     JFrame window;
-    JPanel whole, titlePanel, namePanel, displayNamePanel, amountPanel, caloriesPanel, fatPanel, satfatPanel, carbsPanel, sugarPanel, fibrePanel, proteinPanel, saltPanel, buttonPanel;
-    JTextField nameField, displayNameField, amountField, unitField, caloriesField, fatField, satfatField, carbsField, sugarField, fibreField, proteinField, saltField;
-    JLabel titleLabel, nameLabel, displayNameLabel, amountLabel, caloriesLabel, fatLabel, satfatLabel, carbsLabel, sugarLabel, fibreLabel, proteinLabel, saltLabel;
-    JButton button;
+    JPanel whole, titlePanel, namePanel, displayNamePanel, amountPanel, caloriesPanel, fatPanel, satfatPanel, carbsPanel, sugarPanel, fibrePanel, proteinPanel, saltPanel, barcodePanel, buttonPanel, addedPanel;
+    JTextField nameField, displayNameField, amountField, unitField, caloriesField, fatField, satfatField, carbsField, sugarField, fibreField, proteinField, saltField, barcodeField;
+    JLabel titleLabel, nameLabel, displayNameLabel, amountLabel, caloriesLabel, fatLabel, satfatLabel, carbsLabel, sugarLabel, fibreLabel, proteinLabel, saltLabel, barcodeLabel, addedLabel;
+    JButton button, doneButton;
 
     NewFoodGUI (ChangeDatabaseControl control) {
         this.control = control;
@@ -37,7 +37,7 @@ class NewFoodGUI {
         nameField = new JTextField(); nameField.setPreferredSize(new Dimension(150,26)); namePanel.add(nameField);
 
         displayNamePanel = new JPanel(); whole.add(displayNamePanel);
-        displayNameLabel = new JLabel("Display Name of Food: "); displayNamePanel.add(displayNameLabel);
+        displayNameLabel = new JLabel("Display Name of Food (optional): "); displayNamePanel.add(displayNameLabel);
         displayNameField = new JTextField(); displayNameField.setPreferredSize(new Dimension(150,26)); displayNamePanel.add(displayNameField);
 
         amountPanel = new JPanel(); whole.add(amountPanel);
@@ -77,9 +77,17 @@ class NewFoodGUI {
         saltLabel = new JLabel("Salt (g): "); saltPanel.add(saltLabel);
         saltField = new JTextField(); saltField.setPreferredSize(new Dimension(50,26)); saltPanel.add(saltField);
 
+        barcodePanel = new JPanel(); whole.add(barcodePanel);
+        barcodeLabel = new JLabel("Barcode (optional): "); barcodePanel.add(barcodeLabel);
+        barcodeField = new JTextField(); barcodeField.setPreferredSize(new Dimension(100,26)); barcodePanel.add(barcodeField);
+
         buttonPanel = new JPanel(); whole.add(buttonPanel);
         button = new JButton("Add"); button.addActionListener(new save());
-        buttonPanel.add(button);
+        doneButton = new JButton("Done"); doneButton.addActionListener(new finished());
+        buttonPanel.add(button); buttonPanel.add(doneButton);
+
+        addedPanel = new JPanel(); whole.add(addedPanel);
+        addedLabel = new JLabel(); addedPanel.add(addedLabel);
 
         window.pack();
         window.setLocationRelativeTo(null);
@@ -87,6 +95,7 @@ class NewFoodGUI {
     }
 
     void existingFoodData(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        button.setText("Save");
         nameField.setText(name);
         this.foodName = name;
         displayNameField.setText(displayName);
@@ -100,36 +109,79 @@ class NewFoodGUI {
         fibreField.setText(Double.toString(fibre));
         proteinField.setText(Double.toString(protein));
         saltField.setText(Double.toString(salt));
+        barcodeField.setText(barcode);
     }
 
     class save implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            
             try {
-                String newName = nameField.getText();
-                String displayName = displayNameField.getText();
+
+                String newName = nameField.getText().trim();
+                if (newName == null || newName.equals("")) {
+                    throw new NumberFormatException();
+                }
+
+                String displayName = displayNameField.getText().trim();
                 if (displayName == null || displayName.equals("")) {
                     displayName = newName;
                 }
-                double amount =  Double.parseDouble(amountField.getText());
-                String unit = unitField.getText();
-                double calories = Double.parseDouble(caloriesField.getText());
-                double fat = Double.parseDouble(fatField.getText());
-                double satfat = Double.parseDouble(satfatField.getText());
-                double carbs = Double.parseDouble(carbsField.getText());
-                double sugar = Double.parseDouble(sugarField.getText());
-                double fibre = Double.parseDouble(fibreField.getText());
-                double protein = Double.parseDouble(proteinField.getText());
-                double salt = Double.parseDouble(saltField.getText());
+                double amount =  Double.parseDouble(amountField.getText().trim());
+                String unit = unitField.getText().trim();
+                if (unit == null || unit.equals("")) {
+                    throw new NumberFormatException();
+                }
+                double calories = Double.parseDouble(caloriesField.getText().trim());
+                double fat = Double.parseDouble(fatField.getText().trim());
+                double satfat = Double.parseDouble(satfatField.getText().trim());
+                double carbs = Double.parseDouble(carbsField.getText().trim());
+                double sugar = Double.parseDouble(sugarField.getText().trim());
+                double fibre = Double.parseDouble(fibreField.getText().trim());
+                double protein = Double.parseDouble(proteinField.getText().trim());
+                double salt = Double.parseDouble(saltField.getText().trim());
+                String barcode = barcodeField.getText().trim();
+
+                
+                if (barcode.equals("") || barcode == null) {
+                    barcode = null;
+                } 
+                
                 if (foodName != null) {
                     String oldName = foodName;
-                    control.saveEdited(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, oldName);
+                    control.saveEdited(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 } else {
-                    control.saveNewFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, unit);
+                    control.saveNewFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 }
-            } catch (NumberFormatException n) {}          }
+
+                String confirmation = displayName + " added successfully!";
+                addedLabel.setText(confirmation);
+
+                nameField.setText("");
+                displayNameField.setText("");
+                amountField.setText("");
+                unitField.setText("");
+                caloriesField.setText("");
+                fatField.setText("");
+                satfatField.setText("");
+                carbsField.setText("");
+                sugarField.setText("");
+                fibreField.setText("");
+                proteinField.setText("");
+                saltField.setText("");
+                barcodeField.setText("");
+
+            } catch (NumberFormatException n) {
+                addedLabel.setText("Make sure no non-optional fields are empty, and decimal points are '.' not ',");
+            }
         }
+    }
+
+    class finished implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            window.dispose();
+        }
+    }
     
 
 

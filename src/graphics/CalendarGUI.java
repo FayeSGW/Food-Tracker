@@ -15,8 +15,10 @@ import java.time.LocalDate;
 class CalendarGUI {
     TrackerControl control;
 
-    LocalDate date = LocalDate.now();
-    int month = date.getMonthValue(), year = date.getYear(), day = 17;
+    LocalDate date, today = LocalDate.now();
+    int month, year, day;
+    String type;
+
 
     JFrame calendar;
     JPanel whole, monthYear, days, todayText;
@@ -33,12 +35,13 @@ class CalendarGUI {
     String[] chooseMonthList = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     Integer[] chooseYearList = {2020, 2021, 2022, 2023, 2024, 2025, 2026};
 
-    CalendarGUI(TrackerControl control, LocalDate date) {
+    CalendarGUI(TrackerControl control, LocalDate date, String type) {
         this.control = control;
         this.date = date;
         month = date.getMonthValue(); 
         year = date.getYear(); 
         day = date.getDayOfMonth();
+        this.type = type;
 
 
         try {
@@ -89,7 +92,7 @@ class CalendarGUI {
         
         whole.add(days, BorderLayout.CENTER);
 
-        todayLabel = new JLabel("test");
+        todayLabel = new JLabel("Today's Date: " + today.toString());
         todayText.add(todayLabel);
         whole.add(todayText, BorderLayout.SOUTH);
 
@@ -113,14 +116,25 @@ class CalendarGUI {
     }
 
     private void update() {
+        for (JButton button: grid) {
+            button.setBackground(null);
+        }
         LocalDate firstOfMonth = LocalDate.of(year, month, 1); 
         int weekDay = firstOfMonth.getDayOfWeek().getValue();
         int monthLength = firstOfMonth.lengthOfMonth();
         int d = 1;
 
+        LocalDate current = control.showCurrentDate();
+        int currentDate = current.getDayOfMonth();
+        int currentMonth = current.getMonthValue();
+        int currentYear = current.getYear();
+
         for (int i = weekDay-1; i < (weekDay + monthLength-1); i++) {
             JButton button = grid[i];
             button.setText(Integer.toString(d));
+            if (d == currentDate && currentMonth == month && currentYear == year) {
+                button.setBackground(Color.GREEN);
+            }
             d++;
         }
 
@@ -128,6 +142,7 @@ class CalendarGUI {
         for (int j = (weekDay-2); j >= 0 ; j--) {
             JButton button = grid[j];
             button.setText(Integer.toString(prevMonthLength));
+            button.setBackground(Color.GRAY);
             prevMonthLength--;
         }
       
@@ -135,6 +150,7 @@ class CalendarGUI {
         for (int k = weekDay+monthLength-1; k < 42; k++) {
             JButton button = grid[k];
             button.setText(Integer.toString(d));
+            button.setBackground(Color.GRAY);
             d++;
         }
 
@@ -228,7 +244,13 @@ class CalendarGUI {
             JButton button = (JButton) e.getSource();
             day = Integer.parseInt(button.getText());
             LocalDate newDate = LocalDate.of(year, month, day);
-            control.chooseDate(newDate);
+            if (type == null) {
+                control.chooseDate(newDate);
+            }
+            else {
+                control.setTempDate(newDate);
+            }
+            
             //Send day to control
 
             calendar.dispose();

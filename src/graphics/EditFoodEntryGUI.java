@@ -10,9 +10,9 @@ class EditFoodEntryGUI {
     String mealName, recipeName;
 
     JFrame window;
-    JPanel whole, foodPanel, buttonsPanel;
+    JPanel whole, foodPanel, amountPanel, buttonsPanel;
     JButton saveButton, deleteButton;
-    JLabel foodNameLabel, unitLabel;
+    JLabel foodNameLabel, currentAmount, unitLabel;
     JTextField amountField;
 
     EditFoodEntryGUI(TrackerControl control, String type, String mealName) {
@@ -33,16 +33,21 @@ class EditFoodEntryGUI {
 
         foodPanel = new JPanel(); whole.add(foodPanel, BorderLayout.NORTH);
         foodNameLabel = new JLabel(); foodPanel.add(foodNameLabel);
-        amountField = new JTextField(); foodPanel.add(amountField);
-        unitLabel = new JLabel(); foodPanel.add(unitLabel);
 
-        buttonsPanel = new JPanel(); whole.add(buttonsPanel, BorderLayout.CENTER);
+        amountPanel = new JPanel(); whole.add(amountPanel, BorderLayout.CENTER);
+        currentAmount = new JLabel("Change amount:  "); amountPanel.add(currentAmount);
+        amountField = new JTextField(); amountField.setPreferredSize(new Dimension(40, 26));
+        amountPanel.add(amountField);
+        unitLabel = new JLabel(); amountPanel.add(unitLabel);
+
+        buttonsPanel = new JPanel(); whole.add(buttonsPanel, BorderLayout.SOUTH);
         deleteButton = new JButton("Delete"); deleteButton.addActionListener(new delete());
         buttonsPanel.add(deleteButton);
         saveButton = new JButton("Save"); saveButton.addActionListener(new saveEdits());
         buttonsPanel.add(saveButton);
 
         window.pack();
+        window.setSize(250, 140);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
@@ -51,7 +56,7 @@ class EditFoodEntryGUI {
     void existingData(String name, double amount, String unit) {
         foodNameLabel.setText(name);
         amountField.setText(Double.toString(amount));
-        unitLabel.setText(unit);
+        unitLabel.setText(" " + unit);
     }
 
     class delete implements ActionListener {

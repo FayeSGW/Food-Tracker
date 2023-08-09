@@ -1,12 +1,13 @@
-package src.SQL.java.connect.sql.code;
+//package src.SQL.java.connect.sql.code;
+package src.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import src.db.Food;
-import src.db.SupFood;
-import src.db.Recipe;
-//mport sql.code.*;
+//import src.db.Food;
+//import src.db.SupFood;
+//import src.db.Recipe;
+import src.SQL.java.connect.sql.code.*;
 
 public class Database {
     transient Scanner input = new Scanner(System.in);

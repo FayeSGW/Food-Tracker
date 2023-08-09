@@ -23,6 +23,8 @@ class TrackerControl {
     Diary diary;
     Database data;
 
+    LocalDate tempDateForCopy;
+
 
     TrackerControl(User user, Diary diary, Database data) {
         this.user = user;
@@ -82,9 +84,9 @@ class TrackerControl {
     }
 
     //Open calendar window
-    void openCalendar() {
+    void openCalendar(String type) {
         LocalDate current = showCurrentDate();
-        CalendarGUI cGUI = new CalendarGUI(this, current);
+        CalendarGUI cGUI = new CalendarGUI(this, current, type);
     }
 
     //Updating nutrition display on the SummaryGUI
@@ -227,6 +229,30 @@ class TrackerControl {
         //Meal meal = day.showMeal(mealName);
         //meal.edit(food.showName(), newAmount);
         day.edit(mealName, foodName, newAmount);
+    }
 
+    void setTempDate(LocalDate date) {
+        tempDateForCopy = date;
+    }
+
+    LocalDate showTempDate() {
+        return tempDateForCopy;
+    }
+
+    void copyMealDialogue(String mealName) {
+        CopyMealGUI cmGUI = new CopyMealGUI(this, mealName, showCurrentDate());
+    }
+
+    void copyMeal(String fromMeal, String toMeal) {
+        Day fromDay = diary.getDay(showCurrentDate());
+        Day toDay = diary.getDay(tempDateForCopy);
+        Meal from = fromDay.showMeal(fromMeal);
+
+        fromDay.copyMeal(from, toMeal, toDay);
+        
+
+        chooseDate(tempDateForCopy);
+        tempDateForCopy = null;
+        updateNutrition();
     }
 }

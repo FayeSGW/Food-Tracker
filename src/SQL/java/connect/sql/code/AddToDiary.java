@@ -159,14 +159,14 @@ public class AddToDiary {
         }
     }
 
-    public static void addFood(User user, Day day, String meal, String name, double amount) {
+    public static void addFood(User user, String date, String meal, String name, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String string = "";
         int nameIndex = 0;
-        String date = day.showDate().toString();
+        //String date = day.showDate().toString();
 
-        src.SQL.java.connect.sql.code.Database data = user.accessDatabase();
+        Database data = user.accessDatabase();
         if (data.isRecipe(name)) {
             string = "INSERT INTO FoodsInDiary(Meal, RecipeName, Amount, Date) VALUES (?,?,?,?)";
             //System.out.println(name + " " + data.isRecipe(name));
@@ -199,4 +199,37 @@ public class AddToDiary {
 
         
     }
+
+    public static void removeFood(String date, String meal, String name, String type) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        String foodString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND FoodName = ?";
+        String recipeString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND RecipeName = ?";
+
+        try {
+            conn = connect();
+
+            if (type.equals("food")) {
+                stmt = conn.prepareStatement(foodString);
+            } else {
+                stmt = conn.prepareStatement(recipeString);
+            }
+
+            stmt.setString(1, date);
+            stmt.setString(2, meal);
+            stmt.setString(3, name);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("aa nei " + e.getMessage());
+        } finally {
+            try {
+                stmt.close();              
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            } 
+        }
+    }
+
+    
 }

@@ -69,8 +69,9 @@ public class Day {
     public void addFoodFromGUI(String meal, String item, double amount) {
         SupFood food = database.findItem(item);
         String fullName = food.showName();
+        String date = showDate().toString();
         addFood(meal, fullName, amount);
-        AddToDiary.addFood(user, this, meal, fullName, amount);
+        AddToDiary.addFood(user, date, meal, fullName, amount);
     }
 
     public double[] showGoals() {
@@ -80,6 +81,7 @@ public class Day {
 
     public void remove(String meal, String item) {
         String name = meal.toLowerCase().trim();
+        String date = showDate().toString();
         double[] nutr = new double[8];
         if (name.equals("breakfast")) {
             nutr = breakfast.remove(item);
@@ -94,6 +96,14 @@ public class Day {
             nutrition[i] = nutrition[i] - nutr[i];
             remainingNutrition[i] = remainingNutrition[i] + nutr[i];
         }
+        SupFood food = database.findItem(item);
+
+        if (food instanceof Food) {
+            AddToDiary.removeFood(date, meal, item, "food");
+        } else {
+            AddToDiary.removeFood(date, meal, item, "reciped");
+        }
+        
     }
 
     public void edit(String meal, String item, double weight) {
@@ -111,8 +121,29 @@ public class Day {
         }*/
 
         remove(meal, item);
-        addFood(meal, item, weight);
+        addFoodFromGUI(meal, item, weight);
 
+    }
+
+    public void copyMeal(Meal fromMeal, String toMeal, Day toDay) {
+        /*String name = fromMeal.trim().toLowerCase();
+        double[] nutr = new double[8];
+        if (name.equals("breakfast")) {
+            nutr = breakfast.copy(toMeal);
+        } else if (name.equals("lunch")) {
+            nutr = lunch.copy(toMeal);
+        } else if (name.equals("dinner")) {
+            nutr = dinner.copy(toMeal);
+        } else if (name.equals("snacks")) {
+            nutr = snacks.copy(toMeal);
+        }*/
+
+        HashMap<String, ArrayList<Object>> foodList = fromMeal.showFoods();
+        for (String item: foodList.keySet()) {
+            ArrayList<Object> details = foodList.get(item);
+            double amount = (double) details.get(1);
+            toDay.addFoodFromGUI(toMeal, item, amount);
+        }
 
     }
 

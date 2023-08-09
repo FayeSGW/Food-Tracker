@@ -35,7 +35,7 @@ class DateButtons extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             LocalDate current = control.showCurrentDate();
-            CalendarGUI cGUI = new CalendarGUI(control, current);
+            CalendarGUI cGUI = new CalendarGUI(control, current, null);
         }
     }
 

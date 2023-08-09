@@ -207,7 +207,7 @@ class SummaryGUI extends JPanel {
         public void actionPerformed (ActionEvent e) {
             //LocalDate current = control.showCurrentDate();
             //CalendarGUI cGUI = new CalendarGUI(control, current);
-            control.openCalendar();
+            control.openCalendar(null);
         }
     }
 

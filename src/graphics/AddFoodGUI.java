@@ -127,15 +127,17 @@ class AddFoodGUI {
             addButton.setAlignmentX(Component.LEFT_ALIGNMENT); addButton.addActionListener(new AddFood());
             foodButtons.add(addButton);
             foodButtons.add(Box.createGlue()); 
-            finished = new JButton("Done"); 
-            finished.setAlignmentX(Component.LEFT_ALIGNMENT); finished.setMaximumSize(new Dimension(75, 26));
-            finished.addActionListener(new Exit());
-            foodButtons.add(finished);
+            
         } else {
             deleteButton = new JButton("Delete"); deleteButton.setMaximumSize(new Dimension(75, 26));
             deleteButton.setAlignmentX(Component.LEFT_ALIGNMENT); deleteButton.addActionListener(new deleteItem());
             foodButtons.add(deleteButton);
         }
+
+        finished = new JButton("Done"); 
+        finished.setAlignmentX(Component.LEFT_ALIGNMENT); finished.setMaximumSize(new Dimension(75, 26));
+        finished.addActionListener(new Exit());
+        foodButtons.add(finished);
         
 
         
@@ -157,6 +159,7 @@ class AddFoodGUI {
             if (searchBar.getText().equals("Search for food or recipe")) {
                 searchBar.setText("");
             }
+            foodsList.clearSelection();
         }
 
         @Override
@@ -186,7 +189,7 @@ class AddFoodGUI {
                 
             } catch (NullPointerException n) {
                 System.out.println("Oops" + n.getMessage());
-                actionPerformed(e);
+                //actionPerformed(e);
             }
         }
     }
@@ -197,13 +200,11 @@ class AddFoodGUI {
             if (!e.getValueIsAdjusting()) {
                 String name = foodsList.getSelectedValue();
                 //System.out.println(name);
-                if (!type.equals("edit")) {
+                if (!type.equals("edit") && !(name == null)) {
                     String unit = control.showUnit(name);
                     unitLabel.setText(unit);
+                    amountInput.requestFocusInWindow();
                 }
-            }
-            if (!type.equals("edit")) {
-                amountInput.requestFocusInWindow();
             }
         }
     }

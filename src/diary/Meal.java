@@ -52,14 +52,22 @@ public class Meal {
         return weighted;
     }
 
-    public void copy(Meal meal) {
+    public double[] copy(Meal meal) {
         //removeAll();
 
-        for (String key: meal.showFoods().keySet()) {
+        /*for (String key: meal.showFoods().keySet()) {
             ArrayList<Object> details = meal.showFoods().get(key);
             double weight = (double) details.get(1);
             add(key, weight);
+        }*/
+
+        for (String key: foodlst.keySet()) {
+            ArrayList<Object> details = foodlst.get(key);
+            double weight = (double) details.get(1);
+            meal.add(key, weight);
         }
+
+        return nutrition;
 
         //foodlst = meal.showFoods();
         //nutrition = meal.showNutrition();

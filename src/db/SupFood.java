@@ -1,7 +1,7 @@
 package src.db;
 
 import java.util.Scanner;
-import src.SQL.java.connect.sql.code.*;
+//import src.SQL.java.connect.sql.code.*;
 
 public abstract class SupFood {
     Scanner scanner = new Scanner(System.in);
