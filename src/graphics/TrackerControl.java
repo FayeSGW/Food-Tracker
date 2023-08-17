@@ -187,6 +187,34 @@ class TrackerControl {
         day.addWeightFromGUI(weight);
     }
 
+    void addExerciseDialogue() {
+        AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate());
+    }
+
+    void addExercise(LocalDate date, String workoutName, int workoutTime, int caloriesBurned) {
+        Day day = diary.getDay(date);
+        day.addExercisefromGUI(workoutName, workoutTime, caloriesBurned);
+        updateNutrition();
+    }
+
+    HashMap<String, ArrayList<Integer>> showWorkouts() {
+        Day day = diary.getDay(showCurrentDate());
+        ArrayList<Exercise> workouts = day.showWorkouts();
+        HashMap<String, ArrayList<Integer>> exerciseList = new HashMap<>();
+
+        for (Exercise workout: workouts) {
+            String name = workout.showName();
+            int time = workout.showTime();
+            int cals = workout.showCalories();
+
+            ArrayList<Integer> timeCals = new ArrayList<>();
+            timeCals.add(time); timeCals.add(cals);
+            exerciseList.put(name, timeCals);
+        }
+
+        return exerciseList;
+    }
+
     void newFood() {
         //ChangeDatabaseControl cControl = new ChangeDatabaseControl(this);
         dbControl.newFoodGUI();
@@ -228,7 +256,7 @@ class TrackerControl {
         Day day = diary.getDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.edit(food.showName(), newAmount);
-        day.edit(mealName, foodName, newAmount);
+        day.edit(mealName, food.showName(), newAmount);
     }
 
     void setTempDate(LocalDate date) {
@@ -245,6 +273,11 @@ class TrackerControl {
 
     void copyMeal(String fromMeal, String toMeal) {
         Day fromDay = diary.getDay(showCurrentDate());
+
+        if (tempDateForCopy == null) {
+            return;
+        }
+
         Day toDay = diary.getDay(tempDateForCopy);
         Meal from = fromDay.showMeal(fromMeal);
 

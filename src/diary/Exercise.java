@@ -11,7 +11,7 @@ public class Exercise {
     }
 
     public String showName() {
-        return this.name;
+        return name;
     }
 
     public void alter(int time, int calories) {
@@ -24,7 +24,11 @@ public class Exercise {
     }
 
     public int showCalories() {
-        return this.calories;
+        return calories;
+    }
+
+    public int showTime() {
+        return time;
     }
 
     public String toString() {

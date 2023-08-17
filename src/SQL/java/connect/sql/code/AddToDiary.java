@@ -231,5 +231,32 @@ public class AddToDiary {
         }
     }
 
+    public static void addExercise(String date, String name, int time, int calories) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        String string = "INSERT INTO Workouts(WorkoutName, Time, Calories, Date) VALUES (?,?,?,?)";
+
+        try {
+            conn = connect();
+            stmt = conn.prepareStatement(string);
+            
+            stmt.setString(1, name);
+            stmt.setInt(2, time);
+            stmt.setInt(3, calories);
+            stmt.setString(4, date);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(":( " + e.getErrorCode());
+    
+        } finally {
+            try {
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
     
 }

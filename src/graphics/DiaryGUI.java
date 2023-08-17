@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.lang.Math;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 class DiaryGUI extends JPanel {
     TrackerControl control;
@@ -240,6 +241,12 @@ class DiaryGUI extends JPanel {
             }
             panel.repaint();
         }
+        
+        Component[] exPanel = exercisePanel.getComponents();
+        for (Component panel: exPanel) {
+            exercisePanel.remove(panel);
+        }
+        exercisePanel.repaint();
     }
 
     void populateMealPanels() {
@@ -247,6 +254,7 @@ class DiaryGUI extends JPanel {
         for (String meal:mealsList) {
             updateMealPanels(meal);
         }
+        updateExercisePanel();
         this.repaint();
     }
 
@@ -279,7 +287,7 @@ class DiaryGUI extends JPanel {
             JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 15));
             JLabel calories = new JLabel(foodNutrition[0], SwingConstants.CENTER); calories.setPreferredSize(new Dimension(47, 15));
             JLabel carbs = new JLabel(foodNutrition[3] + " g", SwingConstants.CENTER); carbs.setPreferredSize(new Dimension(34, 15));
-            JLabel fat = new JLabel(foodNutrition[1] + " g", SwingConstants.CENTER); fat.setPreferredSize(new Dimension(18, 15));
+            JLabel fat = new JLabel(foodNutrition[1] + " g", SwingConstants.CENTER); fat.setPreferredSize(new Dimension(25, 15));
             JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
             JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
             foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
@@ -295,6 +303,24 @@ class DiaryGUI extends JPanel {
                 panel.repaint();
             }*/
             //mp.repaint();
+        }
+    }
+
+    void updateExercisePanel() {
+        HashMap<String, ArrayList<Integer>> workouts = control.showWorkouts();
+        for (String workout: workouts.keySet()) {
+            JPanel exercise = new JPanel();
+            exercisePanel.add(exercise);
+
+            int time = workouts.get(workout).get(0);
+            int cals = workouts.get(workout).get(1);
+
+            JLabel name = new JLabel(workout);
+            JLabel timeLabel = new JLabel(time + " minutes");
+            JLabel calories = new JLabel(cals + " calories");
+            exercise.add(name); exercise.add(timeLabel); exercise.add(calories);
+            
+
         }
     }
 
@@ -337,6 +363,13 @@ class DiaryGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             control.addWater();
+        }
+    }
+
+    class addExercise implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.addExerciseDialogue();
         }
     }
 

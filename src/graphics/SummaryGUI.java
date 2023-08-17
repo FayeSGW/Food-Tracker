@@ -37,7 +37,7 @@ class SummaryGUI extends JPanel {
         this.add(summaryAddButtons);
         addFood = new JButton("Add Food"); addFood.addActionListener(new addFood(0));
         addWater = new JButton("Add Water"); addWater.addActionListener(new addWaterC());
-        addExercise = new JButton("Add Exercise");
+        addExercise = new JButton("Add Exercise"); addExercise.addActionListener(new addExercise());
         updateWeight = new JButton("Update Weight"); updateWeight.addActionListener(new updateWeight());
         summaryAddButtons.add(addFood); summaryAddButtons.add(addWater); summaryAddButtons.add(addExercise); summaryAddButtons.add(updateWeight);
         this.add(Box.createRigidArea(new Dimension(0,10))); 
@@ -199,6 +199,13 @@ class SummaryGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             control.updateWeightDialogue(control.showCurrentDate());
+        }
+    }
+
+    class addExercise implements ActionListener {
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            control.addExerciseDialogue();
         }
     }
 

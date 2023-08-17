@@ -12,6 +12,7 @@ public class Day {
     private Meal breakfast, lunch, dinner, snacks;
     private double[] nutrition, remainingNutrition;
     private HashMap<String, Exercise> exercise;
+    private ArrayList<Exercise> workouts;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private double calorieGoal, carbGoal, fatGoal, proteinGoal;
     private double todaysWeight = 0;
@@ -39,6 +40,7 @@ public class Day {
         proteinGoal = user.showNutrition()[6];
 
         this.exercise = new HashMap<>();
+        this.workouts = new ArrayList<>();
         remainingWater = user.showWater();
         
     }
@@ -194,6 +196,13 @@ public class Day {
 
         caloriesBurned += calories;
         exercise.put(name, workout);
+        workouts.add(workout);
+    }
+
+    public void addExercisefromGUI(String name, int time, int calories) {
+        addExercise(name, time, calories);
+        String date = showDate().toString();
+        AddToDiary.addExercise(date, name, time, calories);
     }
 
     public void removeExercise(String name) {
@@ -213,6 +222,10 @@ public class Day {
             caloriesBurned -= calories;
             exercise.remove(name);
         }
+    }
+
+    public ArrayList<Exercise> showWorkouts() {
+        return workouts;
     }
 
     public void addWaterFromGUI() {
@@ -242,7 +255,6 @@ public class Day {
         if (weight > 0) {
             user.updateWeight(date, weight);
         }
-        
     }
 
     public void addWeightFromGUI(double weight) {
