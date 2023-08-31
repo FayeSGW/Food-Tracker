@@ -22,6 +22,8 @@ class DiaryGUI extends JPanel {
     JPanel snacksPanel, snacksTitlePanel, snacksLabelsPanel, snacksFoodsPanel;
     JPanel exercisePanel, exerciseTitlePanel, exerciseLabelsPanel, exerciseWorkoutsPanel;
 
+    JPanel ePanel;
+
     JButton prevDay, chooseDay, nextDay;
     JButton addFoodButton, addWaterButton, addExerciseButton;
     JButton addToBreakfast, addToLunch, addToDinner, addToSnacks;
@@ -55,7 +57,7 @@ class DiaryGUI extends JPanel {
         addButtonsPanel = new JPanel(); this.add(addButtonsPanel);
         addFoodButton = new JButton("Add Food"); addFoodButton.addActionListener(new addFood(0));
         addWaterButton = new JButton("Add Water"); addWaterButton.addActionListener(new addWaterC());
-        addExerciseButton = new JButton("Add Workout");
+        addExerciseButton = new JButton("Add Workout"); addExerciseButton.addActionListener(new addExercise());
         addButtonsPanel.add(addFoodButton); addButtonsPanel.add(addWaterButton); addButtonsPanel.add(addExerciseButton);
 
         overviewPanel = new JPanel(); //overviewPanel.setLayout(new BorderLayout());
@@ -123,7 +125,8 @@ class DiaryGUI extends JPanel {
         snacksPanel = new JPanel(); snacksPanel.setLayout(new BoxLayout(snacksPanel, BoxLayout.Y_AXIS));
         exercisePanel = new JPanel(); exercisePanel.setLayout(new BoxLayout(exercisePanel, BoxLayout.Y_AXIS));
         waterPanel = new JPanel(); waterPanel.setLayout(new BoxLayout(waterPanel, BoxLayout.Y_AXIS));
-        mealsPanel.add(breakfastPanel); mealsPanel.add(lunchPanel); mealsPanel.add(dinnerPanel); mealsPanel.add(snacksPanel); mealsPanel.add(exercisePanel); mealsPanel.add(waterPanel);
+        mealsPanel.add(breakfastPanel); mealsPanel.add(lunchPanel); mealsPanel.add(dinnerPanel); mealsPanel.add(snacksPanel); 
+        mealsPanel.add(exercisePanel); mealsPanel.add(waterPanel);
 
         breakfastTitlePanel = new JPanel(); breakfastTitlePanel.setAlignmentX(CENTER_ALIGNMENT); breakfastPanel.add(breakfastTitlePanel);
         breakfastTitle = new JLabel("Breakfast"); breakfastTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15));
@@ -194,17 +197,21 @@ class DiaryGUI extends JPanel {
         snacksFoodsPanel = new JPanel(); snacksFoodsPanel.setLayout(new BoxLayout(snacksFoodsPanel, BoxLayout.Y_AXIS));
         snacksPanel.add(snacksFoodsPanel);
 
-        exerciseTitlePanel = new JPanel(); exercisePanel.add(exerciseTitlePanel);
-        exerciseTitle = new JLabel("Exercise"); exerciseTitlePanel.add(exerciseTitle);
+        exerciseTitlePanel = new JPanel(); exerciseTitlePanel.setAlignmentX(RIGHT_ALIGNMENT); exercisePanel.add(exerciseTitlePanel);
+        exerciseTitle = new JLabel("Exercise"); exerciseTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15)); exerciseTitlePanel.add(exerciseTitle);
         exerciseLabelsPanel = new JPanel(); exercisePanel.add(exerciseLabelsPanel);
         exerciseName = new JLabel("Workout"); exerciseLabelsPanel.add(exerciseName);
         exerciseTime = new JLabel("Duration"); exerciseLabelsPanel.add(exerciseTime);
         exerciseCals = new JLabel("Calories Burned"); exerciseLabelsPanel.add(exerciseCals);
+        exerciseWorkoutsPanel = new JPanel(); exerciseWorkoutsPanel.setLayout(new BoxLayout(exerciseWorkoutsPanel, BoxLayout.Y_AXIS));
+        exercisePanel.add(exerciseWorkoutsPanel);
         
         mealPanels[0] = breakfastFoodsPanel; mealPanels[1] = lunchFoodsPanel; mealPanels[2] = dinnerFoodsPanel; mealPanels[3] = snacksFoodsPanel;
 
         populateMealPanels();
-        clearMealPanels();
+        //clearMealPanels();
+
+        System.out.println(exercisePanel.getComponentCount());
     }
 
     void changeDate(String day, int date, String month) {
@@ -242,11 +249,11 @@ class DiaryGUI extends JPanel {
             panel.repaint();
         }
         
-        Component[] exPanel = exercisePanel.getComponents();
+        Component[] exPanel = exerciseWorkoutsPanel.getComponents();
         for (Component panel: exPanel) {
-            exercisePanel.remove(panel);
+            exerciseWorkoutsPanel.remove(panel);
         }
-        exercisePanel.repaint();
+        exerciseWorkoutsPanel.repaint();
     }
 
     void populateMealPanels() {
@@ -310,7 +317,7 @@ class DiaryGUI extends JPanel {
         HashMap<String, ArrayList<Integer>> workouts = control.showWorkouts();
         for (String workout: workouts.keySet()) {
             JPanel exercise = new JPanel();
-            exercisePanel.add(exercise);
+            exerciseWorkoutsPanel.add(exercise);
 
             int time = workouts.get(workout).get(0);
             int cals = workouts.get(workout).get(1);

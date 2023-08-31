@@ -259,4 +259,28 @@ public class AddToDiary {
         }
     }
     
+    public static void removeIngredient(String recipeName, String foodName) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        String strng = "DELETE FROM RecipeIngredients WHERE RecipeName = ? AND FoodName = ?";
+
+        try {
+            conn = connect();
+            stmt = conn.prepareStatement(strng);
+
+            stmt.setString(1, recipeName);
+            stmt.setString(2, foodName);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(":(" + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
 }

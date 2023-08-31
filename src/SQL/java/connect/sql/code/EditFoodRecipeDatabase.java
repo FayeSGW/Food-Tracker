@@ -167,8 +167,4 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    public static void deleteRecipe(String name) {
-
-    }
-
 }

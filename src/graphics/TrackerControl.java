@@ -241,6 +241,23 @@ class TrackerControl {
         updateNutrition();
     }
 
+    void editRecipeIngredientDialogue(String recipeName, String foodName) {
+        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "recipe", recipeName);
+        SupFood food = data.findItem(foodName);
+        String unit = food.showUnit();
+        Recipe recipe = (Recipe) data.findItem(recipeName);
+
+        double ingredientWeight = recipe.showIngredientWeight(food.showName());
+        fGUI.existingData(food.showDisplayName(), ingredientWeight, unit);
+    }
+
+    void editRecipeIngredient(String recipeName, String foodName, double newAmount) {
+        /*Recipe recipe = (Recipe) data.findItem(recipeName);
+        Food food = (Food) data.findItem(foodName);
+        recipe.editIngredient(food.showName(), newAmount);*/
+        dbControl.editRecipeIngredient(foodName, newAmount);
+    }
+
     void editMealDialogue(String mealName, String foodName) {
         EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "diary", mealName);
         SupFood food = data.findItem(foodName);
@@ -258,6 +275,7 @@ class TrackerControl {
         //meal.edit(food.showName(), newAmount);
         day.edit(mealName, food.showName(), newAmount);
     }
+
 
     void setTempDate(LocalDate date) {
         tempDateForCopy = date;

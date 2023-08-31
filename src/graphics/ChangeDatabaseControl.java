@@ -61,37 +61,58 @@ class ChangeDatabaseControl {
         }
     }
 
-    void saveEdited(String oldName, String newName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        SupFood supFood = data.findItem(oldName);
-        if (supFood instanceof Food) {
+    boolean saveEdited(NewFoodGUI fGUI, String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        String name = null, disp = null;
+        if (!oldName.equals(newName)) {
+            name = newName;
+            System.out.println(name);
+        }
+        if (!oldDisplayName.equals(displayName)) {
+            disp = displayName;
+        }
+
+        if (!nameCheck(fGUI, name, disp)) {
+            return false;
+        } else {
+            SupFood supFood = data.findItem(oldName);
             Food food = (Food)supFood;
             food.edit(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-        } else {
-            //Recipe is saved upon creation and every time an ingredient is added so no need to save here
-            
-            //Recipe recipe = (Recipe)supFood;
-            //edit recipe
-            //save to DB
-            //EditFoodRecipeDatabase.addRecipe(recipe.showName(), recipe.weight());
-            
-            /*HashMap<String, Double> ingredients = recipe.showIngredientList();
-
-            for (String ing: ingredients.keySet()) {
-                EditFoodRecipeDatabase.addRecipeIngredient(recipe.showName(), ing, ingredients.get(ing));
-            }*/
+            return true;
         }
-
     }
 
-    void saveNewFood(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        data.addFood(name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-        EditFoodRecipeDatabase.addFood(null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+    boolean nameCheck(NewFoodGUI fGUI, String name, String displayName) {
+        if (!data.nameCheck(name)) {
+            fGUI.changeAddedLabel("There is already a food with this name!");
+            return false;
+        } else if (!data.nicknameCheck(displayName)) {
+            fGUI.changeAddedLabel("There is already a food with this display name!");
+            return false;
+        }
+        return true;
     }
 
-    void saveNewRecipe(String name, double amount) {
+    boolean saveNewFood(NewFoodGUI fGUI, String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        if (!nameCheck(fGUI, name, displayName)) {
+            return false;
+        } else {
+            data.addFood(name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            EditFoodRecipeDatabase.addFood(null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            return true;
+        }
+        
+    }
+
+    boolean saveNewRecipe(NewRecipeGUI rGUI, String name, double amount) {
+        if (!data.nameCheck(name)) {
+            rGUI.setInfoLabel("There is already a recipe with that name!");
+            return false;
+        } 
+        
         data.addRecipe(name, amount);
         EditFoodRecipeDatabase.addRecipe(name, amount);
+        return true;
         //recipeName = "";
     }
 
@@ -101,7 +122,19 @@ class ChangeDatabaseControl {
         SupFood ingredient = data.findItem(foodName);
 
         recipe.addIngredientFromGUI(ingredient.showName(), amount);
-        rGUI.updateIngredientsPanel();
+        rGUI.populateIngredients();
+    }
+
+    void editRecipeIngredient(String foodName, double amount) {
+        Recipe recipe = (Recipe) data.findItem(recipeName);
+        Food food = (Food) data.findItem(foodName);
+        if (amount == 0) {
+            recipe.removeIngredient(food.showName());
+        } else {
+            recipe.editIngredient(food.showName(), amount);
+        }
+        
+        rGUI.populateIngredients();
     }
 
     HashMap<String, Double> showIngredientsInRecipe() {

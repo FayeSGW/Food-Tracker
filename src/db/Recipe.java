@@ -72,6 +72,11 @@ public class Recipe extends SupFood {
         return mealType;
     }
 
+    public double showIngredientWeight(String name) {
+        double weight = ingredientsList.get(name);
+        return weight;
+    }
+
 
     public void addIngredient(String name, double weight) {
         SupFood ingredient;
@@ -149,11 +154,13 @@ public class Recipe extends SupFood {
         
         ingredients.remove(name);
         ingredientsList.remove(name);
+
+        AddToDiary.removeIngredient(this.name, name);
     }
 
     public void editIngredient(String name, double amount) {
         removeIngredient(name);
-
+        addIngredientFromGUI(name, amount);
     }
 
     public String perServing() {

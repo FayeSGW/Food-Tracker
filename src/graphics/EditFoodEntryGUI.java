@@ -62,19 +62,34 @@ class EditFoodEntryGUI {
     class delete implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.removeFromMeal(mealName, foodNameLabel.getText());
-            control.updateNutrition();
+            if (type.equals("diary")) {
+                control.removeFromMeal(mealName, foodNameLabel.getText());
+                control.updateNutrition();
+            } else {
+                control.editRecipeIngredient(mealName, foodNameLabel.getText(), 0);
+            }
+            
             window.dispose();
         }
     }
 
     class saveEdits implements ActionListener {
+        /*String type;
+        saveEdits(String type) {
+            this.type = type;
+        }*/
         @Override
         public void actionPerformed (ActionEvent e) {
             String foodName = foodNameLabel.getText();
             double amount = Double.parseDouble(amountField.getText());
-            control.editMeal(mealName, foodName, amount);
-            control.updateNutrition();
+
+            if (type.equals("diary")) {
+                control.editMeal(mealName, foodName, amount);
+                control.updateNutrition();
+            } else {
+                control.editRecipeIngredient(mealName, foodName, amount); //mealname here is the recipe name
+            }
+            
             window.dispose();
         }
     }

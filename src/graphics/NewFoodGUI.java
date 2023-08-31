@@ -6,7 +6,7 @@ import javax.swing.*;
 
 class NewFoodGUI {
     ChangeDatabaseControl control;
-    String foodName;
+    String foodName, display;
 
     JFrame window;
     JPanel whole, titlePanel, namePanel, displayNamePanel, amountPanel, caloriesPanel, fatPanel, satfatPanel, carbsPanel, sugarPanel, fibrePanel, proteinPanel, saltPanel, barcodePanel, buttonPanel, addedPanel;
@@ -82,7 +82,7 @@ class NewFoodGUI {
         barcodeField = new JTextField(); barcodeField.setPreferredSize(new Dimension(100,26)); barcodePanel.add(barcodeField);
 
         buttonPanel = new JPanel(); whole.add(buttonPanel);
-        button = new JButton("Add"); button.addActionListener(new save());
+        button = new JButton("Add"); button.addActionListener(new save(this));
         doneButton = new JButton("Done"); doneButton.addActionListener(new finished());
         buttonPanel.add(button); buttonPanel.add(doneButton);
 
@@ -99,6 +99,7 @@ class NewFoodGUI {
         nameField.setText(name);
         this.foodName = name;
         displayNameField.setText(displayName);
+        this.display = displayName;
         amountField.setText(Double.toString(amount));
         unitField.setText(unit);
         caloriesField.setText(Double.toString(calories));
@@ -112,7 +113,15 @@ class NewFoodGUI {
         barcodeField.setText(barcode);
     }
 
+    void changeAddedLabel(String string) {
+        addedLabel.setText(string);
+    }
+
     class save implements ActionListener {
+        NewFoodGUI fGUI;
+        save (NewFoodGUI fGUI) {
+            this.fGUI = fGUI;
+        }
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
@@ -146,32 +155,34 @@ class NewFoodGUI {
                     barcode = null;
                 } 
                 
+                boolean saveSuccess = true;
                 if (foodName != null) {
                     String oldName = foodName;
-                    control.saveEdited(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    saveSuccess = control.saveEdited(fGUI, oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 } else {
-                    control.saveNewFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    saveSuccess = control.saveNewFood(fGUI, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 }
 
-                String confirmation = displayName + " added successfully!";
-                addedLabel.setText(confirmation);
+                if (saveSuccess) {
+                    String confirmation = displayName + " added successfully!";
+                    changeAddedLabel(confirmation);
 
-                nameField.setText("");
-                displayNameField.setText("");
-                amountField.setText("");
-                unitField.setText("");
-                caloriesField.setText("");
-                fatField.setText("");
-                satfatField.setText("");
-                carbsField.setText("");
-                sugarField.setText("");
-                fibreField.setText("");
-                proteinField.setText("");
-                saltField.setText("");
-                barcodeField.setText("");
-
+                    nameField.setText("");
+                    displayNameField.setText("");
+                    amountField.setText("");
+                    unitField.setText("");
+                    caloriesField.setText("");
+                    fatField.setText("");
+                    satfatField.setText("");
+                    carbsField.setText("");
+                    sugarField.setText("");
+                    fibreField.setText("");
+                    proteinField.setText("");
+                    saltField.setText("");
+                    barcodeField.setText("");
+                }
             } catch (NumberFormatException n) {
-                addedLabel.setText("Make sure no non-optional fields are empty, and decimal points are '.' not ',");
+                changeAddedLabel("Make sure no non-optional fields are empty, and decimal points are '.' not ',");
             }
         }
     }

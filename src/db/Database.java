@@ -40,6 +40,20 @@ public class Database {
         return recipe;
     }
 
+    public boolean nameCheck(String name) {
+        if (database.containsKey(name)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean nicknameCheck(String name) {
+        if (displayDatabase.containsKey(name)) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean addCheck(String name) {
         if (database.containsKey(name)) {
             System.out.println("This exists already! ");

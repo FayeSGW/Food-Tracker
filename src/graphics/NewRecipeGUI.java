@@ -17,7 +17,7 @@ class NewRecipeGUI {
     JPanel whole, titlePanel, namePanel, amountPanel, ingredientsPanel, buttonsPanel, donePanel;
     JPanel totalNutritionPanel, perServingNutritionPanel;
     JTextField nameField, amountField;
-    JLabel titleLabel, nameLabel, amountLabel, servingsLabel, ingredientsLabel;
+    JLabel titleLabel, nameLabel, amountLabel, servingsLabel, ingredientsLabel, infoLabel;
     JButton createRecipeButton, addIngredientButton, deleteButton, doneButton;
 
     NewRecipeGUI (ChangeDatabaseControl control, TrackerControl tControl) {
@@ -47,7 +47,7 @@ class NewRecipeGUI {
         amountLabel = new JLabel("No. servings: "); amountPanel.add(amountLabel);
         amountField = new JTextField(); amountField.setPreferredSize(new Dimension(50,26)); amountPanel.add(amountField);
         servingsLabel = new JLabel("servings"); amountPanel.add(servingsLabel);
-        createRecipeButton = new JButton("Create Recipe"); createRecipeButton.addActionListener(new create());
+        createRecipeButton = new JButton("Create Recipe"); createRecipeButton.addActionListener(new create(this));
         amountPanel.add(createRecipeButton);
 
         ingredientsPanel = new JPanel(); ingredientsPanel.setLayout(new BoxLayout(ingredientsPanel, BoxLayout.Y_AXIS)); whole.add(ingredientsPanel);
@@ -62,10 +62,15 @@ class NewRecipeGUI {
         doneButton = new JButton("Done"); doneButton.setEnabled(false); 
         doneButton.addActionListener(new finished()); donePanel.add(doneButton);
 
+        infoLabel = new JLabel(); whole.add(infoLabel);
 
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+    }
+
+    void setInfoLabel(String string) {
+        infoLabel.setText(string);
     }
 
     void setRecipeName(String name) {
@@ -81,16 +86,32 @@ class NewRecipeGUI {
         
     }
 
-    void updateIngredientsPanel() {
+    void populateIngredients() {
+        window.setVisible(false);
         clearIngredientsPanel();
+        updateIngredientsPanel();
+        window.pack();
+        ingredientsPanel.repaint();
+        window.setVisible(true);
+    }
+
+    void updateIngredientsPanel() {
+        //clearIngredientsPanel();
         HashMap<String, Double> list = control.showIngredientsInRecipe();
         for (String ingredient: list.keySet()) {
             //JPanel ingPanel = new JPanel(); ingredientsPanel.add(ingPanel);
 
             JLabel name = new JLabel(String.format("%s %.0f", ingredient, list.get(ingredient)));
             ingredientsPanel.add(name);
+
+            name.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    tControl.editRecipeIngredientDialogue(recipeName, ingredient);
+                }
+            });
         }
-        ingredientsPanel.repaint();
+        //ingredientsPanel.repaint();
     }
 
     void clearIngredientsPanel() {
@@ -98,16 +119,21 @@ class NewRecipeGUI {
         for (Component panel: panels) {
             ingredientsPanel.remove(panel);
         }
-        ingredientsPanel.repaint();
+        //ingredientsPanel.repaint();
     }
 
     void existingRecipeData(String name, double servings, HashMap<String, Double> ingredients) {
         nameField.setText(name);
         amountField.setText(Double.toString(servings));
-        updateIngredientsPanel();
+        populateIngredients();
     }
 
     class create implements ActionListener {
+        NewRecipeGUI rGUI = null;
+        create(NewRecipeGUI rGUI) {
+            this.rGUI = rGUI;
+        }
+
         @Override
         public void actionPerformed (ActionEvent e) {
             String name = nameField.getText();
@@ -119,10 +145,12 @@ class NewRecipeGUI {
             }
 
             if (name != null) {
-                System.out.println(name);
-                control.saveNewRecipe(name, servings);
-                control.recipe(name);
-                setRecipeName(name);
+                boolean success = control.saveNewRecipe(rGUI, name, servings);
+                if (success) {
+                    control.recipe(name);
+                    setRecipeName(name);
+                }
+                
             }
 
             //addIngredientButton.setEnabled(true);
