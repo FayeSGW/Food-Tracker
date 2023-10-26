@@ -153,7 +153,14 @@ class ChangeDatabaseControl {
         } else {
             EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
         }
-        
+
+        System.out.println(fullName);
+        System.out.println(item instanceof Recipe);
+    }
+
+    int ingredientsInRecipe(String name) {
+        Recipe item = (Recipe) data.findItem(name);
+        return item.numberIngredients();
     }
 
     void updateIngredientsList() {}

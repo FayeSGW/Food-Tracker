@@ -2,6 +2,7 @@ package src.diary;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 
 import src.db.*;
 //import src.db.Food;
@@ -15,6 +16,7 @@ public class User implements java.io.Serializable {
     private double[] nutrition = new double[8];
     private Database data;
     private Diary diary;
+    private HashMap<String, Double> measurements = new HashMap<>();
 
 
     //Gender = M/F, weight in kg, height in cm, DOB as DD.MM.YYYY, goal = loss,
@@ -191,16 +193,30 @@ public class User implements java.io.Serializable {
         return nutrition;
     }
 
-    
-
-    
-
     public void setWaterGoal(int amount) {
         water = amount;
     }
 
     public int showWater() {
         return water;
+    }
+
+    public void addNewMeasurementType(String type) {
+        if (!measurements.keySet().contains(type)) {
+            measurements.put(type, null);
+        }
+    }
+
+    public void setCurrentMeasurement(String type, double measurement) {
+        measurements.put(type, measurement);
+    }
+
+    public HashMap<String, Double> getMeasurements() {
+        return measurements;
+    }
+
+    public Double getSingleMeasurements(String type) {
+        return measurements.get(type);
     }
 
     @Override

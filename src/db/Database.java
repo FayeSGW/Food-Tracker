@@ -77,17 +77,50 @@ public class Database {
         displayDatabase.remove(displayName);
     }
 
-    public ArrayList<SupFood> searchDatabase(String item) {
+    public ArrayList<SupFood> searchDatabase(String item, String constraint) {
         searchResults = new ArrayList<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
                 SupFood result = database.get(food);
-                searchResults.add(result);
-                System.out.println(result.showName());
+                if (constraint.equals("all")) {
+                    searchResults.add(result);
+                } else if (constraint.equals("food") && result instanceof Food) {
+                    searchResults.add(result);
+                } else if (constraint.equals("recipe") && result instanceof Recipe) {
+                    searchResults.add(result);
+                }
+                
+                //System.out.println(result.showName());
             }
         }
         //SupFood[] results = new SupFood[searchResults.size()];
         //String search = String.join(", ", result);
+        return searchResults; 
+    }
+
+    public ArrayList<SupFood> searchForRecipes(String item) {
+        searchResults = new ArrayList<>();
+        for (String food: database.keySet()) {
+            if (food.toLowerCase().contains(item.toLowerCase())) {
+                SupFood result = database.get(food);
+                if (result instanceof Recipe) {
+                    searchResults.add(result);
+                }
+            }
+        }
+        return searchResults; 
+    }
+
+    public ArrayList<SupFood> searchForFoods(String item) {
+        searchResults = new ArrayList<>();
+        for (String food: database.keySet()) {
+            if (food.toLowerCase().contains(item.toLowerCase())) {
+                SupFood result = database.get(food);
+                if (result instanceof Food) {
+                    searchResults.add(result);
+                }
+            }
+        }
         return searchResults; 
     }
 
@@ -123,6 +156,8 @@ public class Database {
         }*/
         return item;        
     }
+
+    
 
     public boolean isRecipe(String name) {
         SupFood item = findItem(name);

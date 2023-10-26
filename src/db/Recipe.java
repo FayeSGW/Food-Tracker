@@ -179,6 +179,10 @@ public class Recipe extends SupFood {
         return ingredientsList;
     }
 
+    public int numberIngredients() {
+        return ingredients.size();
+    }
+
     public String toString() {
         ArrayList<String> ingrdnts = new ArrayList<>();
         for (String name : ingredients.keySet()) {

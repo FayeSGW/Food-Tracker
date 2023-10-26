@@ -8,16 +8,18 @@ import java.time.LocalDate;
 class AddExerciseGUI {
     TrackerControl control;
     LocalDate date;
+    String type, oldName;
 
     JFrame window;
     JPanel whole, inputs, name, time, cals, buttons;
-    JLabel instructions, nameLabel, timeLabel, minutesLabel, calsLabel;
-    JTextField nameInput, timeInput, calsInput;
-    JButton submit;
+    JLabel instructions, nameLabel, timeLabel, minutesLabel, secondsLabel, calsLabel;
+    JTextField nameInput, minsInput, secsInput, calsInput;
+    JButton submit, delete;
 
-    AddExerciseGUI(TrackerControl control, LocalDate date) {
+    AddExerciseGUI(TrackerControl control, LocalDate date, String type) {
         this.control = control;
         this.date = date;
+        this.type = type;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -25,7 +27,7 @@ class AddExerciseGUI {
             System.exit(1);
         }
 
-        window = new JFrame("Add Workout");
+        window = new JFrame("Add/edit Workout");
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         whole = new JPanel(new BorderLayout());
@@ -44,9 +46,13 @@ class AddExerciseGUI {
 
         time = new JPanel(); inputs.add(time, BorderLayout.CENTER);
         timeLabel = new JLabel("Workout duration: "); time.add(timeLabel);
-        timeInput = new JTextField(); timeInput.setPreferredSize(new Dimension(40, 26));
-        time.add(timeInput);
+        minsInput = new JTextField(); minsInput.setPreferredSize(new Dimension(40, 26));
+        time.add(minsInput);
         minutesLabel = new JLabel("minutes"); time.add(minutesLabel);
+
+        secsInput = new JTextField(); secsInput.setPreferredSize(new Dimension(40, 26));
+        time.add(secsInput);
+        secondsLabel = new JLabel("seconds"); time.add(secondsLabel);
 
         cals = new JPanel(); inputs.add(cals, BorderLayout.SOUTH);
         calsLabel = new JLabel("Calories burned: "); cals.add(calsLabel);
@@ -57,9 +63,23 @@ class AddExerciseGUI {
         submit = new JButton("Add workout"); submit.addActionListener(new addExercise(date));
         buttons.add(submit);
 
+        if (type.equals("edit")) {
+            delete = new JButton("Delete workout"); delete.addActionListener(new removeExercise(date));
+            buttons.add(delete);
+        }
+
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+    }
+
+    void existingData(String name, String time, int cals) {
+        nameInput.setText(name);
+        oldName = name;
+        String[] timeSplit = time.split(":");
+        minsInput.setText(timeSplit[0]);
+        secsInput.setText(timeSplit[1]);
+        calsInput.setText(Integer.toString(cals));
     }
 
     class addExercise implements ActionListener {
@@ -72,12 +92,44 @@ class AddExerciseGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 String name = nameInput.getText();
-                int time = Integer.valueOf(timeInput.getText());
+                int mins = Integer.valueOf(minsInput.getText());
+                int secs = Integer.valueOf(secsInput.getText());
+
+                if (secs > 59) {
+                    int addMins = secs/60;
+                    int newSecs = secs%60;
+                    mins += addMins;
+                    secs = newSecs;
+                }
+
                 int calories = Integer.valueOf(calsInput.getText());
-                control.addExercise(date, name, time, calories);
+                if (type.equals("add")) {
+                    control.addExercise(date, name, mins, secs, calories);
+                } else {
+                    control.editExercise(date, oldName, name, mins, secs, calories);
+                    
+                }
+                control.updateNutrition();
+                window.dispose();
+                
                 
             } catch (NumberFormatException n) {
+                
             }
+        }
+    }
+
+    class removeExercise implements ActionListener {
+        LocalDate date;
+        removeExercise(LocalDate date) {
+            this.date = date;
+        }
+
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            String name = nameInput.getText();
+            control.removeExercise(date, name);
+            window.dispose();
         }
     }
 }

@@ -21,8 +21,9 @@ class AddFoodControl {
 
     }
 
-    ArrayList<String> searchDatabase(String string) {
-        ArrayList<SupFood> results = data.searchDatabase(string);
+    ArrayList<String> searchDatabase(String string, String constraint) {
+        ArrayList<SupFood> results = data.searchDatabase(string, constraint);
+        
         ArrayList<String> asString = new ArrayList<>();
         for (SupFood food: results) {
             asString.add(food.showDisplayName());

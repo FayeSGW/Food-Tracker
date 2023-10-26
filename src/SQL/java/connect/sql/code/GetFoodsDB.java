@@ -142,7 +142,7 @@ public class GetFoodsDB {
     public static void getDiary(Connection conn, Diary diary) {
         String dayString = "SELECT Date, Water , Weight FROM Days";
         String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
-        String exercises = "SELECT WorkoutName, Time, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
+        String exercises = "SELECT WorkoutName, Minutes, Seconds, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 
         Statement dayStmt = null, foodStmt = null, exStmt = null;
         ResultSet drs = null, frs = null, ers = null;
@@ -192,7 +192,8 @@ public class GetFoodsDB {
             while (ers.next()) {
                 String exercise = ers.getString("WorkoutName");
                 System.out.println(exercise);
-                int exTime = ers.getInt("Time");
+                int exMins = ers.getInt("Minutes");
+                int exSecs = ers.getInt("Seconds");
                 int exCals = ers.getInt("Calories");
 
                 String dateString = ers.getString("Date");
@@ -200,7 +201,7 @@ public class GetFoodsDB {
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.getDay(date);
                 
-                dayObj.addExercise(exercise, exTime, exCals);
+                dayObj.addExercise(exercise, exMins, exSecs, exCals);
             }
         } catch (SQLException e) {
             System.out.println("Noes" + e.getErrorCode());

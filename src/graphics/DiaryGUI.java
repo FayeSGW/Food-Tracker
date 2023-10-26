@@ -154,7 +154,8 @@ class DiaryGUI extends JPanel {
         copyLunch = new JButton("Copy"); lunchTitlePanel.add(copyLunch);
         copyLunch.addActionListener(new copyMeal("Lunch"));
         lunchLabelsPanel = new JPanel(); lunchPanel.add(lunchLabelsPanel);
-        lunchBlank = new JLabel(" "); lunchLabelsPanel.add(lunchBlank);
+        lunchBlank = new JLabel(" "); lunchBlank.setPreferredSize(new Dimension(200, 26));
+        lunchLabelsPanel.add(lunchBlank);
         lunchCalories = new JLabel("Calories"); lunchLabelsPanel.add(lunchCalories);
         lunchCarbs = new JLabel("Carbs"); lunchLabelsPanel.add(lunchCarbs);
         lunchFat = new JLabel("Fat"); lunchLabelsPanel.add(lunchFat);
@@ -171,7 +172,8 @@ class DiaryGUI extends JPanel {
         copyDinner = new JButton("Copy"); dinnerTitlePanel.add(copyDinner);
         copyDinner.addActionListener(new copyMeal("Dinner"));
         dinnerLabelsPanel = new JPanel(); dinnerPanel.add(dinnerLabelsPanel);
-        dinnerBlank = new JLabel(" "); dinnerLabelsPanel.add(dinnerBlank);
+        dinnerBlank = new JLabel(" "); dinnerBlank.setPreferredSize(new Dimension(200, 26));
+        dinnerLabelsPanel.add(dinnerBlank);
         dinnerCalories = new JLabel("Calories"); dinnerLabelsPanel.add(dinnerCalories);
         dinnerCarbs = new JLabel("Carbs"); dinnerLabelsPanel.add(dinnerCarbs);
         dinnerFat = new JLabel("Fat"); dinnerLabelsPanel.add(dinnerFat);
@@ -188,7 +190,8 @@ class DiaryGUI extends JPanel {
         copySnacks = new JButton("Copy"); snacksTitlePanel.add(copySnacks);
         copySnacks.addActionListener(new copyMeal("Snacks"));
         snacksLabelsPanel = new JPanel(); snacksPanel.add(snacksLabelsPanel);
-        snacksBlank = new JLabel(" "); snacksLabelsPanel.add(snacksBlank);
+        snacksBlank = new JLabel(" "); snacksBlank.setPreferredSize(new Dimension(200, 26));
+        snacksLabelsPanel.add(snacksBlank);
         snacksCalories = new JLabel("Calories"); snacksLabelsPanel.add(snacksCalories);
         snacksCarbs = new JLabel("Carbs"); snacksLabelsPanel.add(snacksCarbs);
         snacksFat = new JLabel("Fat"); snacksLabelsPanel.add(snacksFat);
@@ -200,7 +203,8 @@ class DiaryGUI extends JPanel {
         exerciseTitlePanel = new JPanel(); exerciseTitlePanel.setAlignmentX(RIGHT_ALIGNMENT); exercisePanel.add(exerciseTitlePanel);
         exerciseTitle = new JLabel("Exercise"); exerciseTitle.setFont(new Font(breakfastTitle.getFont().toString(), Font.BOLD, 15)); exerciseTitlePanel.add(exerciseTitle);
         exerciseLabelsPanel = new JPanel(); exercisePanel.add(exerciseLabelsPanel);
-        exerciseName = new JLabel("Workout"); exerciseLabelsPanel.add(exerciseName);
+        exerciseName = new JLabel("Workout"); exerciseName.setPreferredSize(new Dimension(100, 30));
+        exerciseLabelsPanel.add(exerciseName);
         exerciseTime = new JLabel("Duration"); exerciseLabelsPanel.add(exerciseTime);
         exerciseCals = new JLabel("Calories Burned"); exerciseLabelsPanel.add(exerciseCals);
         exerciseWorkoutsPanel = new JPanel(); exerciseWorkoutsPanel.setLayout(new BoxLayout(exerciseWorkoutsPanel, BoxLayout.Y_AXIS));
@@ -253,6 +257,7 @@ class DiaryGUI extends JPanel {
         for (Component panel: exPanel) {
             exerciseWorkoutsPanel.remove(panel);
         }
+        exerciseWorkoutsPanel.revalidate();
         exerciseWorkoutsPanel.repaint();
     }
 
@@ -314,20 +319,25 @@ class DiaryGUI extends JPanel {
     }
 
     void updateExercisePanel() {
-        HashMap<String, ArrayList<Integer>> workouts = control.showWorkouts();
+        HashMap<String, ArrayList<String>> workouts = control.showWorkouts();
         for (String workout: workouts.keySet()) {
             JPanel exercise = new JPanel();
             exerciseWorkoutsPanel.add(exercise);
 
-            int time = workouts.get(workout).get(0);
-            int cals = workouts.get(workout).get(1);
+            String time = workouts.get(workout).get(0);
+            String cals = workouts.get(workout).get(1);
 
             JLabel name = new JLabel(workout);
-            JLabel timeLabel = new JLabel(time + " minutes");
-            JLabel calories = new JLabel(cals + " calories");
+            JLabel timeLabel = new JLabel(time);
+            JLabel calories = new JLabel(cals);
             exercise.add(name); exercise.add(timeLabel); exercise.add(calories);
             
-
+            name.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.editExerciseDialogue("edit", workout);
+                }
+            });
         }
     }
 
@@ -376,7 +386,7 @@ class DiaryGUI extends JPanel {
     class addExercise implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addExerciseDialogue();
+            control.addExerciseDialogue("add");
         }
     }
 

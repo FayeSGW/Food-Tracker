@@ -182,8 +182,12 @@ public class Day {
         caloriesBurned = 0;
     }
 
-    public void addExercise(String name, int time, int calories) {
-        Exercise workout = new Exercise(name, time, calories);
+    public Exercise showWorkout(String name) {
+        return exercise.get(name);
+    }
+
+    public void addExercise(String name, int minutes, int seconds, int calories) {
+        Exercise workout = new Exercise(name, minutes, seconds, calories);
         remainingNutrition[0] = remainingNutrition[0] + calories;
         remainingNutrition[1] = remainingNutrition[1] + ((calories * 0.25)/9); //update fat requirement based on new calories
         remainingNutrition[3] = remainingNutrition[3] + ((calories * 0.5)/4); //update carbs based on new calories
@@ -199,10 +203,16 @@ public class Day {
         workouts.add(workout);
     }
 
-    public void addExercisefromGUI(String name, int time, int calories) {
-        addExercise(name, time, calories);
+    public void addExercisefromGUI(String name, int minutes, int seconds, int calories) {
+        addExercise(name, minutes, seconds, calories);
         String date = showDate().toString();
-        AddToDiary.addExercise(date, name, time, calories);
+        AddToDiary.addExercise(date, name, minutes, seconds, calories);
+    }
+
+    public void editExercise(String oldName, String newName, int minutes, int seconds, int calories) {
+        removeExercise(oldName);
+        addExercisefromGUI(newName, minutes, seconds, calories);
+        
     }
 
     public void removeExercise(String name) {
@@ -221,6 +231,10 @@ public class Day {
             
             caloriesBurned -= calories;
             exercise.remove(name);
+            workouts.remove(workout);
+
+            String date = showDate().toString();
+            AddToDiary.removeWorkout(date, name);
         }
     }
 

@@ -2,11 +2,12 @@ package src.diary;
 
 public class Exercise {
     private String name;
-    private int time, calories;
+    private int minutes, seconds, calories;
 
-    public Exercise(String name, int time, int calories) {
+    public Exercise(String name, int minutes, int seconds, int calories) {
         this.name = name;
-        this.time = time;
+        this.minutes = minutes;
+        this.seconds = seconds;
         this.calories = calories;
     }
 
@@ -14,8 +15,9 @@ public class Exercise {
         return name;
     }
 
-    public void alter(int time, int calories) {
-        this.time = time;
+    public void alter(int minutes, int seconds, int calories) {
+        this.minutes = minutes;
+        this.seconds = seconds;
         this.calories = calories;
     }
 
@@ -27,11 +29,19 @@ public class Exercise {
         return calories;
     }
 
-    public int showTime() {
-        return time;
+    public String showTime() {
+        String mins = Integer.toString(minutes);
+        String secs = Integer.toString(seconds);
+        if (minutes < 10) {
+            mins = "0" + mins;
+        }
+        if (seconds < 10) {
+            secs = "0" + secs;
+        }
+        return mins + ":" + secs;
     }
 
     public String toString() {
-        return this.name + ": " + this.time + " minutes, " + this.calories + " calories burned.";
+        return this.name + ": "  + " minutes, " + this.calories + " calories burned.";
     }
 }

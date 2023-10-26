@@ -37,6 +37,7 @@ class AddFoodGUI {
     JList<String> foodsList;
     JTextField searchBar, amountInput;
     JLabel mealLabel, amountLabel, unitLabel, addedLabel;
+    JCheckBox checkFoods, checkRecipes;
 
     String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
     ArrayList<String> searchResult;
@@ -76,6 +77,9 @@ class AddFoodGUI {
         searchButton = new JButton("Search"); searchButton.setPreferredSize(new Dimension(75, 26));
         searchButton.addActionListener(new search());
         searchPanel.add(searchBar); /*searchPanel.add(Box.createRigidArea(new Dimension(4,0)));*/ searchPanel.add(searchButton);
+
+        checkFoods = new JCheckBox("Show food items", true); checkRecipes = new JCheckBox("Show Recipes", true);
+        searchPanel.add(checkFoods); searchPanel.add(checkRecipes);
         
 
         listPanel = new JPanel(); whole.add(listPanel, BorderLayout.WEST);
@@ -180,7 +184,18 @@ class AddFoodGUI {
                     text = "";
                 }
                 //String[] results = control.searchDatabase(text);
-                ArrayList<String> results = control.searchDatabase(text);
+
+                ArrayList<String> results = null;
+                if (checkFoods.isSelected() && checkRecipes.isSelected()) {
+                    results  = control.searchDatabase(text, "all");
+                } else if (checkFoods.isSelected()) {
+                    results = control.searchDatabase(text, "food");
+                } else if (checkRecipes.isSelected()) {
+                    results = control.searchDatabase(text, "recipe");
+                } else {
+                    results = new ArrayList<>();
+                }
+                
                 if (results.size() == 0) {
                     model.addElement("Nothing found!");
                 } else {

@@ -205,7 +205,7 @@ class SummaryGUI extends JPanel {
     class addExercise implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addExerciseDialogue();
+            control.addExerciseDialogue("add");
         }
     }
 

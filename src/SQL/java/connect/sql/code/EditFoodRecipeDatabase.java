@@ -149,6 +149,7 @@ public class EditFoodRecipeDatabase {
                 stmt2 = conn.prepareStatement(recipeString);
                 stmt2.setString(1, name);
                 stmt2.executeUpdate();
+                
             }
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());

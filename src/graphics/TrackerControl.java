@@ -187,27 +187,49 @@ class TrackerControl {
         day.addWeightFromGUI(weight);
     }
 
-    void addExerciseDialogue() {
-        AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate());
+    void addExerciseDialogue(String type) {
+        AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate(), type);
     }
 
-    void addExercise(LocalDate date, String workoutName, int workoutTime, int caloriesBurned) {
+    void addExercise(LocalDate date, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.getDay(date);
-        day.addExercisefromGUI(workoutName, workoutTime, caloriesBurned);
+        day.addExercisefromGUI(workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
         updateNutrition();
     }
 
-    HashMap<String, ArrayList<Integer>> showWorkouts() {
+    void editExercise(LocalDate date, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
+        Day day = diary.getDay(date);
+        day.editExercise(oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
+        
+    }
+
+    void editExerciseDialogue(String type, String workoutName) {
+        Day day = diary.getDay(showCurrentDate());
+        Exercise workout= day.showWorkout(workoutName);
+        String time = workout.showTime();
+        int cals = workout.showCalories();
+        AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate(), type);
+        eGUI.existingData(workoutName, time, cals);
+    }
+
+    void removeExercise(LocalDate date, String workoutName) {
+        Day day = diary.getDay(date);
+        day.removeExercise(workoutName);
+        updateNutrition();
+    }
+
+    HashMap<String, ArrayList<String>> showWorkouts() {
         Day day = diary.getDay(showCurrentDate());
         ArrayList<Exercise> workouts = day.showWorkouts();
-        HashMap<String, ArrayList<Integer>> exerciseList = new HashMap<>();
+        HashMap<String, ArrayList<String>> exerciseList = new HashMap<>();
 
         for (Exercise workout: workouts) {
             String name = workout.showName();
-            int time = workout.showTime();
-            int cals = workout.showCalories();
+            String time  = workout.showTime();
+            String cals = Integer.toString(workout.showCalories());
 
-            ArrayList<Integer> timeCals = new ArrayList<>();
+            System.out.println(name);
+            ArrayList<String> timeCals = new ArrayList<>();
             timeCals.add(time); timeCals.add(cals);
             exerciseList.put(name, timeCals);
         }

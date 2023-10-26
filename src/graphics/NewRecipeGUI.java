@@ -176,7 +176,11 @@ class NewRecipeGUI {
     class finished implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
+            if (control.ingredientsInRecipe(recipeName) == 0) {
+                control.delete(recipeName);
+            }
             window.dispose();
+
         }
     }
 }
