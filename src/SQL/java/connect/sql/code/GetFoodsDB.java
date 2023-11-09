@@ -13,21 +13,7 @@ import src.diary.*;
 
 public class GetFoodsDB {
 
-    public static Connection connect() {
-        Connection conn = null;
-
-        try {
-            SQLiteConfig config = new SQLiteConfig();
-            config.enforceForeignKeys(true);
-            conn = DriverManager.getConnection("jdbc:sqlite:C:/Users/fayes/OneDrive/Documents/GitHub/FoodTrackerJava/src/SQL/databases/FoodRecipeDatabase.db", config.toProperties());
-            System.out.println("Yay");
-            
-        } catch (SQLException e) {
-            System.out.println(":(");
-        } 
-
-        return conn;
-    }
+    
 
     public static User getUser() {
         String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate, Water FROM UserData";
@@ -37,7 +23,7 @@ public class GetFoodsDB {
         User user = null;
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             userStmt = conn.createStatement();
             urs = userStmt.executeQuery(userSearch);
 
@@ -77,7 +63,7 @@ public class GetFoodsDB {
 
     public static void getFoods(Connection conn, Database d) {
         String foods = "SELECT FoodName, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
-        String recipes = "SELECT FoodName, Servings, IngredientAmount, Recipes.RecipeName FROM RecipeIngredients INNER JOIN Recipes ON RecipeIngredients.RecipeName = Recipes.RecipeName";
+        String recipes = "SELECT FoodName, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients INNER JOIN Recipes ON RecipeIngredients.RecipeName = Recipes.RecipeName";
         Statement stmt = null;
         //Statement stmt2 = null;
         ResultSet frs = null;
@@ -118,6 +104,7 @@ public class GetFoodsDB {
                 double servings = rrs.getDouble("Servings");
                 String ingredient = rrs.getString("FoodName");
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
+                String instructs = rrs.getString("Instructions");
                 
                 Recipe rec = (Recipe)d.findItem(recipeName);
                 if (rec == null) {
@@ -125,6 +112,7 @@ public class GetFoodsDB {
                 }
                 
                 rec.addIngredient(ingredient, ingredientAmount);
+                rec.addInstructions(instructs);
             }
         } catch (SQLException e) {
             System.out.println(":( " + e.getErrorCode());
@@ -142,7 +130,7 @@ public class GetFoodsDB {
     public static void getDiary(Connection conn, Diary diary) {
         String dayString = "SELECT Date, Water , Weight FROM Days";
         String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
-        String exercises = "SELECT WorkoutName, Minutes, Seconds, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
+        String exercises = "SELECT ID, WorkoutName, Minutes, Seconds, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 
         Statement dayStmt = null, foodStmt = null, exStmt = null;
         ResultSet drs = null, frs = null, ers = null;
@@ -190,6 +178,7 @@ public class GetFoodsDB {
             ers = exStmt.executeQuery(exercises);
 
             while (ers.next()) {
+                int index = ers.getInt("ID");
                 String exercise = ers.getString("WorkoutName");
                 System.out.println(exercise);
                 int exMins = ers.getInt("Minutes");
@@ -201,7 +190,7 @@ public class GetFoodsDB {
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.getDay(date);
                 
-                dayObj.addExercise(exercise, exMins, exSecs, exCals);
+                dayObj.addExercise(index, exercise, exMins, exSecs, exCals);
             }
         } catch (SQLException e) {
             System.out.println("Noes" + e.getErrorCode());

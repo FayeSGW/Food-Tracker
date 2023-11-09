@@ -9,6 +9,7 @@ class AddExerciseGUI {
     TrackerControl control;
     LocalDate date;
     String type, oldName;
+    int index;
 
     JFrame window;
     JPanel whole, inputs, name, time, cals, buttons;
@@ -73,9 +74,10 @@ class AddExerciseGUI {
         window.setVisible(true);
     }
 
-    void existingData(String name, String time, int cals) {
+    void existingData(String name, String time, int cals, int index) {
         nameInput.setText(name);
         oldName = name;
+        this.index = index;
         String[] timeSplit = time.split(":");
         minsInput.setText(timeSplit[0]);
         secsInput.setText(timeSplit[1]);
@@ -104,9 +106,9 @@ class AddExerciseGUI {
 
                 int calories = Integer.valueOf(calsInput.getText());
                 if (type.equals("add")) {
-                    control.addExercise(date, name, mins, secs, calories);
+                    control.addExercise(date, null, name, mins, secs, calories);
                 } else {
-                    control.editExercise(date, oldName, name, mins, secs, calories);
+                    control.editExercise(date, index, oldName, name, mins, secs, calories);
                     
                 }
                 control.updateNutrition();
@@ -128,7 +130,7 @@ class AddExerciseGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             String name = nameInput.getText();
-            control.removeExercise(date, name);
+            control.removeExercise(date, index);
             window.dispose();
         }
     }

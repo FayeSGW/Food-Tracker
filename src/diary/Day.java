@@ -11,7 +11,8 @@ public class Day {
     private LocalDate date;
     private Meal breakfast, lunch, dinner, snacks;
     private double[] nutrition, remainingNutrition;
-    private HashMap<String, Exercise> exercise;
+    //private HashMap<String, Exercise> exercise;
+    private HashMap<Integer, Exercise> exercise;
     private ArrayList<Exercise> workouts;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private double calorieGoal, carbGoal, fatGoal, proteinGoal;
@@ -112,41 +113,17 @@ public class Day {
         String name = meal.toLowerCase().trim();
         double[] nutr = new double[8];
 
-        /*if (name.equals("breakfast")) {
-            nutr = breakfast.edit(item, weight);
-        } else if (name.equals("lunch")) {
-            nutr = lunch.edit(item, weight);
-        } else if (name.equals("dinner")) {
-            nutr = dinner.edit(item, weight);
-        } else if (name.equals("snacks")) {
-            nutr = snacks.edit(item, weight);
-        }*/
-
         remove(meal, item);
         addFoodFromGUI(meal, item, weight);
-
     }
 
     public void copyMeal(Meal fromMeal, String toMeal, Day toDay) {
-        /*String name = fromMeal.trim().toLowerCase();
-        double[] nutr = new double[8];
-        if (name.equals("breakfast")) {
-            nutr = breakfast.copy(toMeal);
-        } else if (name.equals("lunch")) {
-            nutr = lunch.copy(toMeal);
-        } else if (name.equals("dinner")) {
-            nutr = dinner.copy(toMeal);
-        } else if (name.equals("snacks")) {
-            nutr = snacks.copy(toMeal);
-        }*/
-
         HashMap<String, ArrayList<Object>> foodList = fromMeal.showFoods();
         for (String item: foodList.keySet()) {
             ArrayList<Object> details = foodList.get(item);
             double amount = (double) details.get(1);
             toDay.addFoodFromGUI(toMeal, item, amount);
         }
-
     }
 
     public void clearMeal(String meal) {
@@ -182,12 +159,12 @@ public class Day {
         caloriesBurned = 0;
     }
 
-    public Exercise showWorkout(String name) {
-        return exercise.get(name);
+    public Exercise showWorkout(Integer index) {
+        return exercise.get(index);
     }
 
-    public void addExercise(String name, int minutes, int seconds, int calories) {
-        Exercise workout = new Exercise(name, minutes, seconds, calories);
+    public Integer addExercise(Integer index, String name, int minutes, int seconds, int calories) {
+        Exercise workout = new Exercise(index, name, minutes, seconds, calories);
         remainingNutrition[0] = remainingNutrition[0] + calories;
         remainingNutrition[1] = remainingNutrition[1] + ((calories * 0.25)/9); //update fat requirement based on new calories
         remainingNutrition[3] = remainingNutrition[3] + ((calories * 0.5)/4); //update carbs based on new calories
@@ -199,25 +176,32 @@ public class Day {
         proteinGoal += ((calories * 0.25)/4);
 
         caloriesBurned += calories;
-        exercise.put(name, workout);
+
+        Integer ind = workout.showIndex();
+        exercise.put(ind, workout);
         workouts.add(workout);
+
+        return ind;
     }
 
-    public void addExercisefromGUI(String name, int minutes, int seconds, int calories) {
-        addExercise(name, minutes, seconds, calories);
+    public void addExercisefromGUI(Integer index, String name, int minutes, int seconds, int calories) {
+        Integer ind = addExercise(index, name, minutes, seconds, calories);
         String date = showDate().toString();
-        AddToDiary.addExercise(date, name, minutes, seconds, calories);
+        AddToDiary.addExercise(ind, date, name, minutes, seconds, calories, null);
     }
 
-    public void editExercise(String oldName, String newName, int minutes, int seconds, int calories) {
-        removeExercise(oldName);
-        addExercisefromGUI(newName, minutes, seconds, calories);
+    public void editExercise(Integer index, String oldName, String newName, int minutes, int seconds, int calories) {
+        Exercise workout = exercise.get(index);
+        workout.edit(newName, minutes, seconds, calories);
         
+        AddToDiary.addExercise(index, showDate().toString(), newName, minutes, seconds, calories, oldName);
+        //removeExercise(index);
+        //addExercisefromGUI(index, newName, minutes, seconds, calories);
     }
 
-    public void removeExercise(String name) {
-        if (exercise.containsKey(name)) {
-            Exercise workout = exercise.get(name);
+    public void removeExercise(Integer index) {
+        if (exercise.containsKey(index)) {
+            Exercise workout = exercise.get(index);
             int calories = workout.showCalories();
             remainingNutrition[0] = remainingNutrition[0] - calories;
             remainingNutrition[1] = remainingNutrition[1] - ((calories * 0.25)/9);
@@ -230,11 +214,11 @@ public class Day {
             proteinGoal -= ((calories * 0.25)/4);
             
             caloriesBurned -= calories;
-            exercise.remove(name);
+            exercise.remove(index);
             workouts.remove(workout);
 
             String date = showDate().toString();
-            AddToDiary.removeWorkout(date, name);
+            AddToDiary.removeWorkout(date, index);
         }
     }
 
@@ -276,14 +260,6 @@ public class Day {
         AddToDiary.updateWeight(this, user);
     }
 
-    public String exerciseToString() {
-        ArrayList<String> list = new ArrayList<>();
-        for (String workout: exercise.keySet()) {
-            list.add(workout.toString());
-        }
-        return String.join("\n", list);
-    }
-
     public double[] showNutrition() {
         return nutrition;
     }
@@ -306,17 +282,5 @@ public class Day {
         } else {
             return snacks;
         }
-    }
-
-
-    @Override
-    public String toString() {
-        String meals = String.format("%s \nBreakfast: %s \n\nLunch: %s \n\nDinner: %s \n\nSnacks: %s", date, breakfast.toString(), lunch.toString(), dinner.toString(), snacks.toString());
-        String exercise = "\n\nToday's workouts: \n" + this.exerciseToString();
-        String total = String.format("\n\nTotal Eaten: \nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", nutrition[0], nutrition[1], nutrition[2], nutrition[3], nutrition[4], nutrition[5], nutrition[6], nutrition[7]);
-        String burned = "\n\nTotal calories burned: " + caloriesBurned;
-        String remaining = String.format("\n\nRemaining nutrition: \nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", remainingNutrition[0], remainingNutrition[1], remainingNutrition[2], remainingNutrition[3], remainingNutrition[4], remainingNutrition[5], remainingNutrition[6], remainingNutrition[7]);
-
-        return meals + exercise + total + burned + remaining;
     }
 }

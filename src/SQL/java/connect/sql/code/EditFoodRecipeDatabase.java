@@ -14,7 +14,7 @@ import src.diary.*;
 
 public class EditFoodRecipeDatabase {
 
-    public static Connection connect() {
+    /*public static Connection connect() {
         Connection conn = null;
 
         try {
@@ -28,7 +28,7 @@ public class EditFoodRecipeDatabase {
         } 
 
         return conn;
-    }
+    }*/
 
     public static void addRecipeIngredient(String recipeName, String foodName, double amount) {
         Connection conn = null;
@@ -36,7 +36,7 @@ public class EditFoodRecipeDatabase {
         String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?)";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(newString);
 
             stmt.setString(1, recipeName);
@@ -55,7 +55,56 @@ public class EditFoodRecipeDatabase {
             }
         }
     }
-    
+
+    public static void addRecipeInstructions(String name, String instruct) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        String strng = "UPDATE Recipes SET Instructions = ? WHERE RecipeName = ?";
+
+        try {
+            conn = Connect.connect();
+            stmt = conn.prepareStatement(strng);
+
+            stmt.setString(1, instruct);
+            stmt.setString(2, name);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("aa nei " + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
+
+    public static void removeIngredient(String recipeName, String foodName) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        String strng = "DELETE FROM RecipeIngredients WHERE RecipeName = ? AND FoodName = ?";
+
+        try {
+            conn = Connect.connect();
+            stmt = conn.prepareStatement(strng);
+
+            stmt.setString(1, recipeName);
+            stmt.setString(2, foodName);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(":(" + e.getMessage());
+        } finally {
+            try {
+                stmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
 
     public static void addRecipe(String name, double servings) {
         Connection conn = null;
@@ -63,7 +112,7 @@ public class EditFoodRecipeDatabase {
         String newString = "INSERT INTO Recipes(RecipeName, Servings) VALUES(?, ?)";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(newString);
 
             stmt.setString(1, name);
@@ -89,7 +138,7 @@ public class EditFoodRecipeDatabase {
         String exString = "UPDATE Foods SET FoodName = ?, DisplayName = ?, Weight = ?, Unit = ?, Calories = ?, Fat = ?, SaturatedFat = ?, Carbohydrates = ?, Sugar = ?, Fibre = ?, Protein = ?, Salt = ?, Barcode = ? WHERE FoodName  = ?";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
 
             if (oldName == null) {
                 stmt = conn.prepareStatement(newString);
@@ -134,7 +183,7 @@ public class EditFoodRecipeDatabase {
         String recipeString = "DELETE FROM Recipes WHERE RecipeName = ?";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
 
             if (type.equals("food")) {
                 stmt = conn.prepareStatement(foodString);

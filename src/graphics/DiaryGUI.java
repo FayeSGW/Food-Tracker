@@ -215,7 +215,7 @@ class DiaryGUI extends JPanel {
         populateMealPanels();
         //clearMealPanels();
 
-        System.out.println(exercisePanel.getComponentCount());
+        //System.out.println(exercisePanel.getComponentCount());
     }
 
     void changeDate(String day, int date, String month) {
@@ -319,15 +319,17 @@ class DiaryGUI extends JPanel {
     }
 
     void updateExercisePanel() {
-        HashMap<String, ArrayList<String>> workouts = control.showWorkouts();
-        for (String workout: workouts.keySet()) {
+        HashMap<Integer, ArrayList<String>> workouts = control.showWorkouts();
+        for (Integer workout: workouts.keySet()) {
             JPanel exercise = new JPanel();
             exerciseWorkoutsPanel.add(exercise);
 
-            String time = workouts.get(workout).get(0);
-            String cals = workouts.get(workout).get(1);
+            
+            String time = workouts.get(workout).get(1);
+            String cals = workouts.get(workout).get(2);
+            String workoutName = workouts.get(workout).get(0);
 
-            JLabel name = new JLabel(workout);
+            JLabel name = new JLabel(workoutName);
             JLabel timeLabel = new JLabel(time);
             JLabel calories = new JLabel(cals);
             exercise.add(name); exercise.add(timeLabel); exercise.add(calories);
@@ -336,6 +338,7 @@ class DiaryGUI extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.editExerciseDialogue("edit", workout);
+                    System.out.println(workout);
                 }
             });
         }

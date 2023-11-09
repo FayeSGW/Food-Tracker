@@ -50,6 +50,7 @@ class TrackerControl {
         showGoals();
     }
 
+    //------------------CALENDAR-----------------------------------------------
     //Functionality for the date chooser on the SummaryGUI and DiaryGUI
     void updateDate(LocalDate date) {
         String day = DayOfWeek.from(date).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
@@ -89,6 +90,7 @@ class TrackerControl {
         CalendarGUI cGUI = new CalendarGUI(this, current, type);
     }
 
+    //---------------------SUMMARY--------------------------------------------
     //Updating nutrition display on the SummaryGUI
     void updateNutrition() {
         Day day = diary.getDay(showCurrentDate());
@@ -131,6 +133,7 @@ class TrackerControl {
         sGUI.setFatGoal(goals[1]);
     }
 
+    //-----------------DIARY------------------------------------------------
     //Functionality for Diary tab
     void addFoodToDiary(String meal, String name, double amount) {
         Day day = diary.getDay(showCurrentDate());
@@ -191,47 +194,49 @@ class TrackerControl {
         AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate(), type);
     }
 
-    void addExercise(LocalDate date, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
+    void addExercise(LocalDate date, Integer index, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.getDay(date);
-        day.addExercisefromGUI(workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
+        day.addExercisefromGUI(index, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
         updateNutrition();
     }
 
-    void editExercise(LocalDate date, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
+    void editExercise(LocalDate date, Integer index, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.getDay(date);
-        day.editExercise(oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
+        day.editExercise(index, oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
         
     }
 
-    void editExerciseDialogue(String type, String workoutName) {
+    void editExerciseDialogue(String type, Integer index) {
         Day day = diary.getDay(showCurrentDate());
-        Exercise workout= day.showWorkout(workoutName);
+        Exercise workout= day.showWorkout(index);
+        String workoutName = workout.showName();
         String time = workout.showTime();
         int cals = workout.showCalories();
         AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate(), type);
-        eGUI.existingData(workoutName, time, cals);
+        eGUI.existingData(workoutName, time, cals, index);
     }
 
-    void removeExercise(LocalDate date, String workoutName) {
+    void removeExercise(LocalDate date, Integer index) {
         Day day = diary.getDay(date);
-        day.removeExercise(workoutName);
+        day.removeExercise(index);
         updateNutrition();
     }
 
-    HashMap<String, ArrayList<String>> showWorkouts() {
+    HashMap<Integer, ArrayList<String>> showWorkouts() {
         Day day = diary.getDay(showCurrentDate());
         ArrayList<Exercise> workouts = day.showWorkouts();
-        HashMap<String, ArrayList<String>> exerciseList = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> exerciseList = new HashMap<>();
 
         for (Exercise workout: workouts) {
             String name = workout.showName();
             String time  = workout.showTime();
             String cals = Integer.toString(workout.showCalories());
+            Integer index = workout.showIndex();
 
-            System.out.println(name);
-            ArrayList<String> timeCals = new ArrayList<>();
-            timeCals.add(time); timeCals.add(cals);
-            exerciseList.put(name, timeCals);
+            //System.out.println(name);
+            ArrayList<String> details = new ArrayList<>();
+            details.add(name); details.add(time); details.add(cals); 
+            exerciseList.put(index, details);
         }
 
         return exerciseList;

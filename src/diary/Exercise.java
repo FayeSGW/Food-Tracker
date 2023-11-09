@@ -2,9 +2,17 @@ package src.diary;
 
 public class Exercise {
     private String name;
-    private int minutes, seconds, calories;
+    private int minutes, seconds, calories, index;
+    static int indexCounter = 0;
 
-    public Exercise(String name, int minutes, int seconds, int calories) {
+    public Exercise(Integer index, String name, int minutes, int seconds, int calories) {
+        if (index != null) {
+            this.index = index;
+            indexCounter = index;
+        } else {
+            indexCounter++;
+            this.index = indexCounter;
+        }
         this.name = name;
         this.minutes = minutes;
         this.seconds = seconds;
@@ -15,14 +23,15 @@ public class Exercise {
         return name;
     }
 
-    public void alter(int minutes, int seconds, int calories) {
+    public int showIndex() {
+        return index;
+    }
+
+    public void edit(String name, int minutes, int seconds, int calories) {
+        this.name = name;
         this.minutes = minutes;
         this.seconds = seconds;
         this.calories = calories;
-    }
-
-    public void changeName(String name) {
-        this.name = name;
     }
 
     public int showCalories() {

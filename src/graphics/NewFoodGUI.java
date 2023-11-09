@@ -193,7 +193,4 @@ class NewFoodGUI {
             window.dispose();
         }
     }
-    
-
-
 }

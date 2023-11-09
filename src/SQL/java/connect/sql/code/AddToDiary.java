@@ -27,7 +27,7 @@ public class AddToDiary {
         //addFood(user, day, "Snacks", "Cup of Tea", 2);
     }*/
 
-    public static Connection connect() {
+    /*public static Connection connect() {
         Connection conn = null;
 
         try {
@@ -41,7 +41,7 @@ public class AddToDiary {
         } 
 
         return conn;
-    }
+    }*/
 
     public static void addUser(User user) {
         Connection conn = null;
@@ -49,7 +49,7 @@ public class AddToDiary {
         String string = "INSERT INTO UserData(Name, Gender, Weight, Height, DOB, Goal, Rate, Water) VALUES(?,?,?,?,?,?,?,?)";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(string);
 
             stmt.setString(1, user.showName());
@@ -82,7 +82,7 @@ public class AddToDiary {
         String userWeight = "UPDATE UserData SET Weight = ?";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             dayStmt = conn.prepareStatement(dayWeight);
             
             dayStmt.setDouble(1, day.showWeight());
@@ -114,7 +114,7 @@ public class AddToDiary {
         String string = "UPDATE Days SET Water = ? WHERE Date = ?";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(string);
 
             stmt.setInt(1, day.showWaterDrunk());
@@ -140,7 +140,7 @@ public class AddToDiary {
         String string = "INSERT INTO Days(Date, Water) VALUES(?,?)";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(string);
 
             stmt.setString(1, day.showDate().toString());
@@ -177,7 +177,7 @@ public class AddToDiary {
         }
 
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(string);
 
             stmt.setString(1, meal);
@@ -207,7 +207,7 @@ public class AddToDiary {
         String recipeString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND RecipeName = ?";
 
         try {
-            conn = connect();
+            conn = Connect.connect();
 
             if (type.equals("food")) {
                 stmt = conn.prepareStatement(foodString);
@@ -231,20 +231,30 @@ public class AddToDiary {
         }
     }
 
-    public static void addExercise(String date, String name, int minutes, int seconds, int calories) {
+    public static void addExercise(int index, String date, String name, int minutes, int seconds, int calories, String oldName) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String string = "INSERT INTO Workouts(WorkoutName, Minutes, Seconds, Calories, Date) VALUES (?,?,?,?,?)";
+        String string = "INSERT INTO Workouts(WorkoutName, Minutes, Seconds, Calories, Date, ID) VALUES (?,?,?,?,?,?)";
+        String update = "UPDATE Workouts SET WorkoutName = ?, Minutes = ?, Seconds = ?, Calories = ?, Date = ?, ID = ? WHERE WorkoutName = ?";
 
         try {
-            conn = connect();
-            stmt = conn.prepareStatement(string);
+            conn = Connect.connect();
+
+            if (oldName == null) {
+                stmt = conn.prepareStatement(string);
+            } else {
+                stmt = conn.prepareStatement(update);
+
+                stmt.setString(7, oldName);
+            }
+            
             
             stmt.setString(1, name);
             stmt.setInt(2, minutes);
             stmt.setInt(3, seconds);
             stmt.setInt(4, calories);
             stmt.setString(5, date);
+            stmt.setInt(6, index);
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -260,17 +270,17 @@ public class AddToDiary {
         }
     }
 
-    public static void removeWorkout(String date, String name) {
+    public static void removeWorkout(String date, Integer index) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String strng = "DELETE FROM Workouts WHERE Date = ? AND WorkoutName = ?";
+        String strng = "DELETE FROM Workouts WHERE ID = ?";
         
         try {
-            conn = connect();
+            conn = Connect.connect();
             stmt = conn.prepareStatement(strng);
 
-            stmt.setString(1, date);
-            stmt.setString(2, name);
+            //stmt.setString(1, date);
+            stmt.setInt(1, index);
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -282,33 +292,6 @@ public class AddToDiary {
             } catch (SQLException e) {
                 System.out.println("!");
             }
-        }
-
-            
-    }
-    
-    public static void removeIngredient(String recipeName, String foodName) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        String strng = "DELETE FROM RecipeIngredients WHERE RecipeName = ? AND FoodName = ?";
-
-        try {
-            conn = connect();
-            stmt = conn.prepareStatement(strng);
-
-            stmt.setString(1, recipeName);
-            stmt.setString(2, foodName);
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(":(" + e.getMessage());
-        } finally {
-            try {
-                stmt.close();
-                conn.close();
-            } catch (SQLException e) {
-                System.out.println("!");
-            }
-        }
+        }       
     }
 }

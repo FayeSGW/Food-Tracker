@@ -12,6 +12,7 @@ public class Recipe extends SupFood {
     private HashSet<String> recipeType;
     private HashSet<String> mealType;
     private HashMap<String, Double> newIngredients;
+    private String instructions;
     //private double nutrition[];
 
     public Recipe(Database data, String name, double servings) {
@@ -21,9 +22,6 @@ public class Recipe extends SupFood {
         foodTypes = new HashSet<>();
         recipeType = new HashSet<>();
         mealType = new HashSet<>();
-
-        //this.nutrition = new double[8];
-
     }
     
     @Override
@@ -34,6 +32,14 @@ public class Recipe extends SupFood {
     @Override
     public String showUnit() {
         return "servings";
+    }
+
+    public void addInstructions(String instruct) {
+        instructions = instruct;
+    }
+
+    public String sbowInstructions() {
+        return instructions;
     }
 
     public void addFoodType(String type) {
@@ -119,7 +125,7 @@ public class Recipe extends SupFood {
 
     public void addFromRecipe(Recipe rec, double servings) {
         for (String name: rec.showIngredients().keySet()) {
-            System.out.println(name);
+            //System.out.println(name);
             double weight = rec.showIngredientList().get(name);
             double totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
@@ -155,7 +161,7 @@ public class Recipe extends SupFood {
         ingredients.remove(name);
         ingredientsList.remove(name);
 
-        AddToDiary.removeIngredient(this.name, name);
+        EditFoodRecipeDatabase.removeIngredient(this.name, name);
     }
 
     public void editIngredient(String name, double amount) {
@@ -193,7 +199,4 @@ public class Recipe extends SupFood {
         String list = name + ": " + String.join(", " , ingrdnts);
         return list;
     }
-
-
-    
 }

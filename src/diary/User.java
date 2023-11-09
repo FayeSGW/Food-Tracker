@@ -33,6 +33,11 @@ public class User implements java.io.Serializable {
         this.diary = new Diary(name, this);
         age = calculateAge();
         updateNutrition();
+        measurements.put("Waist", null);
+        measurements.put("Hips", null);
+        measurements.put("Calf", null);
+        measurements.put("Thigh", null);
+        measurements.put("Upper Arm", null);
         
     }
 
@@ -113,7 +118,6 @@ public class User implements java.io.Serializable {
         
         this.weight = weight;
         updateNutrition();
-
     }
 
     public void updateGoal(double rate, String goal) {
