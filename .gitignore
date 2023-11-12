@@ -4,5 +4,4 @@
 *.jar
 *.env
 
-DatabaseCSV.csv
-src/SQL/databases/FoodRecipeDatabase.db
+tracker\src\main\resources\databases\FoodRecipeDatabase.db
