@@ -3,13 +3,17 @@ package src.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+//import src.io.github.cdimascio.dotenv.*;
 
+import src.Config;
 import src.db.*;
 import src.diary.*;
 import src.SQL.java.connect.sql.code.*;
 
 class Test {
     public static void main (String [] args) {
+        SetDatabaseUrl.setUrl(Config.dotenv.get("DATABASE"));
+        
         User user = GetFoodsDB.getUser();
         //User user = new User("Faye", "F", 81, 165, "24.07.1989", "L", 1);
         Diary diary = user.accessDiary();

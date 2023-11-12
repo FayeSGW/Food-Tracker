@@ -2,6 +2,7 @@
 *.db
 *.json
 *.jar
+*.env
 
 DatabaseCSV.csv
 src/SQL/databases/FoodRecipeDatabase.db

@@ -12,7 +12,7 @@ public class Connect {
         try {
             SQLiteConfig config = new SQLiteConfig();
             config.enforceForeignKeys(true);
-            conn = DriverManager.getConnection("jdbc:sqlite:src/SQL/databases/FoodRecipeDatabase.db", config.toProperties());
+            conn = DriverManager.getConnection(SetDatabaseUrl.getUrl(), config.toProperties());
             System.out.println("Yay");
             
         } catch (SQLException e) {
