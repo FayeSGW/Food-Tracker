@@ -146,7 +146,6 @@ class SummaryGUI extends JPanel {
     }
 
     void setWaterProgessBounds(int water) {
-        //System.out.println(water);
         waterProgress.setMaximum(water);
         waterGoal.setText(Integer.toString(water));
     }
@@ -180,11 +179,7 @@ class SummaryGUI extends JPanel {
 
         @Override
         public void actionPerformed (ActionEvent e) {
-            //AddFoodControl aControl = new AddFoodControl(control);
-            control.addFoodDialogue(index, "food");
-            //ChangeDatabaseControl cControl = new ChangeDatabaseControl(control);
-            //cControl.editFoodorRecipeGUI("a");
-            //control.editFoodorRecipeGUI("a");
+            control.addFoodDialogue(index, "diary");
         }
     }
 

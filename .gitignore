@@ -4,4 +4,5 @@
 *.jar
 *.env
 
+tracker/target/
 tracker\src\main\resources\databases\FoodRecipeDatabase.db

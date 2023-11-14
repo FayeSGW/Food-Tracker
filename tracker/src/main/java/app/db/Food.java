@@ -12,7 +12,11 @@ public class Food extends SupFood{
 
     public Food(Database data, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         super(data, name, weight);
-        this.displayName = displayName;
+        if (displayName == null) {
+            this.displayName = name;
+        } else {
+            this.displayName = displayName;
+        }
         this.barcode = barcode;
         this.unit = unit;
         foodType = new ArrayList<>();
@@ -87,6 +91,7 @@ public class Food extends SupFood{
         this.displayName = displayName;
         this.weight = amount;
         this.unit = unit;
+        this.barcode = barcode;
         nutrition[0] = calories; nutrition[1] = fat; nutrition[2] = satfat; nutrition[3] = carbs; nutrition[4] = sugar; nutrition[5] = fibre; nutrition[6] = protein; nutrition[7] = salt;
     }
 }

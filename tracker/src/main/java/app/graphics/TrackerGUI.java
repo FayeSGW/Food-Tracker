@@ -17,20 +17,12 @@ class Test {
         System.out.println(SetDatabaseUrl.getUrl());
         
         User user = GetFoodsDB.getUser();
-        //User user = new User("Faye", "F", 81, 165, "24.07.1989", "L", 1);
         Diary diary = user.accessDiary();
-        
-
+    
         Database data = user.accessDatabase();
         TrackerControl control = new TrackerControl(user, diary, data);
-        //GetFoodsDB.getFoods(data);
         control.start();
-        //System.out.println(diary);
 
-        //NewFoodControl c = new NewFoodControl(control);
-        
-
-        //TrackerGUI gui = new TrackerGUI(control);
     }
 }
 
