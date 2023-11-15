@@ -39,7 +39,7 @@ public abstract class SupFood {
         this.name = name;
     }
 
-    public double[] unitNutrition() {
+    public double[] showUnitNutrition() {
         double[] unit = new double[8];
         for (int i = 0; i < nutrition.length; i++) {
             unit[i] = nutrition[i] / weight;

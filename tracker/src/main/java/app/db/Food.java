@@ -9,6 +9,7 @@ public class Food extends SupFood{
     private String unit, displayName;
     private String barcode;
     private ArrayList<String> foodType;
+    private ArrayList<Recipe> inRecipes;
 
     public Food(Database data, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         super(data, name, weight);
@@ -20,6 +21,7 @@ public class Food extends SupFood{
         this.barcode = barcode;
         this.unit = unit;
         foodType = new ArrayList<>();
+        inRecipes = new ArrayList<>();
         this.nutrition[0] = calories; this.nutrition[1] = fat; this.nutrition[2] = satfat; this.nutrition[3] = carbs; this.nutrition[4] = sugar; this.nutrition[5] = fibre; this.nutrition[6] = protein; this.nutrition[7] = salt;
         }
 
@@ -39,12 +41,16 @@ public class Food extends SupFood{
         return displayName;
     }
 
+    public void addRecipe(Recipe recipe) {
+        inRecipes.add(recipe);
+    }
+
     public void addFoodType(String type) {
         foodType.add(type);
         for (SupFood food: data.access().values()) {
             if (food instanceof Recipe) {
                 Recipe recipe = (Recipe) food;
-                if (recipe.showIngredients().keySet().contains(name)) {
+                if (recipe.showIngredientList().keySet().contains(name)) {
                     recipe.addFoodType(type);
                 }
             }
@@ -53,14 +59,17 @@ public class Food extends SupFood{
 
     public void removeFoodType(String type) {
         foodType.remove(type);
-        for (SupFood food: data.access().values()) {
+        for (Recipe recipe: inRecipes) {
+            recipe.removeFoodType(type);
+        }
+        /*for (SupFood food: data.access().values()) {
             if (food instanceof Recipe) {
                 Recipe recipe = (Recipe) food;
                 if (!recipe.checkIngredientFoodTypes(name, type)) {
                     recipe.removeFoodType(type);
                 }
             }
-        }
+        }*/
     }
 
     public ArrayList<String> showFoodTypes() {

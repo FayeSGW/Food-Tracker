@@ -3,22 +3,21 @@ package app.db;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+
 import app.sql.java.connect.*;
 
 public class Recipe extends SupFood {
-    private HashMap<String, Food> ingredients;
     private HashMap<String, Double> ingredientsList;
-    private HashSet<String> foodTypes;
+    private HashMap<String, Integer> foodTypes;
     private HashSet<String> recipeType;
     private HashSet<String> mealType;
-    private HashMap<String, Double> newIngredients;
     private String instructions;
 
     public Recipe(Database data, String name, double servings) {
         super(data, name, servings);
-        this.ingredients = new HashMap<>();
         this.ingredientsList = new HashMap<>();
-        foodTypes = new HashSet<>();
+        foodTypes = new HashMap<>();
         recipeType = new HashSet<>();
         mealType = new HashSet<>();
     }
@@ -42,15 +41,24 @@ public class Recipe extends SupFood {
     }
 
     public void addFoodType(String type) {
-        foodTypes.add(type);
+        int number = 1;
+        if (foodTypes.keySet().contains(type)) {
+            number += foodTypes.get(type);
+        }
+        foodTypes.put(type, number);
     }
 
     public void removeFoodType(String type) {
-        foodTypes.remove(type);
+        if (foodTypes.get(type) > 1) {
+            int number = foodTypes.get(type) -1;
+            foodTypes.put(type, number);
+        } else {
+            foodTypes.remove(type);
+        }
     }
 
-    public HashSet<String> showFoodTypes() {
-        return foodTypes;
+    public Set<String> showFoodTypes() {
+        return foodTypes.keySet();
     }
 
     public void addRecipeType(String type) {
@@ -82,6 +90,20 @@ public class Recipe extends SupFood {
         return weight;
     }
 
+    public void addFoodIngredient(Food food, String name, double weight) {
+        double[] nutr = food.showUnitNutrition();
+        ingredientsList.put(name, weight);
+        food.addRecipe(this);
+        for (String type: food.showFoodTypes()) {
+            addFoodType(type);
+        }
+        double[] weighted = new double[8];
+        for (int i = 0; i < nutrition.length; i++) {
+            weighted[i] = nutr[i] * weight;
+            nutrition[i] = nutrition[i] + weighted[i];
+        } 
+    }
+
 
     public void addIngredient(String name, double weight) {
         SupFood ingredient;
@@ -89,19 +111,7 @@ public class Recipe extends SupFood {
             ingredient = data.addFromDatabase(name);
             if (ingredient instanceof Food) {
                 Food ingr = (Food) ingredient;
-                double[] nutr = ingredient.unitNutrition();
-                ingredients.put(name, ingr);
-                ingredientsList.put(name, weight);
-                foodTypes.addAll(ingr.showFoodTypes());
-                double[] weighted = new double[8];
-                for (int i = 0; i < nutrition.length; i++) {
-                    weighted[i] = nutr[i] * weight;
-                    nutrition[i] = nutrition[i] + weighted[i];
-                } 
-
-                try {
-                    newIngredients.put(ingredient.showName(), weight);
-                } catch (NullPointerException e) {};
+                addFoodIngredient(ingr, name, weight);
                 
             } else {
                 Recipe rec = (Recipe) ingredient;
@@ -118,7 +128,7 @@ public class Recipe extends SupFood {
     }
 
     public void addFromRecipe(Recipe rec, double servings) {
-        for (String name: rec.showIngredients().keySet()) {
+        for (String name: rec.showIngredientList().keySet()) {
             double weight = rec.showIngredientList().get(name);
             double totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
@@ -128,30 +138,36 @@ public class Recipe extends SupFood {
     }
 
     public boolean checkIngredientFoodTypes(String ingr, String type) {
-        for (Food ingredient: showIngredients().values()) {
+        /*for (Food ingredient: showIngredients().values()) {
             if (!ingredient.showName().equals(ingr) && ingredient.showFoodTypes().contains(type)) {
                 return true;
             } 
+        }*/
+        for (String name: showIngredientList().keySet()) {
+            Food food = (Food) data.findItem(name);
+            if (!name.equals(ingr) && food.showFoodTypes().contains(type)) {
+                return true;
+            }
         }
         return false;
     }
 
     public void removeIngredient(String name) {
-        Food food = ingredients.get(name);
+        Food food = (Food) data.findItem(name);
         double[] weighted = new double[8];
         double weight = ingredientsList.get(name);
         for (int i = 0; i < nutrition.length; i++) {
-            weighted[i] = food.unitNutrition()[i] * weight; 
+            weighted[i] = food.showUnitNutrition()[i] * weight; 
             nutrition[i] = nutrition[i] - weighted[i];
         }
 
         for (String type: food.showFoodTypes()) {
-            if (!checkIngredientFoodTypes(name, type)) {
+            /*if (!checkIngredientFoodTypes(name, type)) {
                 removeFoodType(type);
-            }
+            }*/
+            removeFoodType(type);
         }
         
-        ingredients.remove(name);
         ingredientsList.remove(name);
 
         EditFoodRecipeDatabase.removeIngredient(this.name, name);
@@ -163,15 +179,10 @@ public class Recipe extends SupFood {
     }
 
     public String perServing() {
-        double[] perServ = unitNutrition();
+        double[] perServ = showUnitNutrition();
         String text = String.format("%s \nCalories: %.0f \nFat: %.1f g \nSaturated Fat: %.1f g \nCarbs: %.1f g \nSugar: %.1f g \nFibre: %.1f g \nProtein: %.1f g \nSalt: %.1f g", 
         this.name, perServ[0], perServ[1], perServ[2], perServ[3], perServ[4], perServ[5], perServ[6], perServ[7]);
         return text;
-    }
-
-
-    public HashMap<String, Food> showIngredients() {
-        return ingredients;
     }
 
     public HashMap<String, Double> showIngredientList() {
@@ -179,17 +190,7 @@ public class Recipe extends SupFood {
     }
 
     public int numberIngredients() {
-        return ingredients.size();
+        return ingredientsList.size();
     }
 
-    public String toString() {
-        ArrayList<String> ingrdnts = new ArrayList<>();
-        for (String name : ingredients.keySet()) {
-            Food ingredient = ingredients.get(name);
-            String strng = ingredientsList.get(name) + " " + ingredient.showUnit() + " " + name;
-            ingrdnts.add(strng);
-        }
-        String list = name + ": " + String.join(", " , ingrdnts);
-        return list;
-    }
 }

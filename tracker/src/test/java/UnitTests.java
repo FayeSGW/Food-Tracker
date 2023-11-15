@@ -23,51 +23,74 @@ public class UnitTests {
 
     //-------------------FOOD TESTS------------------
     @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjects")
+    public void test001_AssertGettersForNewFoodObject(Food food, String expectedName, String expectedDisplayName, String expectedAmountString, double[] expectedNutritionArray, double[] expectedUnitNutritionArray, String expectedBarcode) {
+        assertEquals(expectedName, food.showName());
+        assertEquals(expectedDisplayName, food.showDisplayName());
+        assertEquals(expectedAmountString, food.showWeight());
+        assertArrayEquals(expectedNutritionArray, food.showNutrition());
+        assertArrayEquals(expectedUnitNutritionArray, food.showUnitNutrition());
+        assertEquals(expectedBarcode, food.showBarcode());
+    }
+    
+    /*@ParameterizedTest
     @MethodSource("UnitTestMethods#providesFoodObjectsWithNames")
-    public void test001_FoodName(Food food, String expectedName) {
+    public void test001_AssertCorrectFoodNameReturned(Food food, String expectedName) {
         String actualName = food.showName();
         assertEquals(expectedName, actualName);
     }
 
     @ParameterizedTest
     @MethodSource("UnitTestMethods#providesFoodObjectsWithDisplayNames")
-    public void test002_DisplayName(Food food, String expectedName) {
+    public void test002_AssertCorrectDisplayNameReturned(Food food, String expectedName) {
         String displayName = food.showDisplayName();
         assertEquals(expectedName, displayName);
     }
 
-    @Test
-    public void test003_Barcode() {
-        String barcode = stubFoodWithDisplayName.showBarcode();
-        assertEquals("barcode", barcode);
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithBarcodes")
+    public void test003_AssertCorrectBarcodeReturned(Food food, String expected) {
+        String barcode = food.showBarcode();
+        assertEquals(expected, barcode);
     }
 
-    @Test
-    public void test004_AmountString() {
-        String strng = stubFoodWithDisplayName.showWeight();
-        assertEquals("100.0 g", strng);
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithAmountString")
+    public void test004_AsertCorrectAmountString(Food food, String expected) {
+        String strng = food.showWeight();
+        assertEquals(expected, strng);
     }
 
-    @Test
-    public void test005_Amount() {
-        double weight = stubFoodWithDisplayName.showAmount();
-        assertEquals(100.0, weight);
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithAmounts")
+    public void test005_AssertCorrectAmountReturned(Food food, double expected) {
+        double weight = food.showAmount();
+        assertEquals(expected, weight);
     }
 
-    @Test
-    public void test006_Unit() {
-        String unit = stubFoodWithDisplayName.showUnit();
-        assertEquals("g", unit);
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithUnits")
+    public void test006_AssertCorrectUnitReturned(Food food, String expected) {
+        String unit = food.showUnit();
+        assertEquals(expected, unit);
     }
 
-    @Test
-    public void test007_Nutrition() {
-        double[] nutrition = {350, 12.3, 3, 24, 10, 14, 37, 0.4};
-        assertArrayEquals(nutrition, stubFoodWithDisplayName.showNutrition());
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithNutrition")
+    public void test007_AssertCorrectNutritionArrayReturned(Food food, double[] expected) {
+        double[] nutrition = food.showNutrition();
+        assertArrayEquals(expected, nutrition);
     }
 
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesFoodObjectsWithUnitNutrition")
+    public void test012_AssertCorrectUnitNutritionArrayReturned(Food food, double[] expected) {
+        double[] nutrition = food.showUnitNutrition();
+        assertArrayEquals(expected, nutrition);
+    }*/
+
     @Test
-    public void test008_Edit() {
+    public void test008_AssertEditsApplyCorrectly() {
         stubFoodWithDisplayName.edit("New Name", "New Display Name", 0, "ml", 0, 0, 0, 0, 0, 0, 0, 0, "New Barcode");
         double[] nutrition = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         assertEquals("New Name", stubFoodWithDisplayName.showName());
@@ -92,7 +115,7 @@ public class UnitTests {
     @TestMethodOrder(MethodOrderer.DisplayName.class)
     class TestingFoodTypes {
         @Test
-        public void test010_AddFoodType() {
+        public void test010_AssertFoodTypeAddedCorrectly() {
             ArrayList<String> expected = new ArrayList<String>(Arrays.asList("Food Type"));
 
             stubFoodWithDisplayName.addFoodType("Food Type");
@@ -102,12 +125,23 @@ public class UnitTests {
         }
 
         @Test
-        public void test011_RemoveFoodType() {
+        public void test011_AssertFoodTypeRemovedCorrectly() {
             stubFoodWithDisplayName.removeFoodType("Food Type");
             ArrayList<String> actual = stubFoodWithDisplayName.showFoodTypes();
+            ArrayList<String> expected = new ArrayList<String>();
 
             assertEquals(0, actual.size());
+            assertIterableEquals(expected, actual);
         }
+    }
+
+
+    //----------------------RECIPE TESTS--------------------
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesRecipeObjectsWithNames")
+    public void test012_AssertCorrectRecipeNameReturned(Recipe recipe, String expectedName) {
+        String actualName = recipe.showName();
+        assertEquals(expectedName, actualName);
     }
 
 }

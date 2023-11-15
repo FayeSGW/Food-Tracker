@@ -30,7 +30,7 @@ public class Meal {
         try {
             SupFood food = data.findItem(name);
             String unit = food.showUnit();
-            double[] unitNutrition = food.unitNutrition();
+            double[] unitNutrition = food.showUnitNutrition();
             if (foodNamesList.contains(name)) {
                 arr = foodlst.get(name);
                 double oldWeight = (double) arr.get(1);
@@ -84,7 +84,7 @@ public class Meal {
         foodNamesList.add(name);
 
         for (int i = 0; i < nutrition.length; i++) {
-            weighted[i] = food.unitNutrition()[i] * weight;
+            weighted[i] = food.showUnitNutrition()[i] * weight;
             nutrition[i] = nutrition[i] + weighted[i];
         }
 
@@ -97,7 +97,7 @@ public class Meal {
         double weight = (double) lst.get(1);
         SupFood food = (SupFood) lst.get(0);
         for (int i = 0; i < nutrition.length; i++) {
-            weighted[i] = food.unitNutrition()[i] * weight;
+            weighted[i] = food.showUnitNutrition()[i] * weight;
             nutrition[i] = nutrition[i] - weighted[i];
         }
         foodlst.remove(name);
@@ -140,7 +140,7 @@ public class Meal {
         ArrayList<Object> details = foodlst.get(name);
         SupFood food = (SupFood)details.get(0);
         double weight = (double)details.get(1);
-        double[] unitNutrition = food.unitNutrition();
+        double[] unitNutrition = food.showUnitNutrition();
         double[] weightedNutrition = new double[8];
         for (int i = 0; i < 8; i++) {
             weightedNutrition[i] = unitNutrition[i] * weight;
