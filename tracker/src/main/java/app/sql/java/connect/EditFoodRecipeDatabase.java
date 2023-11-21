@@ -1,13 +1,8 @@
 package app.sql.java.connect;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import org.sqlite.SQLiteConfig;
-import java.time.LocalDate;
 
 import app.db.*;
 import app.diary.*;

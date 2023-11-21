@@ -152,8 +152,7 @@ public class Recipe extends SupFood {
         return false;
     }
 
-    public void removeIngredient(String name) {
-        Food food = (Food) data.findItem(name);
+    public void removeIngredient1(Food food, String name) {
         double[] weighted = new double[8];
         double weight = ingredientsList.get(name);
         for (int i = 0; i < nutrition.length; i++) {
@@ -169,6 +168,11 @@ public class Recipe extends SupFood {
         }
         
         ingredientsList.remove(name);
+    }
+
+    public void removeIngredient(String name) {
+        Food food = (Food) data.findItem(name);
+        removeIngredient1(food, name);        
 
         EditFoodRecipeDatabase.removeIngredient(this.name, name);
     }

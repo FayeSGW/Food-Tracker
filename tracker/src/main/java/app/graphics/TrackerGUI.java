@@ -12,9 +12,7 @@ import app.sql.java.connect.*;
 class Test {
     public static void main (String [] args) {
         Dotenv dt = Config.dotenv;
-        SetDatabaseUrl.setUrl(dt.get("DATABASE"));
-
-        System.out.println(SetDatabaseUrl.getUrl());
+        Config.setDBUrl(dt.get("DATABASE"));
         
         User user = GetFoodsDB.getUser();
         Diary diary = user.accessDiary();

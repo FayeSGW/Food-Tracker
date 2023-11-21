@@ -8,4 +8,14 @@ public class Config {
     public Dotenv showEnv() {
         return dotenv;
     }
+
+
+    public static String url;
+    public static void setDBUrl(String set) {
+        url = set;
+    }
+
+    public static String getDBUrl() {
+        return url;
+    }
 }

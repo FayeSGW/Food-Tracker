@@ -12,7 +12,7 @@ public class Connect {
         try {
             SQLiteConfig config = new SQLiteConfig();
             config.enforceForeignKeys(true);
-            String url = SetDatabaseUrl.getUrl();
+            String url = Config.getDBUrl();
             conn = DriverManager.getConnection(url, config.toProperties());
             System.out.println("Yay");
             
