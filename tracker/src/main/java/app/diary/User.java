@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 
+import exceptions.*;
+
 import app.db.*;
 
 public class User implements java.io.Serializable {
@@ -14,27 +16,47 @@ public class User implements java.io.Serializable {
     private Database data;
     private Diary diary;
     private HashMap<String, Double> measurements = new HashMap<>();
+    private LocalDate today = LocalDate.now();
 
 
-    //Gender = M/F, weight in kg, height in cm, DOB as DD.MM.YYYY, goal = loss,
-    public User(String name, String gender, double weight, int height, String dateOfBirth, String goal, double rate, int water) {
+    //Gender = M/F, weight in kg, height in cm, DOB as YYYY-MM-DD, goal = loss,
+    public User(String name, String gender, double weight, int height, String dateOfBirth, 
+        String goal, double rate, int water) throws NoNegativeException {
+        //No excpetion checking for these because their values are limited by the GUI
         this.name = name;
         this.gender = gender;
-        this.weight = weight;
-        this.height = height;
         this.dateOfBirth = dateOfBirth;
         this.goal = goal;
-        this.rate = rate;
-        this.water = water;
+
+        
+        age = calculateAge(today);
+        this.weight = checkForNegativeValues("Weight", weight);
+        this.height = (int) checkForNegativeValues("Height", height);
+        this.rate = checkForNegativeValues("Rate", rate);
+        this.water = (int) checkForNegativeValues("Water", water);
+
+        
+
         this.data = new Database(name + "'s Database");
-        this.diary = new Diary(name, this);
-        age = calculateAge();
+        this.diary = new Diary(name, this);    
+        
         updateNutrition();
         measurements.put("Waist", null);
         measurements.put("Hips", null);
         measurements.put("Calf", null);
         measurements.put("Thigh", null);
         measurements.put("Upper Arm", null);
+
+
+        
+    }
+
+    //Throws exception if user tries to input negative value for certain parameters
+    public double checkForNegativeValues(String parameter, double value) throws NoNegativeException {
+        if (value < 0) {
+            throw new NoNegativeException(parameter + " cannot have negative value!");
+        }
+        return value;
     }
 
     public Database accessDatabase() {
@@ -45,11 +67,14 @@ public class User implements java.io.Serializable {
         return diary;
     }
 
-    public int calculateAge() {
-        LocalDate today = LocalDate.now();
+    public int calculateAge(LocalDate now) throws NoNegativeException {
         LocalDate dob = LocalDate.parse(dateOfBirth);
-        long age = ChronoUnit.YEARS.between(dob, today);
+        long age = ChronoUnit.YEARS.between(dob, now);
         int ageInt = Math.toIntExact(age);
+        
+        if (dob.isAfter(now)) {
+            throw new NoNegativeException("DOB can't be after the current date!");
+        }
         return ageInt;
     }
 
@@ -101,16 +126,22 @@ public class User implements java.io.Serializable {
         nutrition[7] = salt;
     }
 
-
     public void updateWeight(LocalDate date, double weight) {
+        // This ensures that if a more recent weight has been entered in the diary, then 
+        // we don't overwrite it.
         for (LocalDate day: diary.showDays()) {
             if (day.isAfter(date) == true && diary.getDay(day).showWeight() > 0) {
                 return;
             }
         }
+
+        try {
+            this.weight = checkForNegativeValues("Weight", weight);
+            updateNutrition();
+        } catch (NoNegativeException e) {
+            e.getMessage();
+        }
         
-        this.weight = weight;
-        updateNutrition();
     }
 
     public void updateGoal(double rate, String goal) {

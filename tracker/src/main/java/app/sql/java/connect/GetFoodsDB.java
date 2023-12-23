@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import app.db.*;
 import app.diary.*;
+import exceptions.NoNegativeException;
 
 public class GetFoodsDB {
 
@@ -43,7 +44,7 @@ public class GetFoodsDB {
 
                 return user;
             } 
-        } catch (SQLException e) {
+        } catch (NoNegativeException | SQLException e) {
             System.out.println(":( noes " + e.getMessage());
         } finally {
             try {

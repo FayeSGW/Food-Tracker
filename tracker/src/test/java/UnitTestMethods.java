@@ -1,21 +1,49 @@
+
 import java.util.stream.Stream;
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.time.LocalDate;
 
 import org.junit.jupiter.params.provider.Arguments;
 
 import app.db.*;
+import app.diary.*;
+import exceptions.NoNegativeException;
 
 class UnitTestMethods {
 
-    static Database stubDB = new Database("DB");
-    static Food stubFoodWithDisplayName = new Food(stubDB, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
-    static Food stubFoodWithNullDisplayName = new Food(stubDB, "Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
 
-    static Recipe stubRecipe1 = new Recipe(stubDB, "Recipe Name1", 4);
-    static Recipe stubRecipe2 = new Recipe(stubDB, "Recipe Name2", 1);
+    static class Stubs {
+        public static Food stubFoodWithDisplayName = null;
+        public static Food stubFoodWithNullDisplayName = null;
+        public static Recipe stubRecipe1 = null;
+        public static Recipe stubRecipe2 = null;
+        public static User stubUserMaintain = null;
+        public static User stubUserLose = null;
+        public static User stubUserGain = null;
+
+        static {
+            try {
+                Database stubDB = new Database("DB");
+                stubFoodWithDisplayName = new Food(stubDB, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
+                stubFoodWithNullDisplayName = new Food(stubDB, "Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
+
+                stubRecipe1 = new Recipe(stubDB, "Recipe Name1", 4);
+                stubRecipe2 = new Recipe(stubDB, "Recipe Name2", 1);
+
+                stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
+                stubUserLose = new User("Elizabeth", "F", 60.0, 160, "1990-12-12", "L", 0.5, 10);
+                stubUserGain = new User("Percy", "M", 65.5, 200, "1995-06-07", "G", 1.0, 7);
+            } catch (NoNegativeException e) {}
+        }
+        
+    }
+
+    protected static Stubs getStubs() {
+        Stubs stubs = new Stubs();
+        return stubs;
+    }
 
     //------------------Food Arguments-------------------
     protected static Stream<Arguments> providesFoodObjects() {
@@ -25,100 +53,36 @@ class UnitTestMethods {
         double[] unit_food2 = {350/50.0, 12.3/50, 3/50.0, 24/50.0, 10/50.0, 14/50.0, 37/50.0, 0.4/50};
         
         return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "Full Name1", "Display Name", "100.0 g", nutrition, unit_food1, "barcode", 0),
-        Arguments.of(stubFoodWithNullDisplayName, "Full Name2", "Full Name2", "50.0 ml", nutrition, unit_food2, null, 0)
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodEditWithNonNumbers() {
-        //test_001
-        
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "one hundred", 350, 12.3, 3, 24, 10, 14, 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, "350", 12.3, 3, 24, 10, 14, 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, "a", 3, 24, 10, 14, 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, 12.3, true, 24, 10, 14, 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, 12.3, 3, 24, false, 14, 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, 12.3, 3, 24, 10, "xx", 37, 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, 12.3, 3, 24, 10, 14, "37", 0.4),
-        Arguments.of(stubFoodWithDisplayName, 100, 350, 12.3, 3, 24, 10, 14, 37, "*")
-
+        Arguments.of(Stubs.stubFoodWithDisplayName, "Full Name1", "Display Name", "100.0 g", nutrition, 
+            unit_food1, "barcode", 0),
+        Arguments.of(Stubs.stubFoodWithNullDisplayName, "Full Name2", "Full Name2", "50.0 ml", nutrition, 
+            unit_food2, null, 0)
         );
     }
     
-    /*protected static Stream<Arguments> providesFoodObjectsWithNames() {
-        //test_001
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "Full Name1"),
-        Arguments.of(stubFoodWithNullDisplayName, "Full Name2")
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithDisplayNames() {
+    protected static Stream<Arguments> providesEditedFoodObjects() {
         //test_002
+        double[] nutrition_food1 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        double[] unit_food1 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        double[] nutrition_food2 = {100.0, 50.0, 1.0, 0.0, 100.0, 50.0, 1.0, 0.0};
+        double[] unit_food2 = {1.0, 0.5, 0.01, 0.0, 1.0, 0.5, 0.01, 0.0};
+        
         return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "Display Name"),
-        Arguments.of(stubFoodWithNullDisplayName, "Full Name2")
+        Arguments.of(Stubs.stubFoodWithDisplayName, "New Name1", "New Display Name", 250.0, "x", "250.0 x", 
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nutrition_food1, unit_food1, "barcode", 0),
+        Arguments.of(Stubs.stubFoodWithNullDisplayName, "New Name2", null, 100.0, "g", "100.0 g", 
+            100.0, 50.0, 1.0, 0.0, 100.0, 50.0, 1.0, 0.0, nutrition_food2, unit_food2, null, 0)
         );
     }
 
-    protected static Stream<Arguments> providesFoodObjectsWithBarcodes() {
-        //test_003
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "barcode"),
-        Arguments.of(stubFoodWithNullDisplayName, null)
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithAmountString() {
-        //test_004
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "100.0 g"),
-        Arguments.of(stubFoodWithNullDisplayName, "50.0 ml")
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithAmounts() {
-        //test_005
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, 100.0),
-        Arguments.of(stubFoodWithNullDisplayName, 50.0)
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithUnits() {
-        //test_006
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, "g"),
-        Arguments.of(stubFoodWithNullDisplayName, "ml")
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithNutrition() {
-        //test_007
-        double[] array = {350, 12.3, 3, 24, 10, 14, 37, 0.4};
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, array),
-        Arguments.of(stubFoodWithNullDisplayName, array)
-        );
-    }
-
-    protected static Stream<Arguments> providesFoodObjectsWithUnitNutrition() {
-        //test_012
-        double[] unit_food1 = {350/100.0, 12.3/100, 3/100.0, 24/100.0, 10/100.0, 14/100.0, 37/100.0, 0.4/100};
-        double[] unit_food2 = {350/50.0, 12.3/50, 3/50.0, 24/50.0, 10/50.0, 14/50.0, 37/50.0, 0.4/50};
-        return Stream.of(
-        Arguments.of(stubFoodWithDisplayName, unit_food1),
-        Arguments.of(stubFoodWithNullDisplayName, unit_food2)
-        );
-    }*/
 
     //---------------------Recipe Arguments-----------------
     protected static Stream<Arguments> providesNewRecipeObjects() {
         //test_012
         return Stream.of(
-        Arguments.of(stubRecipe1, "Recipe Name1", 4, 0),
-        Arguments.of(stubRecipe2, "Recipe Name2", 1, 0)
+        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 4, 0),
+        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 1, 0)
         );
     }
 
@@ -140,8 +104,8 @@ class UnitTestMethods {
 
         //Recipe Object - Ingredient Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List (Keys) - Expected Ingredients List (Values) - Expected Nutrition
         return Stream.of(
-        Arguments.of(stubRecipe1, stubFoodWithDisplayName, 100, "Recipe Name1", 1, list1Set, ingredient1_perServing),
-        Arguments.of(stubRecipe2, stubFoodWithNullDisplayName, 100,  "Recipe Name2", 1, list2Set, ingredient2_perServing)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, 100, "Recipe Name1", 1, list1Set, ingredient1_perServing),
+        Arguments.of(Stubs.stubRecipe2, Stubs.stubFoodWithNullDisplayName, 100,  "Recipe Name2", 1, list2Set, ingredient2_perServing)
         );
     }
 
@@ -156,7 +120,7 @@ class UnitTestMethods {
 
         //Recipe Object - Ingredient Object - Ingredient Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List - Expected Nutrition
         return Stream.of(
-        Arguments.of(stubRecipe1, stubFoodWithDisplayName, stubFoodWithNullDisplayName, 75, "Recipe Name1", 2, list3Set, nutrition_perServing)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, Stubs.stubFoodWithNullDisplayName, 75, "Recipe Name1", 2, list3Set, nutrition_perServing)
         );
     }
 
@@ -177,9 +141,38 @@ class UnitTestMethods {
 
         //Recipe Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List - Expected Nutrition
         return Stream.of(
-        Arguments.of(stubRecipe1, stubFoodWithDisplayName, "Recipe Name1", 1, list3Set, nutrition_perServing),
-        Arguments.of(stubRecipe1, stubFoodWithNullDisplayName, "Recipe Name1", 0, list1Set, nutrition_perServing2)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, "Recipe Name1", 1, list3Set, nutrition_perServing),
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithNullDisplayName, "Recipe Name1", 0, list1Set, nutrition_perServing2)
         );
     }
+
+    //--------------------User Arguments----------------------
+    protected static Stream<Arguments> providesUserObjects() {
+        return Stream.of(
+        Arguments.of(Stubs.stubUserMaintain, "Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8),
+        Arguments.of(Stubs.stubUserLose, "Elizabeth", "F", 60.0, 160, "1990-12-12", "L", 0.5, 10),
+        Arguments.of(Stubs.stubUserGain, "Percy", "M", 65.5, 200, "1995-06-07", "G", 1.0, 7)
+        );
+    }
+
+    protected static Stream<Arguments> providesUserAges() {
+        return Stream.of(
+        Arguments.of(Stubs.stubUserMaintain, LocalDate.of(2000, 06, 06), 0),
+        Arguments.of(Stubs.stubUserMaintain, LocalDate.of(2010, 04, 01), 10),
+        Arguments.of(Stubs.stubUserMaintain, LocalDate.of(2033, 06, 06), 33)
+        );
+    }
+
+    /*protected static Stream<Arguments> providesUsersWithNegativeValues() throws NoNegativeException {
+        User stubUserWithNegativeWeight = new User("Baldrick", "M", -90.0, 200, "2000-01-01", "M", 0.0, 8);
+        User stubUserWithNegativeHeight = new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8);
+        User stubUserWithNegativeRate = new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", -1.0, 8);
+        User stubUserWithNegativeWater = new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", 0.0, -8);
+        User stubUserWithNegativeAge = new User("Baldrick", "M", 90.0, 200, "2050-01-01", "M", 0.0, 8);
+        
+        return Stream.of(
+        Arguments.of(stubUserWithNegativeWeight, "Weight", "Weight cannot have negative value!")
+        );
+    }*/
 
 }
