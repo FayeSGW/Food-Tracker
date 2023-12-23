@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import exceptions.NoNegativeException;
+import exceptions.NoNullException;
+
 class NewFoodGUI {
     ChangeDatabaseControl control;
     String foodName, display;
@@ -125,36 +128,30 @@ class NewFoodGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
-
-                String newName = nameField.getText().trim();
-                if (newName == null || newName.equals("")) {
-                    throw new NumberFormatException();
-                }
-
+                String newName = checkForNull("Name", nameField.getText().trim());
                 String displayName = displayNameField.getText().trim();
                 if (displayName == null || displayName.equals("")) {
                     displayName = newName;
                 }
-                double amount =  Double.parseDouble(amountField.getText().trim());
-                String unit = unitField.getText().trim();
-                if (unit == null || unit.equals("")) {
-                    throw new NumberFormatException();
-                }
-                double calories = Double.parseDouble(caloriesField.getText().trim());
-                double fat = Double.parseDouble(fatField.getText().trim());
-                double satfat = Double.parseDouble(satfatField.getText().trim());
-                double carbs = Double.parseDouble(carbsField.getText().trim());
-                double sugar = Double.parseDouble(sugarField.getText().trim());
-                double fibre = Double.parseDouble(fibreField.getText().trim());
-                double protein = Double.parseDouble(proteinField.getText().trim());
-                double salt = Double.parseDouble(saltField.getText().trim());
-                String barcode = barcodeField.getText().trim();
 
+                double amount = checkNumbers("Amount", amountField.getText().trim());
+                String unit = checkForNull("Unit", unitField.getText().trim());
+
+                double calories = checkNumbers("Calories", caloriesField.getText().trim());
+                double fat = checkNumbers("Fat", fatField.getText().trim());
+                double satfat = checkNumbers("Saturated Fat", satfatField.getText().trim());
+                double carbs = checkNumbers("Carbs", carbsField.getText().trim());
+                double sugar = checkNumbers("Sugar", sugarField.getText().trim());
+                double fibre = checkNumbers("FIbre", fibreField.getText().trim());
+                double protein = checkNumbers("Protein", proteinField.getText().trim());
+                double salt = checkNumbers("Salt", saltField.getText().trim());
                 
-                if (barcode.equals("") || barcode == null) {
+                String barcode = barcodeField.getText().trim();
+                if (barcode.equals("")) {
                     barcode = null;
                 } 
                 
+                //So we can tell the user that the food was successfully added to the database
                 boolean saveSuccess = true;
                 if (foodName != null) {
                     String oldName = foodName;
@@ -166,7 +163,7 @@ class NewFoodGUI {
                 if (saveSuccess) {
                     String confirmation = displayName + " added successfully!";
                     changeAddedLabel(confirmation);
-
+                    //Reset fields
                     nameField.setText("");
                     displayNameField.setText("");
                     amountField.setText("");
@@ -181,9 +178,35 @@ class NewFoodGUI {
                     saltField.setText("");
                     barcodeField.setText("");
                 }
-            } catch (NumberFormatException n) {
-                changeAddedLabel("Make sure no non-optional fields are empty, and decimal points are '.' not ',");
+            } catch (NoNegativeException | NoNullException | NumberFormatException n) {
+                changeAddedLabel(n.getMessage());
             }
+        }
+    
+        //Methods for handling exceptions
+        private double checkNumbers(String param, String entry) throws NoNegativeException, NoNullException {
+            checkForNull(param, entry);
+            double value = 0;
+            try {
+                value = Double.parseDouble(entry);
+            } catch (NumberFormatException e) {
+                throw new NumberFormatException(param + " must be a number.");
+            }
+            checkForNegative(param, value);
+            return value;
+        }
+
+        private void checkForNegative(String param, double value) throws NoNegativeException {
+            if (value < 0) {
+                throw new NoNegativeException(param + " cannot be negative.");
+            }
+        }
+
+        private String checkForNull(String param, String entry) throws NoNullException {
+            if (entry == null || entry.equals("")) {
+                throw new NoNullException(param + " cannot be empty.");
+            }
+            return entry;
         }
     }
 
