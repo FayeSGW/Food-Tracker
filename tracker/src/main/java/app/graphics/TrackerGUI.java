@@ -13,6 +13,7 @@ class Test {
     public static void main (String [] args) {
         Dotenv dt = Config.dotenv;
         Config.setDBUrl(dt.get("DATABASE"));
+        Config.setTesting(false);
         
         User user = GetFoodsDB.getUser();
         Diary diary = user.accessDiary();

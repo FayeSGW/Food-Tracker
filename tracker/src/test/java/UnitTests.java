@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,15 +15,27 @@ import org.apache.maven.plugin.surefire.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 
 import app.db.*;
+import app.sql.java.connect.Config;
 
 public class UnitTests {
 
     Database stubDB = new Database("DB");
     Food stubFoodWithDisplayName = new Food(stubDB, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
     Food stubFoodWithNullDisplayName = new Food(stubDB, "Full Name2", null, 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
+    Recipe stubRecipe1 = new Recipe(stubDB, "Recipe Name1", 4);
+
+    
+    
+    @BeforeAll
+    public static void setTestingEnv() {
+        Config.setTesting(true);
+    }
+    
+    
 
     //-------------------FOOD TESTS------------------
     @ParameterizedTest
@@ -62,7 +75,7 @@ public class UnitTests {
             ArrayList<String> expected = new ArrayList<String>(Arrays.asList("Food Type"));
 
             stubFoodWithDisplayName.addFoodType("Food Type");
-            ArrayList<String> actual = stubFoodWithDisplayName.showFoodTypes();
+            HashSet<String> actual = stubFoodWithDisplayName.showFoodTypes();
             assertEquals(1, actual.size());
             assertIterableEquals(expected, actual);
         }
@@ -70,8 +83,8 @@ public class UnitTests {
         @Test
         public void test004_AssertFoodTypeRemovedCorrectly() {
             stubFoodWithDisplayName.removeFoodType("Food Type");
-            ArrayList<String> actual = stubFoodWithDisplayName.showFoodTypes();
-            ArrayList<String> expected = new ArrayList<String>();
+            HashSet<String> actual = stubFoodWithDisplayName.showFoodTypes();
+            HashSet<String> expected = new HashSet<String>();
 
             assertEquals(0, actual.size());
             assertIterableEquals(expected, actual);
@@ -88,13 +101,25 @@ public class UnitTests {
         assertEquals(expectedNumberIngredients, recipe.numberIngredients());
     }
 
+    @Test
+    public void test006_AssertRecipeEditedCorrectly() {
+        stubRecipe1.edit("EditName", 10);
+        
+        assertEquals("EditName", stubRecipe1.showName());
+        assertEquals(10, stubRecipe1.weight());
+        assertEquals(0, stubRecipe1.numberIngredients());
+
+        stubRecipe1 = new Recipe(stubDB, "Recipe Name1", 4);
+    }
+
     @Nested
     @TestMethodOrder(MethodOrderer.DisplayName.class)
     class TestingIngredientsAddingandRemoving {
 
+
         @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithOneIngredientAdded")
-        public void test006_AssertSingleIngredientAddedCOrrectly(Recipe recipe, Food ingredient, int ingredientAmount, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
+        public void test007_AssertSingleIngredientAddedCOrrectly(Recipe recipe, Food ingredient, int ingredientAmount, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
             Recipe rec = recipe;
             recipe.addFoodIngredient(ingredient, ingredient.showName(), ingredientAmount);
             
@@ -106,7 +131,7 @@ public class UnitTests {
 
         @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithTwoIngredientsAdded")
-        public void test007_AssertSecondIngredientAddedCorrectly(Recipe recipe, Food ingredient1, Food ingredient2, int ingredientAmount, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
+        public void test008_AssertSecondIngredientAddedCorrectly(Recipe recipe, Food ingredient1, Food ingredient2, int ingredientAmount, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
             Recipe rec = recipe;
             recipe.addFoodIngredient(ingredient2, ingredient2.showName(), ingredientAmount);
             assertEquals(expectedRecipeName, recipe.showName());
@@ -117,7 +142,7 @@ public class UnitTests {
 
         @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithIngredientsRemoved")
-        public void test008_AssertIngredientRemovedCorrectly(Recipe recipe, Food ingredient, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
+        public void test009_AssertIngredientRemovedCorrectly(Recipe recipe, Food ingredient, String expectedRecipeName, int expectedNumberIngredients, Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition) {
             recipe.removeIngredient1(ingredient, ingredient.showName());
             assertEquals(expectedRecipeName, recipe.showName());
             assertEquals(expectedNumberIngredients, recipe.numberIngredients());

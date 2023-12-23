@@ -1,6 +1,6 @@
 package app.db;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 import app.sql.java.connect.*;
 
@@ -8,8 +8,8 @@ public class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);
     private String unit, displayName;
     private String barcode;
-    private ArrayList<String> foodType;
-    private ArrayList<Recipe> inRecipes;
+    private HashSet<String> foodType;
+    private HashSet<Recipe> inRecipes;
 
     public Food(Database data, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         super(data, name, weight);
@@ -20,8 +20,8 @@ public class Food extends SupFood{
         }
         this.barcode = barcode;
         this.unit = unit;
-        foodType = new ArrayList<>();
-        inRecipes = new ArrayList<>();
+        foodType = new HashSet<>();
+        inRecipes = new HashSet<>();
         this.nutrition[0] = calories; this.nutrition[1] = fat; this.nutrition[2] = satfat; this.nutrition[3] = carbs; this.nutrition[4] = sugar; this.nutrition[5] = fibre; this.nutrition[6] = protein; this.nutrition[7] = salt;
         }
 
@@ -41,10 +41,16 @@ public class Food extends SupFood{
         return displayName;
     }
 
+    //When a food item is added to a recipe as an ingredient, that recipe is added to the inRecipes list
     public void addRecipe(Recipe recipe) {
         inRecipes.add(recipe);
     }
 
+    public void removeRecipe(Recipe recipe) {
+        inRecipes.remove(recipe);
+    }
+
+    //Add food type, and then add that type to all recipes which contain this food as an ingredient
     public void addFoodType(String type) {
         foodType.add(type);
         for (SupFood food: data.access().values()) {
@@ -56,6 +62,7 @@ public class Food extends SupFood{
             }
         }
     }
+
 
     public void removeFoodType(String type) {
         foodType.remove(type);
@@ -72,7 +79,7 @@ public class Food extends SupFood{
         }*/
     }
 
-    public ArrayList<String> showFoodTypes() {
+    public HashSet<String> showFoodTypes() {
         return foodType;
     }
 

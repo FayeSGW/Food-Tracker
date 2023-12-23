@@ -18,4 +18,14 @@ public class Config {
     public static String getDBUrl() {
         return url;
     }
+
+    public static boolean isTesting;
+    
+    public static void setTesting(boolean set) {
+        isTesting = set;
+    }
+
+    public static boolean checkTesting() {
+        return isTesting;
+    }
 }
