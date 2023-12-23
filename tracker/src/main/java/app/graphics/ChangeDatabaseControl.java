@@ -84,10 +84,10 @@ class ChangeDatabaseControl {
 
     boolean nameCheck(NewFoodGUI fGUI, String name, String displayName) {
         if (!data.nameCheck(name)) {
-            fGUI.changeAddedLabel("There is already a food with this name!");
+            fGUI.changeAddedLabel("There is already a food/recipe with this name!");
             return false;
         } else if (!data.nicknameCheck(displayName)) {
-            fGUI.changeAddedLabel("There is already a food with this display name!");
+            fGUI.changeAddedLabel("There is already a food/recipe with this display name!");
             return false;
         }
         return true;
@@ -106,13 +106,23 @@ class ChangeDatabaseControl {
 
     boolean saveNewRecipe(NewRecipeGUI rGUI, String name, double amount) {
         if (!data.nameCheck(name)) {
-            rGUI.setInfoLabel("There is already a recipe with that name!");
+            rGUI.setInfoLabel("There is already a food/recipe with that name!");
             return false;
-        } 
-        
+        }
+        if (!data.nicknameCheck(name)) {
+            rGUI.setInfoLabel("There is already a food/recipe with that name!");
+            return false;
+        }
         data.addRecipe(name, amount);
         EditFoodRecipeDatabase.addRecipe(name, amount);
+        for (String s: data.access().keySet()) {
+            System.out.println(s);
+        }
         return true;
+        
+        
+        
+       
         //recipeName = "";
     }
 
@@ -154,8 +164,8 @@ class ChangeDatabaseControl {
             EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
         }
 
-        System.out.println(fullName);
-        System.out.println(item instanceof Recipe);
+        //System.out.println(fullName);
+        //System.out.println(item instanceof Recipe);
     }
 
     int ingredientsInRecipe(String name) {

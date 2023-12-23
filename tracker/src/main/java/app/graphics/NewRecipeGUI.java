@@ -2,11 +2,9 @@ package app.graphics;
 
 import java.awt.*;
 import java.awt.event.*;
-
-import javax.sound.midi.Track;
 import javax.swing.*;
-
 import java.util.HashMap;
+import exceptions.*;
 
 class NewRecipeGUI {
     ChangeDatabaseControl control;
@@ -65,6 +63,7 @@ class NewRecipeGUI {
         infoLabel = new JLabel(); whole.add(infoLabel);
 
         window.pack();
+        window.setSize(400, 400);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
     }
@@ -79,6 +78,7 @@ class NewRecipeGUI {
         addIngredientButton.setEnabled(true);
         deleteButton.setEnabled(true);
         doneButton.setEnabled(true);
+        setInfoLabel("Recipe Created");
     }
 
     void addIngredient() {
@@ -136,21 +136,26 @@ class NewRecipeGUI {
 
         @Override
         public void actionPerformed (ActionEvent e) {
-            String name = nameField.getText();
-            int servings;
-            if (amountField.getText() == null || amountField.getText().equals("")) {
-                servings = 1;
-            } else {
-                servings = Integer.parseInt(amountField.getText());
-            }
-
-            if (name != null) {
-                boolean success = control.saveNewRecipe(rGUI, name, servings);
-                if (success) {
-                    control.recipe(name);
-                    setRecipeName(name);
+            try {
+                String name = ExHandling.checkForNull("Name", nameField.getText());
+                int servings;
+                if (amountField.getText() == null || amountField.getText().equals("")) {
+                    servings = 1;
+                } else {
+                    servings = ExHandling.checkNumbersInts("Amount", amountField.getText());
                 }
+
+                if (name != null) {
+                    boolean success = control.saveNewRecipe(rGUI, name, servings);
+                    System.out.println(success);
+                    if (success) {
+                        control.recipe(name);
+                        setRecipeName(name);
+                    }
                 
+                }
+            } catch (NumberFormatException | NoNegativeException | NoNullException n) {
+                infoLabel.setText(n.getMessage());
             }
 
             //addIngredientButton.setEnabled(true);

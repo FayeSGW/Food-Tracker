@@ -3,6 +3,11 @@ package app.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import exceptions.ExHandling;
+import exceptions.NoNegativeException;
+import exceptions.NoNullException;
+
 import java.time.LocalDate;
 
 class UpdateWeightGUI {
@@ -54,9 +59,13 @@ class UpdateWeightGUI {
         }
         @Override
         public void actionPerformed (ActionEvent e) {
-            double weight = Double.valueOf(input.getText());
-            control.updateWeight(date, weight);
-            window.dispose();
+            try {
+                double weight = ExHandling.checkNumbers("Weight", input.getText());
+                control.updateWeight(date, weight);
+                window.dispose();
+            } catch (NumberFormatException | NoNegativeException | NoNullException n) {
+                
+            }
         }
     }
 

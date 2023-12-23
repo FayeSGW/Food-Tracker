@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import exceptions.ExHandling;
+import exceptions.NoNegativeException;
+import exceptions.NoNullException;
+
 import java.util.ArrayList;
 
 class AddFoodGUI {
@@ -233,7 +237,7 @@ class AddFoodGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 
-                double amount = Double.valueOf(amountInput.getText());
+                double amount = ExHandling.checkNumbers("Amount", amountInput.getText());
                 String itemName = foodsList.getSelectedValue();
                 if (type.equals("diary")) {
                     String meal = (String)mealChooser.getSelectedItem();
@@ -245,7 +249,7 @@ class AddFoodGUI {
                 //System.out.println(itemName);
                 amountInput.setText("");
                 searchBar.requestFocusInWindow();
-            } catch (NumberFormatException n) {}
+            } catch (NumberFormatException | NoNegativeException | NoNullException n) {}
         }
     }
 

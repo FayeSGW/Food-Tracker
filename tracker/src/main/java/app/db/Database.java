@@ -26,9 +26,6 @@ public class Database {
     }
 
     public Recipe addRecipe(String name, double servings) {
-        if (!addCheck(name)) {
-            System.out.println("OK!");
-        }
         Recipe recipe = new Recipe(this, name, servings);
         database.put(name, recipe);
         displayDatabase.put(name, recipe);

@@ -103,6 +103,7 @@ public class GetFoodsDB {
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
                 String instructs = rrs.getString("Instructions");
                 
+                System.out.println(recipeName);
                 Recipe rec = (Recipe)d.findItem(recipeName);
                 if (rec == null) {
                     rec = d.addRecipe(recipeName, servings);

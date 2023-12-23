@@ -4,8 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import exceptions.NoNegativeException;
-import exceptions.NoNullException;
+import exceptions.*;
 
 class NewFoodGUI {
     ChangeDatabaseControl control;
@@ -128,23 +127,23 @@ class NewFoodGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
-                String newName = checkForNull("Name", nameField.getText().trim());
+                String newName = ExHandling.checkForNull("Name", nameField.getText().trim());
                 String displayName = displayNameField.getText().trim();
                 if (displayName == null || displayName.equals("")) {
                     displayName = newName;
                 }
 
-                double amount = checkNumbers("Amount", amountField.getText().trim());
-                String unit = checkForNull("Unit", unitField.getText().trim());
+                double amount = ExHandling.checkNumbers("Amount", amountField.getText().trim());
+                String unit = ExHandling.checkForNull("Unit", unitField.getText().trim());
 
-                double calories = checkNumbers("Calories", caloriesField.getText().trim());
-                double fat = checkNumbers("Fat", fatField.getText().trim());
-                double satfat = checkNumbers("Saturated Fat", satfatField.getText().trim());
-                double carbs = checkNumbers("Carbs", carbsField.getText().trim());
-                double sugar = checkNumbers("Sugar", sugarField.getText().trim());
-                double fibre = checkNumbers("FIbre", fibreField.getText().trim());
-                double protein = checkNumbers("Protein", proteinField.getText().trim());
-                double salt = checkNumbers("Salt", saltField.getText().trim());
+                double calories = ExHandling.checkNumbers("Calories", caloriesField.getText().trim());
+                double fat = ExHandling.checkNumbers("Fat", fatField.getText().trim());
+                double satfat = ExHandling.checkNumbers("Saturated Fat", satfatField.getText().trim());
+                double carbs = ExHandling.checkNumbers("Carbs", carbsField.getText().trim());
+                double sugar = ExHandling.checkNumbers("Sugar", sugarField.getText().trim());
+                double fibre = ExHandling.checkNumbers("FIbre", fibreField.getText().trim());
+                double protein = ExHandling.checkNumbers("Protein", proteinField.getText().trim());
+                double salt = ExHandling.checkNumbers("Salt", saltField.getText().trim());
                 
                 String barcode = barcodeField.getText().trim();
                 if (barcode.equals("")) {
@@ -181,33 +180,7 @@ class NewFoodGUI {
             } catch (NoNegativeException | NoNullException | NumberFormatException n) {
                 changeAddedLabel(n.getMessage());
             }
-        }
-    
-        //Methods for handling exceptions
-        private double checkNumbers(String param, String entry) throws NoNegativeException, NoNullException {
-            checkForNull(param, entry);
-            double value = 0;
-            try {
-                value = Double.parseDouble(entry);
-            } catch (NumberFormatException e) {
-                throw new NumberFormatException(param + " must be a number.");
-            }
-            checkForNegative(param, value);
-            return value;
-        }
-
-        private void checkForNegative(String param, double value) throws NoNegativeException {
-            if (value < 0) {
-                throw new NoNegativeException(param + " cannot be negative.");
-            }
-        }
-
-        private String checkForNull(String param, String entry) throws NoNullException {
-            if (entry == null || entry.equals("")) {
-                throw new NoNullException(param + " cannot be empty.");
-            }
-            return entry;
-        }
+        }   
     }
 
     class finished implements ActionListener {

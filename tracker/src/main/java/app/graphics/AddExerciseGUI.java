@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.time.LocalDate;
 
+import exceptions.*;
+
 class AddExerciseGUI {
     TrackerControl control;
     LocalDate date;
@@ -94,8 +96,8 @@ class AddExerciseGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 String name = nameInput.getText();
-                int mins = Integer.valueOf(minsInput.getText());
-                int secs = Integer.valueOf(secsInput.getText());
+                int mins = ExHandling.checkNumbersInts("Minutes", minsInput.getText());
+                int secs = ExHandling.checkNumbersInts("Seconds", secsInput.getText());
 
                 if (secs > 59) {
                     int addMins = secs/60;
@@ -115,7 +117,7 @@ class AddExerciseGUI {
                 window.dispose();
                 
                 
-            } catch (NumberFormatException n) {
+            } catch (NoNegativeException | NoNullException | NumberFormatException n) {
                 
             }
         }
