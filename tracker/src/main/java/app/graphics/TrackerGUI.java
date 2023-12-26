@@ -30,6 +30,7 @@ class TrackerGUI {
     SummaryGUI sGUI;
     DiaryGUI dGUI;
     ChangeDatabaseGUI dbGUI;
+    UserGUI uGUI;
     JFrame window;
     JTabbedPane tabbedPane;
 
@@ -43,11 +44,13 @@ class TrackerGUI {
 
 
 
-    TrackerGUI (TrackerControl control, String name, SummaryGUI sGUI, DiaryGUI dGUI, ChangeDatabaseGUI dbGUI) {
+    TrackerGUI (TrackerControl control, String name, SummaryGUI sGUI, DiaryGUI dGUI, ChangeDatabaseGUI dbGUI,
+                UserGUI uGUI) {
         this.control = control;
         this.sGUI = sGUI;
         this.dGUI = dGUI;
         this.dbGUI = dbGUI;
+        this.uGUI = uGUI;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -73,7 +76,7 @@ class TrackerGUI {
         database = dbGUI;
         tabbedPane.add("Database", database);
 
-        profile = new JPanel();
+        profile = uGUI; 
         tabbedPane.add("Profile", profile);
 
         //SUMMARY TAB

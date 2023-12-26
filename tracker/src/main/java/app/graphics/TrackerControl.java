@@ -19,6 +19,8 @@ class TrackerControl {
     ChangeDatabaseGUI dbGUI;
     //DiaryControl dCont;
     //CalendarGUI cGUI;
+    UserControl uControl;
+    UserGUI uGUI;
     User user;
     Diary diary;
     Database data;
@@ -35,8 +37,10 @@ class TrackerControl {
         dGUI = new DiaryGUI(this);
         dbControl = new ChangeDatabaseControl(this);
         dbGUI = dbControl.showDbGUI();
-        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI);
-             
+        uControl = new UserControl(this, user);
+        uGUI = uControl.showUserGUI();
+
+        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI, uGUI);  
     }
 
     public User showUser() {
@@ -332,5 +336,9 @@ class TrackerControl {
         chooseDate(tempDateForCopy);
         tempDateForCopy = null;
         updateNutrition();
+    }
+
+    void setUserTempDOB(LocalDate date) {
+        uGUI.changeDOBLabel(date.toString());
     }
 }

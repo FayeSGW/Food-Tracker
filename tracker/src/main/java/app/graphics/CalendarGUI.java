@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.stream.*;
 
 /*class CalTest {
     public static void main (String [] args) {
@@ -33,7 +35,9 @@ class CalendarGUI {
 
     String[] dayLabelList = {"M", "T", "W", "T", "F", "S", "S"};
     String[] chooseMonthList = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    Integer[] chooseYearList = {2020, 2021, 2022, 2023, 2024, 2025, 2026};
+    
+    Integer[] chooseYearList;  
+    
 
     CalendarGUI(TrackerControl control, LocalDate date, String type) {
         this.control = control;
@@ -60,6 +64,14 @@ class CalendarGUI {
         days = new JPanel(); days.setLayout(new GridLayout(7,7));
         todayText = new JPanel();
         whole.add(monthYear, BorderLayout.NORTH); 
+
+        //Sets different year ranges for choosing DOB (via User profie) and choosing a day for the diary
+        if (type == null || type.equals("copy")) {
+            chooseYearList = IntStream.range(2020, 2027).boxed().toArray(Integer[]::new);
+        } else if (type.equals("DOB")) {
+            chooseYearList = IntStream.range(1950, 2027).boxed().toArray(Integer[]::new);
+            today = date;
+        }
 
         prevYear = new JButton("<<"); prevYear.addActionListener(new goToPrevYear());
         prevMonth = new JButton("<"); prevMonth.addActionListener(new goToPrevMonth());
@@ -89,10 +101,15 @@ class CalendarGUI {
                 days.add(d);
             }
         }
-        
         whole.add(days, BorderLayout.CENTER);
 
-        todayLabel = new JLabel("Today's Date: " + today.toString());
+        //Change label depending on if calendar being used for the diary or for updating DOB
+        if (type == null || type.equals("copy")) {
+            todayLabel = new JLabel("Today's Date: " + today.toString());
+            //Add capability of clicking
+        } else if (type.equals("DOB")) {
+            todayLabel = new JLabel("Current DOB: " + today.toString());
+        }
         todayText.add(todayLabel);
         whole.add(todayText, BorderLayout.SOUTH);
 
@@ -122,7 +139,7 @@ class CalendarGUI {
         LocalDate firstOfMonth = LocalDate.of(year, month, 1); 
         int weekDay = firstOfMonth.getDayOfWeek().getValue();
         int monthLength = firstOfMonth.lengthOfMonth();
-        int d = 1;
+        int dayNum = 1;
 
         LocalDate current = control.showCurrentDate();
         int currentDate = current.getDayOfMonth();
@@ -131,13 +148,14 @@ class CalendarGUI {
 
         for (int i = weekDay-1; i < (weekDay + monthLength-1); i++) {
             JButton button = grid[i];
-            button.setText(Integer.toString(d));
-            if (d == currentDate && currentMonth == month && currentYear == year) {
+            button.setText(Integer.toString(dayNum));
+            if (dayNum == currentDate && currentMonth == month && currentYear == year) {
                 button.setBackground(Color.GREEN);
             }
-            d++;
+            dayNum++;
         }
 
+        //Sets day labels for previous month's overlapping days correctly
         int prevMonthLength = updatePrev(firstOfMonth);
         for (int j = (weekDay-2); j >= 0 ; j--) {
             JButton button = grid[j];
@@ -146,15 +164,15 @@ class CalendarGUI {
             prevMonthLength--;
         }
       
-        d = 1;
+        //Sets day labels for next month's overlapping days correctly
+        dayNum = 1;
         for (int k = weekDay+monthLength-1; k < 42; k++) {
             JButton button = grid[k];
-            button.setText(Integer.toString(d));
+            button.setText(Integer.toString(dayNum));
             button.setBackground(Color.GRAY);
-            d++;
+            dayNum++;
         }
-
-        d = 1;
+        dayNum = 1;
     }
 
     private int updatePrev(LocalDate current) {
@@ -164,39 +182,45 @@ class CalendarGUI {
         } else {
             prev = LocalDate.of(year, month-1, 20);
         }
-
         int prevMonthLength = prev.lengthOfMonth();
         return prevMonthLength;
     }
 
-    class goToPrevMonth implements ActionListener {
-        @Override 
-        public void actionPerformed (ActionEvent e) {
-            if (month == 1) {
+    private void goToPrevMonth() {
+        if (month == 1) {
                 month = 12;
                 year = year-1;
                 years.setSelectedIndex(setComboBox());
             } else {
                 month = month-1;
             }
-            update();
             months.setSelectedIndex(month-1);
-
-        }
     }
 
-    class goToNextMonth implements ActionListener {
-        @Override 
-        public void actionPerformed (ActionEvent e) {
-            if (month == 12) {
+    private void goToNextMonth() {
+        if (month == 12) {
                 month = 1;
                 year = year+1;
                 years.setSelectedIndex(setComboBox());
             } else {
                 month = month + 1;
             }
-            update();
             months.setSelectedIndex(month-1);
+    }
+
+    class goToPrevMonth implements ActionListener {
+        @Override 
+        public void actionPerformed (ActionEvent e) {
+            goToPrevMonth();
+            update();
+        }
+    }
+
+    class goToNextMonth implements ActionListener {
+        @Override 
+        public void actionPerformed (ActionEvent e) {
+            goToNextMonth();
+            update();
         }
     }
 
@@ -218,13 +242,12 @@ class CalendarGUI {
         }
     }
 
-
     class chooseMonth implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
             month = months.getSelectedIndex() + 1;
             update();
-            //Update day grid and send month to control
+            //Update day grid and dropdowns
         }
     }
 
@@ -233,35 +256,50 @@ class CalendarGUI {
         public void actionPerformed (ActionEvent e) {
             year = (int)years.getSelectedItem();
             update();
-            //Update day grid and send year to control
+            //Update day grid and dropdowns
         }
     }
 
     class chooseDay implements ActionListener {
-        
         @Override 
         public void actionPerformed (ActionEvent e) {
             JButton button = (JButton) e.getSource();
             day = Integer.parseInt(button.getText());
+
+            //If user clicks on a day from the previous month, update the month/year so that they're
+            // taken to the correct day
+            for (int i = 0; i < 7; i++) {
+                JButton gridButton = grid[i];
+                if (gridButton == button) {
+                    if (day <= i+1) {
+                        break;
+                    }
+                    goToPrevMonth();
+                }
+            }
+
+            //If user clicks on a day from the next month, update the month/year so that they're
+            // taken to the correct day
+            for (int i = 41; i > 34; i--) {
+                JButton gridButton = grid[i];
+                if (gridButton == button) {
+                    if (day > 15) {
+                        break;
+                    } 
+                    goToNextMonth();
+                }
+            }
+
             LocalDate newDate = LocalDate.of(year, month, day);
-            if (type == null) {
+            if (type == null) { //Calendar used for basic diary entries
                 control.chooseDate(newDate);
             }
-            else {
+            else if (type.equals("copy")) { //Calendar used for copying meals
                 control.setTempDate(newDate);
+            } else if (type.equals("DOB")) { //Calendar used to choose DOB
+                control.setUserTempDOB(newDate);
             }
-            
-            //Send day to control
-
             calendar.dispose();
-        }
-    }
-
-    class prevMonthAL implements ActionListener {
-
-        @Override
-        public void actionPerformed (ActionEvent e) {
-
         }
     }
 }
