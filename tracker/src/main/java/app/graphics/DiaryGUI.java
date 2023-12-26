@@ -335,7 +335,6 @@ class DiaryGUI extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.editExerciseDialogue("edit", workout);
-                    System.out.println(workout);
                 }
             });
         }

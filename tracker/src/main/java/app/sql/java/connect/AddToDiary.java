@@ -10,15 +10,22 @@ import app.diary.*;
 public class AddToDiary {
 
 
-    public static void addUser(User user) {
+    public static void addUser(User user, String oldName) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String string = "INSERT INTO UserData(Name, Gender, Weight, Height, DOB, Goal, Rate, Water) VALUES(?,?,?,?,?,?,?,?)";
+        String newstring = "INSERT INTO UserData(Name, Gender, Weight, Height, DOB, Goal, Rate, Water) VALUES(?,?,?,?,?,?,?,?)";
+        String updateString = "UPDATE UserData SET Name = ?, Gender = ?, Weight = ?, Height = ?, DOB = ?, GOal = ?, Rate = ?, Water = ? WHERE Name = ?";
 
         try {
             conn = Connect.connect();
-            stmt = conn.prepareStatement(string);
 
+            if (oldName == null) {
+                stmt = conn.prepareStatement(newstring);
+            } else {
+                stmt = conn.prepareStatement(updateString);
+                stmt.setString(9, oldName);
+            }
+            
             stmt.setString(1, user.showName());
             stmt.setString(2, user.showGender());
             stmt.setDouble(3, user.showWeight());
@@ -30,7 +37,7 @@ public class AddToDiary {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(":(");
+            System.out.println(":(" + e.getMessage());
         } finally {
             try {
                 stmt.close();

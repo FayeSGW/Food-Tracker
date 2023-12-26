@@ -47,7 +47,6 @@ class CalendarGUI {
         day = date.getDayOfMonth();
         this.type = type;
 
-
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
@@ -57,8 +56,7 @@ class CalendarGUI {
         calendar = new JFrame("Choose Date");
         calendar.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        whole = new JPanel(new BorderLayout());
-        calendar.add(whole);
+        whole = new JPanel(new BorderLayout()); calendar.add(whole);
 
         monthYear = new JPanel(new FlowLayout());
         days = new JPanel(); days.setLayout(new GridLayout(7,7));
@@ -94,7 +92,6 @@ class CalendarGUI {
         for (int r = 0; r < 6; r++) {
             for (int c = 0; c < 7; c++) {
                 JButton d = new JButton("0");
-                //daysGrid[r][c] = d;
                 grid[a] = d;
                 a++;
                 d.addActionListener(new chooseDay());
@@ -106,7 +103,13 @@ class CalendarGUI {
         //Change label depending on if calendar being used for the diary or for updating DOB
         if (type == null || type.equals("copy")) {
             todayLabel = new JLabel("Today's Date: " + today.toString());
-            //Add capability of clicking
+            todayLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.chooseDate(LocalDate.now());
+                    calendar.dispose();
+                }
+            });
         } else if (type.equals("DOB")) {
             todayLabel = new JLabel("Current DOB: " + today.toString());
         }

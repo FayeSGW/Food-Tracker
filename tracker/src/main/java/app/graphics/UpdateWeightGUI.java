@@ -60,7 +60,7 @@ class UpdateWeightGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
-                double weight = ExHandling.checkNumbers("Weight", input.getText());
+                double weight = ExHandling.checkDoublesIncNullCheck("Weight", input.getText());
                 control.updateWeight(date, weight);
                 window.dispose();
             } catch (NumberFormatException | NoNegativeException | NoNullException n) {

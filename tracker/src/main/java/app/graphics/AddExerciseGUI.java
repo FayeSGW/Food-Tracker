@@ -96,8 +96,8 @@ class AddExerciseGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 String name = nameInput.getText();
-                int mins = ExHandling.checkNumbersInts("Minutes", minsInput.getText());
-                int secs = ExHandling.checkNumbersInts("Seconds", secsInput.getText());
+                int mins = ExHandling.checkIntsIncNullCheck("Minutes", minsInput.getText());
+                int secs = ExHandling.checkIntsIncNullCheck("Seconds", secsInput.getText());
 
                 if (secs > 59) {
                     int addMins = secs/60;

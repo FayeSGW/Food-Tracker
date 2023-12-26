@@ -1,10 +1,8 @@
 package exceptions;
 
 public class ExHandling {
-    // Method to check that input numbers are correct - 
-    // they cannot be empty, a non-number, or negative.
-    public static double checkNumbers(String param, String entry) throws NoNegativeException, NoNullException {
-        checkForNull(param, entry);
+
+    public static double checkDoubles(String param, String entry) throws NoNegativeException {
         double value = 0;
         try {
             value = Double.parseDouble(entry);
@@ -15,8 +13,7 @@ public class ExHandling {
         return value;
     }
 
-    public static int checkNumbersInts(String param, String entry) throws NoNegativeException, NoNullException {
-        checkForNull(param, entry);
+    public static int checkInts(String param, String entry) throws NoNegativeException {
         double value = 0;
         try {
             value = Double.parseDouble(entry);
@@ -25,6 +22,17 @@ public class ExHandling {
         }
         checkForNegative(param, value);
         return (int) value;
+    }
+    // Method to check that input numbers are correct - 
+    // they cannot be empty, a non-number, or negative.
+    public static double checkDoublesIncNullCheck(String param, String entry) throws NoNegativeException, NoNullException {
+        checkForNull(param, entry);
+        return checkDoubles(param, entry);
+    }
+
+    public static int checkIntsIncNullCheck(String param, String entry) throws NoNegativeException, NoNullException {
+        checkForNull(param, entry);
+        return checkInts(param, entry);
     }
 
     //Method to check that numbers are positive

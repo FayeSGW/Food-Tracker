@@ -237,7 +237,7 @@ class AddFoodGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 
-                double amount = ExHandling.checkNumbers("Amount", amountInput.getText());
+                double amount = ExHandling.checkDoublesIncNullCheck("Amount", amountInput.getText());
                 String itemName = foodsList.getSelectedValue();
                 if (type.equals("diary")) {
                     String meal = (String)mealChooser.getSelectedItem();

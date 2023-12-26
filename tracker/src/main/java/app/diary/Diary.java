@@ -57,56 +57,18 @@ public class Diary implements java.io.Serializable {
         return d;
     }
 
-    /*public String showDay(LocalDate date) {
-        Day d = this.addDay(date);
-        //Day d = diary.get(date);
-        current = date;
-        return d.toString();
-    }*/
-
-    public Day getDay(LocalDate date) {
+    public Day goToDay(LocalDate date) {
         Day day = this.addDay(date);
         current = date;
-        //return diary.get(date);
         return day;
     }
 
-    /*public Day next(LocalDate date) {
-        LocalDate nxt = diary.higherKey(date);
-        try {
-            diary.get(nxt);
-        } catch (NullPointerException e) {
-            /*String[] day = date.split("-");
-            int[] dayInt = {Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])};
-            LocalDate dayDate = LocalDate.of(dayInt[0], dayInt[1], dayInt[2]);
-            LocalDate nextDay = dayDate.plusDays(1);
-            nxt = nextDay.toString();
-            this.addDay(nxt);
-         }
-        //System.out.println(nxt);
-        current = nxt;
-        return diary.get(nxt);
-    }*/
-
-    /*public Day previous(LocalDate date) {
-        LocalDate prev = diary.lowerKey(date);
-        try {
-            diary.get(prev);
-        } catch (NullPointerException e) {
-            String[] day = date.split("-");
-            int[] dayInt = {Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])};
-            LocalDate dayDate = LocalDate.of(dayInt[0], dayInt[1], dayInt[2]);
-            LocalDate prevDay = dayDate.minusDays(1);
-            prev = prevDay.toString();
-            this.addDay(prev);
-        }
-        current = prev;
-        return diary.get(prev);
-    }*/
+    public Day getDay(LocalDate date) {
+        return diary.get(date);
+    }
 
     public Day goToToday() {
         LocalDate today = LocalDate.now();
-        //String todayS = today.toString();
         current = today;
         return diary.get(today);
     }

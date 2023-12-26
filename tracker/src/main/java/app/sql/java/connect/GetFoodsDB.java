@@ -162,7 +162,7 @@ public class GetFoodsDB {
                 String dateString = frs.getString("Date");
                 
                 LocalDate date = LocalDate.parse(dateString);
-                Day dayObj = diary.getDay(date);
+                Day dayObj = diary.goToDay(date);
 
                 if (recipe == null) {
                     dayObj.addFood(meal, food, amount);
@@ -185,7 +185,7 @@ public class GetFoodsDB {
                 String dateString = ers.getString("Date");
                 
                 LocalDate date = LocalDate.parse(dateString);
-                Day dayObj = diary.getDay(date);
+                Day dayObj = diary.goToDay(date);
                 
                 dayObj.addExercise(index, exercise, exMins, exSecs, exCals);
             }

@@ -133,17 +133,17 @@ class NewFoodGUI {
                     displayName = newName;
                 }
 
-                double amount = ExHandling.checkNumbers("Amount", amountField.getText().trim());
+                double amount = ExHandling.checkDoublesIncNullCheck("Amount", amountField.getText().trim());
                 String unit = ExHandling.checkForNull("Unit", unitField.getText().trim());
 
-                double calories = ExHandling.checkNumbers("Calories", caloriesField.getText().trim());
-                double fat = ExHandling.checkNumbers("Fat", fatField.getText().trim());
-                double satfat = ExHandling.checkNumbers("Saturated Fat", satfatField.getText().trim());
-                double carbs = ExHandling.checkNumbers("Carbs", carbsField.getText().trim());
-                double sugar = ExHandling.checkNumbers("Sugar", sugarField.getText().trim());
-                double fibre = ExHandling.checkNumbers("FIbre", fibreField.getText().trim());
-                double protein = ExHandling.checkNumbers("Protein", proteinField.getText().trim());
-                double salt = ExHandling.checkNumbers("Salt", saltField.getText().trim());
+                double calories = ExHandling.checkDoublesIncNullCheck("Calories", caloriesField.getText().trim());
+                double fat = ExHandling.checkDoublesIncNullCheck("Fat", fatField.getText().trim());
+                double satfat = ExHandling.checkDoublesIncNullCheck("Saturated Fat", satfatField.getText().trim());
+                double carbs = ExHandling.checkDoublesIncNullCheck("Carbs", carbsField.getText().trim());
+                double sugar = ExHandling.checkDoublesIncNullCheck("Sugar", sugarField.getText().trim());
+                double fibre = ExHandling.checkDoublesIncNullCheck("FIbre", fibreField.getText().trim());
+                double protein = ExHandling.checkDoublesIncNullCheck("Protein", proteinField.getText().trim());
+                double salt = ExHandling.checkDoublesIncNullCheck("Salt", saltField.getText().trim());
                 
                 String barcode = barcodeField.getText().trim();
                 if (barcode.equals("")) {

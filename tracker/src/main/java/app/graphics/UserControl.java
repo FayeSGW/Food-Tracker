@@ -57,5 +57,17 @@ class UserControl {
         CalendarGUI cGUI = new CalendarGUI(tControl, dob, "DOB");
     }
 
+    public void updateUserParameters(String oldName, String newName, String gender, double weight, int height, String dob,
+        String goal, double rate, int water) {
+            /*user.changeName(name);
+            user.changeGender(gender);
+            user.updateWeight(LocalDate.now(), weight);
+            user.changeHeight(height);
+            user.changeDOB(dob);
+            user.updateGoal(rate, goal);
+            user.setWaterGoal(water);*/
+            user.edit(oldName, newName, gender, weight, height, dob, goal, rate, water);
+        }
+
 
 }

@@ -142,7 +142,7 @@ class NewRecipeGUI {
                 if (amountField.getText() == null || amountField.getText().equals("")) {
                     servings = 1;
                 } else {
-                    servings = ExHandling.checkNumbersInts("Amount", amountField.getText());
+                    servings = ExHandling.checkIntsIncNullCheck("Amount", amountField.getText());
                 }
 
                 if (name != null) {

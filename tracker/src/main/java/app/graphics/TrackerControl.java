@@ -65,10 +65,9 @@ class TrackerControl {
     }
 
     void chooseDate(LocalDate date) {
-        diary.getDay(date);
+        diary.goToDay(date);
         updateDate(date);
         updateNutrition();
-        //System.out.println(diary.showDays().size());
     }
 
     LocalDate showCurrentDate() {
@@ -97,7 +96,7 @@ class TrackerControl {
     //---------------------SUMMARY--------------------------------------------
     //Updating nutrition display on the SummaryGUI
     void updateNutrition() {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         //System.out.println(showCurrentDate());
         double[] remaining = day.showRemainingNutrition();
         double[] nutrition = day.showNutrition();
@@ -128,7 +127,7 @@ class TrackerControl {
         int water = user.showWater();
         sGUI.setWaterProgessBounds(water);
 
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
 
         double[] goals = day.showGoals();
         sGUI.setCalsGoal((int)goals[0]);
@@ -140,7 +139,7 @@ class TrackerControl {
     //-----------------DIARY------------------------------------------------
     //Functionality for Diary tab
     void addFoodToDiary(String meal, String name, double amount) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         day.addFoodFromGUI(meal, name, amount);
         updateNutrition();
     }
@@ -155,19 +154,19 @@ class TrackerControl {
     }
 
     void addWater() {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         day.addWaterFromGUI();
         updateNutrition();
     }
 
     ArrayList<String> showFoodsinMeal(String mealName) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
         return meal.showFoodNames();
     }
 
     String[] showFoodItemNutrition(String mealName, String foodName) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
         double[] nutrition = meal.showFoodItemNutrition(foodName);
         String[] nutritionString = new String[8];
@@ -179,7 +178,7 @@ class TrackerControl {
     }
 
     String showFoodItemAmount(String mealName, String foodName) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
         return meal.showFoodItemAmount(foodName);
     }
@@ -190,28 +189,29 @@ class TrackerControl {
     }
 
     void updateWeight(LocalDate date, double weight) {
-        Day day = diary.getDay(date);
+        Day day = diary.goToDay(date);
         day.addWeightFromGUI(weight);
     }
 
+    //Functionality for user to add/edit workouts
     void addExerciseDialogue(String type) {
         AddExerciseGUI eGUI = new AddExerciseGUI(this, showCurrentDate(), type);
     }
 
     void addExercise(LocalDate date, Integer index, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
-        Day day = diary.getDay(date);
+        Day day = diary.goToDay(date);
         day.addExercisefromGUI(index, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
         updateNutrition();
     }
 
     void editExercise(LocalDate date, Integer index, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
-        Day day = diary.getDay(date);
+        Day day = diary.goToDay(date);
         day.editExercise(index, oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
         
     }
 
     void editExerciseDialogue(String type, Integer index) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         Exercise workout= day.showWorkout(index);
         String workoutName = workout.showName();
         String time = workout.showTime();
@@ -221,13 +221,13 @@ class TrackerControl {
     }
 
     void removeExercise(LocalDate date, Integer index) {
-        Day day = diary.getDay(date);
+        Day day = diary.goToDay(date);
         day.removeExercise(index);
         updateNutrition();
     }
 
     HashMap<Integer, ArrayList<String>> showWorkouts() {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         ArrayList<Exercise> workouts = day.showWorkouts();
         HashMap<Integer, ArrayList<String>> exerciseList = new HashMap<>();
 
@@ -237,7 +237,6 @@ class TrackerControl {
             String cals = Integer.toString(workout.showCalories());
             Integer index = workout.showIndex();
 
-            //System.out.println(name);
             ArrayList<String> details = new ArrayList<>();
             details.add(name); details.add(time); details.add(cals); 
             exerciseList.put(index, details);
@@ -258,14 +257,14 @@ class TrackerControl {
 
     void removeFromMeal(String mealName, String foodName) {
         SupFood food = data.findItem(foodName);
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.remove(food.showName());
         day.remove(mealName, food.showName());
     }
 
     void clearMeal(String mealName) {
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.removeAll();
         day.clearMeal(mealName);
@@ -292,7 +291,7 @@ class TrackerControl {
     void editMealDialogue(String mealName, String foodName) {
         EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "diary", mealName);
         SupFood food = data.findItem(foodName);
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
 
         ArrayList<Object> data = meal.showFood(foodName);
@@ -301,7 +300,7 @@ class TrackerControl {
 
     void editMeal(String mealName, String foodName, double newAmount) {
         SupFood food = data.findItem(foodName);
-        Day day = diary.getDay(showCurrentDate());
+        Day day = diary.goToDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.edit(food.showName(), newAmount);
         day.edit(mealName, food.showName(), newAmount);
@@ -321,18 +320,16 @@ class TrackerControl {
     }
 
     void copyMeal(String fromMeal, String toMeal) {
-        Day fromDay = diary.getDay(showCurrentDate());
+        Day fromDay = diary.goToDay(showCurrentDate());
 
         if (tempDateForCopy == null) {
             return;
         }
 
-        Day toDay = diary.getDay(tempDateForCopy);
+        Day toDay = diary.goToDay(tempDateForCopy);
         Meal from = fromDay.showMeal(fromMeal);
 
         fromDay.copyMeal(from, toMeal, toDay);
-        
-
         chooseDate(tempDateForCopy);
         tempDateForCopy = null;
         updateNutrition();

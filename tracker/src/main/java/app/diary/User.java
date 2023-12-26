@@ -8,6 +8,7 @@ import java.lang.Math.*;
 import exceptions.*;
 
 import app.db.*;
+import app.sql.java.connect.*;
 
 public class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;
@@ -60,6 +61,17 @@ public class User implements java.io.Serializable {
 
     public Diary accessDiary() {
         return diary;
+    }
+
+    public void edit(String oldName, String name, String gender, double weight, int height, String dob, String goal, double rate, int water) {
+        changeName(name);
+        changeGender(gender);
+        updateWeight(LocalDate.now(), weight);
+        changeHeight(height);
+        changeDOB(dob);
+        updateGoal(rate, goal);
+        setWaterGoal(water);
+        AddToDiary.addUser(this, oldName);
     }
 
     public int calculateAge(LocalDate now) throws NoNegativeException {

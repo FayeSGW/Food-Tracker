@@ -4,22 +4,24 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import exceptions.ExHandling;
+import exceptions.NoNegativeException;
+
 class UserGUI extends JPanel {
     UserControl uControl;
     TrackerControl tControl;
 
     JPanel whole, headerPanel, namePanel, genderPanel, dobPanel, heightPanel, weightPanel,
-        goalPanel, ratePanel, waterPanel;
+        goalPanel, ratePanel, waterPanel, footerPanel;
     JLabel headerLabel, nameLabel, genderLabel, dobLabel, dobLabel2, heightLabel, 
-        heightLabel2, weightLabel, weightLabel2, goalLabel, rateLabel, waterLabel;
-    JButton editButton;
-
-    //For when profile being edited
+        heightLabel2, weightLabel, weightLabel2, goalLabel, goalLabel2, rateLabel, 
+        waterLabel, waterLabel2, messageLabel;
     JButton saveButton, dobButton;
     JTextField nameField, heightField, weightField, rateField, waterField;
     JComboBox<String> genderChooser, goalChooser;
 
     String[] genderList = {"Male", "Female"};
+    String[] goalList = {"Lose", "Maintain", "Gain"};
 
     UserGUI(UserControl uControl, TrackerControl tControl) {
         this.uControl = uControl;
@@ -63,10 +65,28 @@ class UserGUI extends JPanel {
         weightPanel.add(weightLabel); weightPanel.add(weightField); weightPanel.add(weightLabel2);
 
         goalPanel = new JPanel(); whole.add(goalPanel);
-
-        ratePanel = new JPanel(); whole.add(ratePanel);
+        goalLabel = new JLabel("Goal: ");
+        goalChooser = new JComboBox<>(goalList); goalChooser.setSelectedItem(uControl.userGoal());
+        goalPanel.add(goalLabel); goalPanel.add(goalChooser);
+        if (uControl.userGoal().equals("Maintain")) {
+            goalLabel2 = new JLabel("weight.");
+        } else {
+            rateField = new JTextField(Double.toString(uControl.userRate()));
+            goalPanel.add(rateField);
+            goalLabel2 = new JLabel("kg per week.");
+        }
+        goalPanel.add(goalLabel2);
 
         waterPanel = new JPanel(); whole.add(waterPanel);   
+        waterLabel = new JLabel("Water Goal: ");
+        waterField = new JTextField(Integer.toString(uControl.userWater()));
+        waterLabel2 = new JLabel(" glasses per day");
+        waterPanel.add(waterLabel); waterPanel.add(waterField); waterPanel.add(waterLabel2);
+
+        footerPanel = new JPanel(); whole.add(footerPanel);
+        messageLabel = new JLabel();
+        saveButton = new JButton("Save changes"); saveButton.addActionListener(new saveChanges(this));
+        footerPanel.add(messageLabel); footerPanel.add(saveButton);
     }
 
     public void changeDOBLabel(String string) {
@@ -77,6 +97,77 @@ class UserGUI extends JPanel {
         @Override
         public void actionPerformed (ActionEvent e) {
             uControl.openCalendar();
+        }
+    }
+
+    class saveChanges implements ActionListener {
+        UserGUI uGUI = null;
+        saveChanges(UserGUI uGUI) {
+            this.uGUI = uGUI;
+        }
+        @Override
+        public void actionPerformed (ActionEvent e) {
+            try {
+                String oldName = uControl.userName();
+                String newName = nameField.getText().trim();
+                if (ifNullDontUpdate(newName)) {
+                    newName = uControl.userName();
+                }
+
+                String newGender = (String)genderChooser.getSelectedItem();
+
+                String newDOB = dobLabel2.getText();
+
+                String newHeightText = heightField.getText();
+                int newHeight = 0;
+                if (ifNullDontUpdate(newHeightText)) {
+                    newHeight = uControl.userHeight();
+                } else {
+                    newHeight = ExHandling.checkInts("Height", newHeightText);
+                }
+
+                String newWeightText = weightField.getText();
+                double newWeight = 0;
+                if (ifNullDontUpdate(newWeightText)) {
+                    newWeight = uControl.userWeight();
+                } else {
+                    newWeight = ExHandling.checkDoubles("Weight", newWeightText);
+                }
+
+                String newGoal = (String)goalChooser.getSelectedItem();
+
+                String newRateText = rateField.getText();
+                double newRate = 0;
+                if (ifNullDontUpdate(newRateText)) {
+                    newRate = uControl.userRate();
+                } else {
+                    newRate = ExHandling.checkDoubles("Rate of weight change", newRateText);
+                }
+
+                String newWaterText = waterField.getText();
+                int newWater = 0;
+                if (ifNullDontUpdate(newWaterText)) {
+                    newWater = uControl.userWater();
+                } else {
+                    newWater = ExHandling.checkInts("Weight", newWaterText);
+                }
+
+                uControl.updateUserParameters(oldName, newName, newGender, newWeight, newHeight, newDOB, newGoal, newRate, newWater);
+                messageLabel.setText("Details updated!");
+                headerLabel.setText("Hi " + uControl.userName() + "!");
+
+            } catch (NumberFormatException | NoNegativeException n) {
+                messageLabel.setText(n.getMessage());
+            }
+        }
+
+        private boolean ifNullDontUpdate(String string) {
+            // If text box is empty, don't update the value
+            if (string == null || string.equals("")) {
+                return true;
+            }
+            return false;
+
         }
     }
     
