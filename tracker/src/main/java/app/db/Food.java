@@ -50,6 +50,10 @@ public class Food extends SupFood{
         inRecipes.remove(recipe);
     }
 
+    public HashSet<Recipe> showRecipes() {
+        return inRecipes;
+    }
+
     //Add food type, and then add that type to all recipes which contain this food as an ingredient
     public void addFoodType(String type) {
         foodType.add(type);

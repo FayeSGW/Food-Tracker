@@ -148,21 +148,27 @@ public class Recipe extends SupFood {
     }*/
 
     public void removeIngredient1(Food food, String name) {
-        double[] weighted = new double[8];
-        double weight = ingredientsList.get(name);
-        for (int i = 0; i < nutrition.length; i++) {
-            weighted[i] = food.showUnitNutrition()[i] * weight; 
-            nutrition[i] = nutrition[i] - weighted[i];
-        }
+        if (ingredientsList.keySet().contains(name)) {
+            double[] weighted = new double[8];
+            double weight = ingredientsList.get(name);
+            for (int i = 0; i < nutrition.length; i++) {
+                weighted[i] = food.showUnitNutrition()[i] * weight; 
+                nutrition[i] = nutrition[i] - weighted[i];
+            }
 
-        for (String type: food.showFoodTypes()) {
-            /*if (!checkIngredientFoodTypes(name, type)) {
-                removeFoodType(type);
-            }*/
-            removeFoodType(type);
+            for (String type: food.showFoodTypes()) {
+                /*if (!checkIngredientFoodTypes(name, type)) {
+                    removeFoodType(type);
+                }*/
+                if (type != null) {
+                    removeFoodType(type);
+                }
+                
+            }
+            food.removeRecipe(this);
+            ingredientsList.remove(name);
         }
-        food.removeRecipe(this);
-        ingredientsList.remove(name);
+        
     }
 
     public void removeIngredient(String name) {

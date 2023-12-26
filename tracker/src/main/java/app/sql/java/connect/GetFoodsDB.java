@@ -143,7 +143,6 @@ public class GetFoodsDB {
                 int water = drs.getInt("Water");
                 double weight = drs.getDouble("Weight");
 
-                //LocalDate date = LocalDate.of(year, month, day);
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.addSavedDays(date);
 

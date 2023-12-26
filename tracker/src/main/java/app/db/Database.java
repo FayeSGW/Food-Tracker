@@ -63,7 +63,6 @@ public class Database {
         return database;
     }
 
-
     public void delete(String fullName, String displayName) {
         database.remove(fullName);
         displayDatabase.remove(displayName);
@@ -112,7 +111,6 @@ public class Database {
         return searchResults; 
     }
 
-
     public SupFood addFromDatabase(String name) {
         if (!database.containsKey(name) && !displayDatabase.containsKey(name)) {
             System.out.println(name + " Not in database!");
@@ -128,11 +126,8 @@ public class Database {
         } else if (displayDatabase.keySet().contains(name)) {
             item = displayDatabase.get(name);
         }
-
         return item;        
     }
-
-    
 
     public boolean isRecipe(String name) {
         SupFood item = findItem(name);
@@ -142,8 +137,7 @@ public class Database {
         return false;
     }
 
-
-    @Override
+    /*@Override
     public String toString() {
         ArrayList<String> db = new ArrayList<>();
         for (String item: database.keySet()) {
@@ -151,5 +145,5 @@ public class Database {
         }
         String list = String.join(", ", db);
         return list;
-    }
+    }*/
 }

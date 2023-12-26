@@ -12,9 +12,10 @@ class DiaryGUI extends JPanel {
     String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
     JPanel[] mealPanels = new JPanel[4];
 
-
-    JPanel dateButtonsPanel, addButtonsPanel, overviewPanel, overviewLabels, eatenPanel, remainingPanel, mealsPanel, waterPanel;
-    JPanel overviewTitlePanel, overviewCaloriesPanel, overviewCarbsPanel, overviewSugarPanel, overviewFatPanel, overviewSatFatPanel, overviewProteinPanel, overviewFibrePanel, overviewSaltPanel;
+    JPanel dateButtonsPanel, addButtonsPanel, overviewPanel, overviewLabels, eatenPanel, remainingPanel, 
+        mealsPanel, waterPanel;
+    JPanel overviewTitlePanel, overviewCaloriesPanel, overviewCarbsPanel, overviewSugarPanel, overviewFatPanel, 
+        overviewSatFatPanel, overviewProteinPanel, overviewFibrePanel, overviewSaltPanel;
     JScrollPane scroll;
     JPanel breakfastPanel, breakfastTitlePanel, breakfastLabelsPanel, breakfastFoodsPanel;
     JPanel lunchPanel, lunchTitlePanel, lunchLabelsPanel, lunchFoodsPanel;
@@ -282,16 +283,12 @@ class DiaryGUI extends JPanel {
             
             if (mealName.equals("Breakfast")) {
                 mp = breakfastFoodsPanel;
-                //breakfastFoodsPanel.add(foodItem);
             } else if (mealName.equals("Lunch")) {
                 mp = lunchFoodsPanel;
-                //lunchFoodsPanel.add(foodItem);
             } else if (mealName.equals("Dinner")) {
                 mp = dinnerFoodsPanel;
-                //dinnerFoodsPanel.add(foodItem);
             } else {
                 mp = snacksFoodsPanel;
-                //snacksFoodsPanel.add(foodItem);
             }
 
             mp.add(foodItem);

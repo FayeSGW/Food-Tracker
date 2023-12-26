@@ -3,7 +3,9 @@ import java.util.stream.Stream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import java.time.LocalDate;
+import java.util.Collections;
 
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -12,7 +14,6 @@ import app.diary.*;
 import exceptions.NoNegativeException;
 
 class UnitTestMethods {
-
 
     static class Stubs {
         public static Food stubFoodWithDisplayName = null;
@@ -79,10 +80,13 @@ class UnitTestMethods {
 
     //---------------------Recipe Arguments-----------------
     protected static Stream<Arguments> providesNewRecipeObjects() {
-        //test_012
+        double[] expectedNutrition = {0, 0, 0, 0, 0, 0, 0, 0};
+        HashMap<String, Double> ingList = new HashMap<>();
+        Set<Map.Entry<String,Double>> expectedIngredientList = ingList.entrySet();
+        
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 4, 0),
-        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 1, 0)
+        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 4, 0, expectedNutrition, expectedIngredientList),
+        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 1, 0, expectedNutrition, expectedIngredientList)
         );
     }
 
@@ -95,17 +99,21 @@ class UnitTestMethods {
         double[] ingredient1_perServing = {350/4.0, 12.3/4.0, 3/4.0, 24/4.0, 10/4.0, ((14.0/100)*100)/4.0, 37/4.0, 0.4/4.0};
         HashMap<String, Double> list1 = new HashMap<>(Map.of("Full Name1", 100.0));
         Set<Map.Entry<String,Double>> list1Set = list1.entrySet();
+        HashSet<Recipe> ingredient1RecipeList = new HashSet<>();
+        Collections.addAll(ingredient1RecipeList, Stubs.stubRecipe1);
 
         //Recipe 2
         //100 g of ingredient, 1 serving
         double[] ingredient2_perServing = {350*2.0, 12.3*2.0, 3*2.0, 24*2.0, 10*2.0, ((14.0/50)*100), 37*2.0, 0.4*2.0};
         HashMap<String, Double> list2 = new HashMap<>(Map.of("Full Name2", 100.0));
         Set<Map.Entry<String,Double>> list2Set = list2.entrySet();
+        HashSet<Recipe> ingredient2RecipeList = new HashSet<>();
+        Collections.addAll(ingredient2RecipeList, Stubs.stubRecipe2);
 
         //Recipe Object - Ingredient Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List (Keys) - Expected Ingredients List (Values) - Expected Nutrition
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, 100, "Recipe Name1", 1, list1Set, ingredient1_perServing),
-        Arguments.of(Stubs.stubRecipe2, Stubs.stubFoodWithNullDisplayName, 100,  "Recipe Name2", 1, list2Set, ingredient2_perServing)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, 100, "Recipe Name1", 1, list1Set, ingredient1_perServing, ingredient1RecipeList),
+        Arguments.of(Stubs.stubRecipe2, Stubs.stubFoodWithNullDisplayName, 100,  "Recipe Name2", 1, list2Set, ingredient2_perServing, ingredient2RecipeList)
         );
     }
 
@@ -117,10 +125,12 @@ class UnitTestMethods {
         double[] nutrition_perServing = {(350 + 350*1.5)/4.0, (12.3 + 12.3*1.5)/4.0, (3 + 3*1.5)/4.0, (24 + 24*1.5)/4.0, (10 + 10*1.5)/4.0, (((14.0/100)*100) + ((14.0/50)*75))/4.0, (37 + 37*1.5)/4.0, (0.4 + 0.4*1.5)/4.0};
         HashMap<String, Double> list3 = new HashMap<>(Map.of("Full Name1", 100.0, "Full Name2", 75.0));
         Set<Map.Entry<String,Double>> list3Set = list3.entrySet();
+        HashSet<Recipe> ingredient2RecipeList = new HashSet<>();
+        Collections.addAll(ingredient2RecipeList, Stubs.stubRecipe1, Stubs.stubRecipe2);
 
         //Recipe Object - Ingredient Object - Ingredient Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List - Expected Nutrition
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, Stubs.stubFoodWithNullDisplayName, 75, "Recipe Name1", 2, list3Set, nutrition_perServing)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, Stubs.stubFoodWithNullDisplayName, 75, "Recipe Name1", 2, list3Set, nutrition_perServing, ingredient2RecipeList)
         );
     }
 
@@ -132,17 +142,20 @@ class UnitTestMethods {
         double[] nutrition_perServing = {(350*1.5)/4.0, (12.3*1.5)/4.0, (3*1.5)/4.0, (24*1.5)/4.0, (10*1.5)/4.0, 5.250000000000002, (37*1.5)/4.0, ((0.4/50)*75)/4.0};
         HashMap<String, Double> list3 = new HashMap<>(Map.of("Full Name2", 75.0));
         Set<Map.Entry<String,Double>> list3Set = list3.entrySet();
+        HashSet<Recipe> ingredient1RecipeList = new HashSet<>();
 
         //Recipe 1
         //No ingredients
         double[] nutrition_perServing2 = {0.0, 0.0,0.0,0.0,0.0,8.881784197001252E-16,0.0,0.0};
         HashMap<String, Double> list1 = new HashMap<>();
         Set<Map.Entry<String,Double>> list1Set = list1.entrySet();
+        HashSet<Recipe> ingredient2RecipeList = new HashSet<>();
+        Collections.addAll(ingredient2RecipeList, Stubs.stubRecipe2);
 
         //Recipe Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List - Expected Nutrition
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, "Recipe Name1", 1, list3Set, nutrition_perServing),
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithNullDisplayName, "Recipe Name1", 0, list1Set, nutrition_perServing2)
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, "Recipe Name1", 1, list3Set, nutrition_perServing, ingredient1RecipeList, 0),
+        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithNullDisplayName, "Recipe Name1", 0, list1Set, nutrition_perServing2, ingredient2RecipeList, 1)
         );
     }
 
@@ -163,16 +176,24 @@ class UnitTestMethods {
         );
     }
 
-    /*protected static Stream<Arguments> providesUsersWithNegativeValues() throws NoNegativeException {
-        User stubUserWithNegativeWeight = new User("Baldrick", "M", -90.0, 200, "2000-01-01", "M", 0.0, 8);
-        User stubUserWithNegativeHeight = new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8);
-        User stubUserWithNegativeRate = new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", -1.0, 8);
-        User stubUserWithNegativeWater = new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", 0.0, -8);
-        User stubUserWithNegativeAge = new User("Baldrick", "M", 90.0, 200, "2050-01-01", "M", 0.0, 8);
-        
+    protected static Stream<Arguments> providesUserCaloriesForWeightGoal() {
         return Stream.of(
-        Arguments.of(stubUserWithNegativeWeight, "Weight", "Weight cannot have negative value!")
+        Arguments.of(Stubs.stubUserMaintain, 0),
+        Arguments.of(Stubs.stubUserLose, -550),
+        Arguments.of(Stubs.stubUserGain, 1100)
         );
-    }*/
+    }
+
+    protected static Stream<Arguments> providesUserNutrition() {
+        double[] user1Nutrition = {2498, ((2498*0.25)/9), 30, ((2498*0.5)/4), 50, 33, ((2498*0.25)/4), 6};
+        double[] user2Nutrition = {1028, ((1028*0.25)/9), 20, ((1028*0.5)/4), 50, 27, ((1028*0.25)/4), 6};
+        double[] user3Nutrition = {3222, ((3222*0.25)/9), 30, ((3222*0.5)/4), 50, 33, ((3222*0.25)/4), 6};
+
+        return Stream.of(
+        Arguments.of(Stubs.stubUserMaintain, user1Nutrition),
+        Arguments.of(Stubs.stubUserLose, user2Nutrition),
+        Arguments.of(Stubs.stubUserGain, user3Nutrition)
+        );
+    }
 
 }
