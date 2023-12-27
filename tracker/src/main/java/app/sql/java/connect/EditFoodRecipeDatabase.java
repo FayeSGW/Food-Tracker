@@ -1,7 +1,9 @@
 package app.sql.java.connect;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import app.db.*;
@@ -154,37 +156,97 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    public static void deleteFood(String name, String type) {
+    private static boolean checkIfContains(Connection conn, String itemName, String itemType) {
+            PreparedStatement stmtDiary = null, stmtRecipes = null;
+            String searchRecipes = null, searchDiary = null;
+            ResultSet rsRecipes = null, rsDiary = null;
+            boolean contains = true;
+        try {
+            if (itemType.equals("food")) {
+                searchDiary = "SELECT COUNT(*) FROM FoodsInDiary WHERE FoodName = ?"; 
+            } else if (itemType.equals("recipe")) {
+                searchDiary = "SELECT COUNT(*) FROM FoodsInDiary WHERE RecipeName = ?"; 
+            } 
+
+            searchRecipes = "SELECT COUNT(*) FROM RecipeIngredients WHERE FoodName = ?";
+            stmtRecipes = conn.prepareStatement(searchRecipes);
+            stmtRecipes.setString(1, itemName);
+            rsRecipes = stmtRecipes.executeQuery();
+
+            stmtDiary = conn.prepareStatement(searchDiary);
+            stmtDiary.setString(1, itemName);
+            rsDiary = stmtDiary.executeQuery();
+
+            if (rsDiary.getInt(1) == 0 && rsRecipes.getInt(1) == 0) {
+                contains = false;
+            }
+        } catch (SQLException e) {
+                System.out.println(e.getMessage());
+        } finally {
+            try {
+                rsDiary.close();
+                rsRecipes.close();
+                stmtDiary.close();
+            } catch (SQLException e) {}
+        }
+        return contains;
+    }
+
+    public static boolean deleteFood(String name, String type) {
+        boolean actuallyDeleted = false;
+        
         Connection conn = null;
         PreparedStatement stmt = null, stmt2 = null;
+        //Deletion queries
         String foodString = "DELETE FROM Foods WHERE FoodName = ?";
         String ingredientsString = "DELETE FROM RecipeIngredients WHERE RecipeName = ?";
         String recipeString = "DELETE FROM Recipes WHERE RecipeName = ?";
 
+        //Update queries to mark as "deleted"
+        String foodUpdate = "UPDATE Foods SET Deleted = ? WHERE FoodName = ?";
+        String recipeUpdate = "UPDATE Recipes SET Deleted = ? WHERE RecipeName = ?";
         try {
             conn = Connect.connect();
 
-            if (type.equals("food")) {
-                stmt = conn.prepareStatement(foodString);
+            if (checkIfContains(conn, name, type)) {
+                //Don't delete from database, mark as "deleted" instead
+                // This means that if foods/recipes have already been entered into the diary
+                // or as a recipe ingredient, those entries are not affected
+                // But the "deleted" item no longer shows up in searches, so as far as the user
+                // is concerned, it has been deleted.
+                if (type.equals("food")) {
+                    stmt = conn.prepareStatement(foodUpdate);
+                } else if (type.equals("recipe")) {
+                    stmt = conn.prepareStatement(recipeUpdate);
+                }
+                stmt.setInt(1, 1);
+                stmt.setString(2, name);
+                stmt.executeUpdate();
             } else {
-                stmt = conn.prepareStatement(ingredientsString);
+                actuallyDeleted = true;
+                if (type.equals("food")) {
+                    stmt = conn.prepareStatement(foodString);
+                } else if (type.equals("recipe")) {
+                    stmt = conn.prepareStatement(ingredientsString);
+                }
+
+                stmt.setString(1, name);
+                stmt.executeUpdate();
+
+                if (type.equals("recipe")) {
+                    stmt2 = conn.prepareStatement(recipeString);
+                    stmt2.setString(1, name);
+                    stmt2.executeUpdate();
+                }
             }
             
-            stmt.setString(1, name);
-            stmt.executeUpdate();
-
-            if (type.equals("recipe")) {
-                stmt2 = conn.prepareStatement(recipeString);
-                stmt2.setString(1, name);
-                stmt2.executeUpdate();
-                
-            }
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());
         } finally {
             try {
-                stmt.close();
-
+                if (stmt != null) {
+                    stmt.close();
+                }
                 if (stmt2 != null) {
                     stmt2.close();
                 }
@@ -194,6 +256,9 @@ public class EditFoodRecipeDatabase {
                 System.out.println("!");
             } 
         }
+        //If the item was able to be deleted from the saved database, pass this to the 
+        // in-memory database to update it too
+        return actuallyDeleted;
     }
 
 }

@@ -1,6 +1,7 @@
 package app.db;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,15 +11,16 @@ public class Database {
     transient Scanner input = new Scanner(System.in);
     protected String name;
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();
-    protected HashMap<String, SupFood> displayDatabase = new HashMap<>();
-    private ArrayList<SupFood> searchResults;
+    protected HashMap<String, SupFood> displayDatabase = new HashMap<>(); //For foods where the display name and full name are very different
+    //protected HashSet<SupFood> deleted = new HashSet<>();
+    private HashSet<SupFood> searchResults;
 
     public Database(String name) {
         this.name = name;
     }
 
     public void addFood(String name, String nickname, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        if (addCheck(name)) {
+        if (nameCheck(name) && nicknameCheck(nickname)) {
             Food food = new Food(this, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
             displayDatabase.put(nickname, food);
@@ -26,9 +28,12 @@ public class Database {
     }
 
     public Recipe addRecipe(String name, double servings) {
-        Recipe recipe = new Recipe(this, name, servings);
-        database.put(name, recipe);
-        displayDatabase.put(name, recipe);
+        Recipe recipe = null;
+        if (nameCheck(name)) {
+            recipe = new Recipe(this, name, servings);
+            database.put(name, recipe);
+        }
+        
         return recipe;
     }
 
@@ -46,7 +51,7 @@ public class Database {
         return true;
     }
 
-    public boolean addCheck(String name) {
+    /*public boolean addCheck(String name) {
         if (database.containsKey(name)) {
             System.out.println("This exists already! ");
             System.out.println(database.get(name));
@@ -57,22 +62,48 @@ public class Database {
             }
         }
         return true;
-    }
+    }*/
 
     public HashMap<String, SupFood> access() {
         return database;
     }
 
-    public void delete(String fullName, String displayName) {
-        database.remove(fullName);
-        displayDatabase.remove(displayName);
+    public void delete(String fullName, String displayName, boolean full) {
+        SupFood food = database.get(fullName);
+        //deleted.add(food);
+        food.setDeleted();
+        if (full) {
+            database.remove(fullName);
+            displayDatabase.remove(displayName);
+        }
+       
     }
 
-    public ArrayList<SupFood> searchDatabase(String item, String constraint) {
-        searchResults = new ArrayList<>();
+    public HashSet<SupFood> searchDatabase(String item, String constraint) {
+        searchResults = new HashSet<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
                 SupFood result = database.get(food);
+                //If food marked as "deleted", don't add to search result
+                if (result.isDeleted()) {
+                    continue;
+                }
+                if (constraint.equals("all")) {
+                    searchResults.add(result);
+                } else if (constraint.equals("food") && result instanceof Food) {
+                    searchResults.add(result);
+                } else if (constraint.equals("recipe") && result instanceof Recipe) {
+                    searchResults.add(result);
+                }
+            }
+        }
+        //In case the display name contains the search string but the full name doesn't (unlikely!)
+        for (String food: displayDatabase.keySet()) {
+            if (food.toLowerCase().contains(item.toLowerCase())) {
+                SupFood result = displayDatabase.get(food);
+                if (result.isDeleted()) {
+                    continue;
+                }
                 if (constraint.equals("all")) {
                     searchResults.add(result);
                 } else if (constraint.equals("food") && result instanceof Food) {
@@ -85,11 +116,14 @@ public class Database {
         return searchResults; 
     }
 
-    public ArrayList<SupFood> searchForRecipes(String item) {
-        searchResults = new ArrayList<>();
+    public HashSet<SupFood> searchForRecipes(String item) {
+        searchResults = new HashSet<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
                 SupFood result = database.get(food);
+                if (result.isDeleted()) {
+                    continue;
+                }
                 if (result instanceof Recipe) {
                     searchResults.add(result);
                 }
@@ -98,11 +132,14 @@ public class Database {
         return searchResults; 
     }
 
-    public ArrayList<SupFood> searchForFoods(String item) {
-        searchResults = new ArrayList<>();
+    public HashSet<SupFood> searchForFoods(String item) {
+        searchResults = new HashSet<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
                 SupFood result = database.get(food);
+                if (result.isDeleted()) {
+                    continue;
+                }
                 if (result instanceof Food) {
                     searchResults.add(result);
                 }
@@ -136,14 +173,4 @@ public class Database {
         }
         return false;
     }
-
-    /*@Override
-    public String toString() {
-        ArrayList<String> db = new ArrayList<>();
-        for (String item: database.keySet()) {
-            db.add(item);
-        }
-        String list = String.join(", ", db);
-        return list;
-    }*/
 }

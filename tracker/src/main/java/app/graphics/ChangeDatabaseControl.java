@@ -11,9 +11,10 @@ class ChangeDatabaseControl {
     Database data;
     ChangeDatabaseGUI dbGUI;
 
-    String recipeName;
+    String recipeName, messageString;
     Recipe recipe;
     NewRecipeGUI rGUI;
+    NewFoodGUI fGUI;
 
     ChangeDatabaseControl(TrackerControl tControl) {
         this.tControl = tControl;
@@ -32,7 +33,7 @@ class ChangeDatabaseControl {
 
     //Functionality for adding new foods to database/editing foods
     void newFoodGUI() {
-        NewFoodGUI nGUI = new NewFoodGUI(this);
+        fGUI = new NewFoodGUI(this);
     }
 
     void newRecipeGUI() {
@@ -57,11 +58,10 @@ class ChangeDatabaseControl {
             rGUI.setRecipeName(recipeName);
             HashMap<String, Double> ingredients = showIngredientsInRecipe();
             rGUI.existingRecipeData(recipeName, recipe.weight(), ingredients);
-            //
         }
     }
 
-    boolean saveEdited(NewFoodGUI fGUI, String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    boolean saveEditedFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         String name = null, disp = null;
         if (!oldName.equals(newName)) {
             name = newName;
@@ -71,7 +71,7 @@ class ChangeDatabaseControl {
             disp = displayName;
         }
 
-        if (!nameCheck(fGUI, name, disp)) {
+        if (!nameCheck(name, disp)) {
             return false;
         } else {
             SupFood supFood = data.findItem(oldName);
@@ -82,48 +82,40 @@ class ChangeDatabaseControl {
         }
     }
 
-    boolean nameCheck(NewFoodGUI fGUI, String name, String displayName) {
-        if (!data.nameCheck(name)) {
-            fGUI.changeAddedLabel("There is already a food/recipe with this name!");
-            return false;
-        } else if (!data.nicknameCheck(displayName)) {
-            fGUI.changeAddedLabel("There is already a food/recipe with this display name!");
+    boolean nameCheck(String name, String displayName) {
+        SupFood item = data.findItem(name);
+        messageString = "There is already a food/recipe with that name!";
+        if (item != null) {
+            if (item.isDeleted()) {
+                messageString = "This name is in use by a deleted item!";
+            }
+            if (fGUI != null) {
+                fGUI.changeAddedLabel(messageString); 
+            } else if (rGUI != null) {
+                rGUI.setInfoLabel(messageString);
+            }
             return false;
         }
         return true;
     }
 
-    boolean saveNewFood(NewFoodGUI fGUI, String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        if (!nameCheck(fGUI, name, displayName)) {
+    boolean saveNewFood(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        if (!nameCheck(name, displayName)) {
             return false;
         } else {
             data.addFood(name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             EditFoodRecipeDatabase.addFood(null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             return true;
         }
-        
     }
 
-    boolean saveNewRecipe(NewRecipeGUI rGUI, String name, double amount) {
-        if (!data.nameCheck(name)) {
-            rGUI.setInfoLabel("There is already a food/recipe with that name!");
-            return false;
-        }
-        if (!data.nicknameCheck(name)) {
-            rGUI.setInfoLabel("There is already a food/recipe with that name!");
+    boolean saveNewRecipe(String name, double amount) {
+        if (!nameCheck(name, name)) {
             return false;
         }
         data.addRecipe(name, amount);
         EditFoodRecipeDatabase.addRecipe(name, amount);
-        for (String s: data.access().keySet()) {
-            System.out.println(s);
-        }
         return true;
-        
-        
-        
-       
-        //recipeName = "";
     }
 
     void addIngredientToRecipe(String foodName, double amount) {
@@ -157,12 +149,16 @@ class ChangeDatabaseControl {
         SupFood item = data.findItem(name);
         String fullName = item.showName();
         String displayName = item.showDisplayName();
-        data.delete(fullName, displayName);
+        
+
+        boolean fullDeletion = true;
         if (item instanceof Food) {
-            EditFoodRecipeDatabase.deleteFood(fullName, "food");
+            fullDeletion = EditFoodRecipeDatabase.deleteFood(fullName, "food");
         } else {
-            EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
+            fullDeletion = EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
         }
+        
+        data.delete(fullName, displayName, fullDeletion);
 
         //System.out.println(fullName);
         //System.out.println(item instanceof Recipe);

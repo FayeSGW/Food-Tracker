@@ -59,8 +59,8 @@ public class GetFoodsDB {
     }
 
     public static void getFoods(Connection conn, Database d) {
-        String foods = "SELECT FoodName, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
-        String recipes = "SELECT FoodName, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients INNER JOIN Recipes ON RecipeIngredients.RecipeName = Recipes.RecipeName";
+        String foods = "SELECT FoodName, Deleted, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
+        String recipes = "SELECT FoodName, Deleted, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients INNER JOIN Recipes ON RecipeIngredients.RecipeName = Recipes.RecipeName";
         Statement stmt = null;
         //Statement stmt2 = null;
         ResultSet frs = null;
@@ -74,6 +74,7 @@ public class GetFoodsDB {
             //Adding foods to database
             while (frs.next()) {
                 String name = frs.getString("FoodName");
+                int deleted = frs.getInt("Deleted");
                 String displayName = frs.getString("DisplayName");
                 if (displayName == null) {
                     displayName = name;
@@ -91,6 +92,10 @@ public class GetFoodsDB {
                 String barcode = frs.getString("Barcode");
 
                 d.addFood(name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                if (deleted == 1) {
+                    Food food = (Food)d.findItem(name);
+                    food.setDeleted();
+                }
             }
 
             //Adding recipes to database
@@ -98,6 +103,7 @@ public class GetFoodsDB {
             rrs = stmt.executeQuery(recipes);
             while (rrs.next()) {
                 String recipeName = rrs.getString("RecipeName");
+                int deleted = frs.getInt("Deleted");
                 double servings = rrs.getDouble("Servings");
                 String ingredient = rrs.getString("FoodName");
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
@@ -109,6 +115,9 @@ public class GetFoodsDB {
                     rec = d.addRecipe(recipeName, servings);
                 }
                 
+                if (deleted == 1) {
+                    rec.setDeleted();
+                }
                 rec.addIngredient(ingredient, ingredientAmount);
                 rec.addInstructions(instructs);
             }

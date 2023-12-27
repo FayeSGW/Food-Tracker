@@ -9,6 +9,7 @@ public abstract class SupFood {
     protected double nutrition[];
     protected double weight;
     protected Database data;
+    protected boolean deleted = false;
 
     public SupFood(Database data, String name, double weight) {
         this.name = name;
@@ -45,6 +46,14 @@ public abstract class SupFood {
             unit[i] = nutrition[i] / weight;
         }
         return unit;
+    }
+
+    public void setDeleted() {
+        deleted = true;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public String toString() {

@@ -146,7 +146,7 @@ class NewRecipeGUI {
                 }
 
                 if (name != null) {
-                    boolean success = control.saveNewRecipe(rGUI, name, servings);
+                    boolean success = control.saveNewRecipe(name, servings);
                     System.out.println(success);
                     if (success) {
                         control.recipe(name);

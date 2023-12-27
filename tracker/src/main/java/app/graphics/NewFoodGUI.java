@@ -154,9 +154,9 @@ class NewFoodGUI {
                 boolean saveSuccess = true;
                 if (foodName != null) {
                     String oldName = foodName;
-                    saveSuccess = control.saveEdited(fGUI, oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    saveSuccess = control.saveEditedFood(oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 } else {
-                    saveSuccess = control.saveNewFood(fGUI, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    saveSuccess = control.saveNewFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 }
 
                 if (saveSuccess) {

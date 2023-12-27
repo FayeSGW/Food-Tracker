@@ -1,6 +1,8 @@
 package app.graphics;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Collections;
 
 import app.sql.java.connect.*;
 import app.diary.*;
@@ -22,22 +24,19 @@ class AddFoodControl {
     }
 
     ArrayList<String> searchDatabase(String string, String constraint) {
-        ArrayList<SupFood> results = data.searchDatabase(string, constraint);
+        HashSet<SupFood> results = data.searchDatabase(string, constraint);
         
         ArrayList<String> asString = new ArrayList<>();
         for (SupFood food: results) {
             asString.add(food.showDisplayName());
-            //System.out.println(food.showName());
-            //System.out.println(food.showDisplayName());
         }
-        
+
+        Collections.sort(asString);
         return asString;
     }
 
     String showUnit(String name) {
         SupFood item = data.findItem(name);
-        //System.out.println(data.isRecipe(name));
-        //System.out.println(item);
         return item.showUnit();
     }
 
