@@ -87,16 +87,20 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    public static void addRecipe(String name, double servings) {
+    public static void addRecipe(String oldName, String newName, double servings) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String newString = "INSERT INTO Recipes(RecipeName, Servings) VALUES(?, ?)";
-
+        String exString = "UPDATE Recipes SET RecipeName = ?, Servings = ? WHERE RecipeName = ?";
         try {
             conn = Connect.connect();
-            stmt = conn.prepareStatement(newString);
-
-            stmt.setString(1, name);
+            if (oldName == null) {
+                stmt = conn.prepareStatement(newString);
+            } else {
+                stmt = conn.prepareStatement(exString);
+                stmt.setString(3, oldName);
+            }
+            stmt.setString(1, newName);
             stmt.setDouble(2, servings);
 
             stmt.executeUpdate();
@@ -156,12 +160,16 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    private static boolean checkIfContains(Connection conn, String itemName, String itemType) {
+    public static boolean checkIfContains(Connection conn, String itemName, String itemType) {
             PreparedStatement stmtDiary = null, stmtRecipes = null;
             String searchRecipes = null, searchDiary = null;
             ResultSet rsRecipes = null, rsDiary = null;
             boolean contains = true;
         try {
+            if (conn == null) {
+                conn = Connect.connect();
+            }
+
             if (itemType.equals("food")) {
                 searchDiary = "SELECT COUNT(*) FROM FoodsInDiary WHERE FoodName = ?"; 
             } else if (itemType.equals("recipe")) {
@@ -239,7 +247,6 @@ public class EditFoodRecipeDatabase {
                     stmt2.executeUpdate();
                 }
             }
-            
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());
         } finally {
@@ -250,7 +257,6 @@ public class EditFoodRecipeDatabase {
                 if (stmt2 != null) {
                     stmt2.close();
                 }
-                
                 conn.close();
             } catch (SQLException e) {
                 System.out.println("!");

@@ -49,7 +49,11 @@ class AddFoodControl {
     }
 
     void editItem(String name) {
-        cControl.editFoodorRecipeGUI(name);
+        cControl.editFoodorRecipeGUI(name, gui);
+    }
+
+    void updateSearchResults() {
+        gui.updateResults();
     }
 
     void deleteFromDatabase(String name) {

@@ -11,8 +11,7 @@ public class Database {
     transient Scanner input = new Scanner(System.in);
     protected String name;
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();
-    protected HashMap<String, SupFood> displayDatabase = new HashMap<>(); //For foods where the display name and full name are very different
-    //protected HashSet<SupFood> deleted = new HashSet<>();
+    protected HashMap<String, SupFood> displayDatabase = new HashMap<>(); 
     private HashSet<SupFood> searchResults;
 
     public Database(String name) {
@@ -33,7 +32,6 @@ public class Database {
             recipe = new Recipe(this, name, servings);
             database.put(name, recipe);
         }
-        
         return recipe;
     }
 
@@ -51,32 +49,33 @@ public class Database {
         return true;
     }
 
-    /*public boolean addCheck(String name) {
-        if (database.containsKey(name)) {
-            System.out.println("This exists already! ");
-            System.out.println(database.get(name));
-            System.out.println("Would you to overwrite? ");
-            String replace = input.nextLine();
-            if (replace.toUpperCase().equals("N")) {
-                return false;
-            }
-        }
-        return true;
-    }*/
-
     public HashMap<String, SupFood> access() {
         return database;
     }
 
+    public void editFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        Food food = (Food) findItem(oldName);
+        food.edit(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+        database.remove(oldName); displayDatabase.remove(oldDisplayName);
+        database.put(newName, food); displayDatabase.put(displayName, food);
+    }
+
+    public void editRecipe(String oldName, String newName, double amount) {
+        Recipe recipe = (Recipe) findItem(oldName);
+        recipe.edit(newName, amount);
+        database.remove(oldName); displayDatabase.remove(oldName);
+        database.put(newName, recipe); displayDatabase.put(newName, recipe);
+    }
+
+    //If "full" is true, it means that the item is not referenced by any recipes in the database or any entries in the diary, and
+    // therefore can be fully deleted from the external database
     public void delete(String fullName, String displayName, boolean full) {
         SupFood food = database.get(fullName);
-        //deleted.add(food);
         food.setDeleted();
         if (full) {
             database.remove(fullName);
             displayDatabase.remove(displayName);
         }
-       
     }
 
     public HashSet<SupFood> searchDatabase(String item, String constraint) {
@@ -116,7 +115,7 @@ public class Database {
         return searchResults; 
     }
 
-    public HashSet<SupFood> searchForRecipes(String item) {
+    /*public HashSet<SupFood> searchForRecipes(String item) {
         searchResults = new HashSet<>();
         for (String food: database.keySet()) {
             if (food.toLowerCase().contains(item.toLowerCase())) {
@@ -146,15 +145,15 @@ public class Database {
             }
         }
         return searchResults; 
-    }
+    }*/
 
-    public SupFood addFromDatabase(String name) {
+    /*public SupFood addFromDatabase(String name) {
         if (!database.containsKey(name) && !displayDatabase.containsKey(name)) {
             System.out.println(name + " Not in database!");
             return null;
         }
         return findItem(name);
-    }
+    }*/
 
     public SupFood findItem(String name) {
         SupFood item = null;
