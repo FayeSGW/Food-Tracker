@@ -16,7 +16,7 @@ class NewRecipeGUI {
     JPanel totalNutritionPanel, perServingNutritionPanel;
     JTextField nameField, amountField;
     JLabel titleLabel, nameLabel, amountLabel, servingsLabel, ingredientsLabel, infoLabel;
-    JButton createRecipeButton, addIngredientButton, deleteButton, doneButton;
+    JButton createRecipeButton, editRecipeButton, addIngredientButton, deleteButton, doneButton;
 
     NewRecipeGUI (ChangeDatabaseControl control, TrackerControl tControl) {
         this.control = control;
@@ -45,6 +45,7 @@ class NewRecipeGUI {
         amountLabel = new JLabel("No. servings: "); amountPanel.add(amountLabel);
         amountField = new JTextField(); amountField.setPreferredSize(new Dimension(50,26)); amountPanel.add(amountField);
         servingsLabel = new JLabel("servings"); amountPanel.add(servingsLabel);
+
         createRecipeButton = new JButton("Create Recipe"); createRecipeButton.addActionListener(new create(this));
         amountPanel.add(createRecipeButton);
 
@@ -58,7 +59,7 @@ class NewRecipeGUI {
         deleteButton.addActionListener(new deleteRecipe()); buttonsPanel.add(deleteButton);
         donePanel = new JPanel(); whole.add(donePanel);
         doneButton = new JButton("Done"); doneButton.setEnabled(false); 
-        doneButton.addActionListener(new finished()); donePanel.add(doneButton);
+        doneButton.addActionListener(new finished(this)); donePanel.add(doneButton);
 
         infoLabel = new JLabel(); whole.add(infoLabel);
 
@@ -82,8 +83,7 @@ class NewRecipeGUI {
     }
 
     void addIngredient() {
-        tControl.addFoodDialogue(0, "recipe");
-        
+        tControl.addFoodDialogue(0, "recipe");  
     }
 
     void populateIngredients() {
@@ -96,14 +96,10 @@ class NewRecipeGUI {
     }
 
     void updateIngredientsPanel() {
-        //clearIngredientsPanel();
         HashMap<String, Double> list = control.showIngredientsInRecipe();
         for (String ingredient: list.keySet()) {
-            //JPanel ingPanel = new JPanel(); ingredientsPanel.add(ingPanel);
-
             JLabel name = new JLabel(String.format("%s %.0f", ingredient, list.get(ingredient)));
             ingredientsPanel.add(name);
-
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -111,7 +107,6 @@ class NewRecipeGUI {
                 }
             });
         }
-        //ingredientsPanel.repaint();
     }
 
     void clearIngredientsPanel() {
@@ -119,12 +114,12 @@ class NewRecipeGUI {
         for (Component panel: panels) {
             ingredientsPanel.remove(panel);
         }
-        //ingredientsPanel.repaint();
     }
 
     void existingRecipeData(String name, double servings, HashMap<String, Double> ingredients) {
         nameField.setText(name);
         amountField.setText(Double.toString(servings));
+        doneButton.setText("Save Edits");
         populateIngredients();
     }
 
@@ -133,7 +128,6 @@ class NewRecipeGUI {
         create(NewRecipeGUI rGUI) {
             this.rGUI = rGUI;
         }
-
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
@@ -147,19 +141,15 @@ class NewRecipeGUI {
 
                 if (name != null) {
                     boolean success = control.saveNewRecipe(name, servings);
-                    System.out.println(success);
+                    //System.out.println(success);
                     if (success) {
                         control.recipe(name);
                         setRecipeName(name);
                     }
-                
                 }
             } catch (NumberFormatException | NoNegativeException | NoNullException n) {
                 infoLabel.setText(n.getMessage());
             }
-
-            //addIngredientButton.setEnabled(true);
-            //saveButton.setEnabled(true);
         }
     }
 
@@ -179,13 +169,19 @@ class NewRecipeGUI {
     }
 
     class finished implements ActionListener {
+
         @Override
         public void actionPerformed (ActionEvent e) {
             if (control.ingredientsInRecipe(recipeName) == 0) {
                 control.delete(recipeName);
             }
+            
+            String name = nameField.getText();
+            double servings = Double.parseDouble(amountField.getText());
+            if (!control.checkRecipeName(name) || !control.checkRecipeServings(servings)) {
+                control.editRecipe(recipeName, name, servings);
+            }
             window.dispose();
-
         }
     }
 }

@@ -1,6 +1,7 @@
 package app.graphics;
 
 import java.util.HashMap;
+import java.util.Arrays;
 
 import app.sql.java.connect.*;
 import app.db.*;
@@ -70,15 +71,15 @@ class ChangeDatabaseControl {
         return false;
     }
 
-    boolean checkRecipeServings(int num) {
+    boolean checkRecipeServings(double num) {
         if (num == recipe.weight()) {
             return true;
         }
         return false;
     }
 
-    boolean editRecipe(String oldName, String newName, int servings) {
-        String name = null, disp = null;
+    boolean editRecipe(String oldName, String newName, double servings) {
+        String name = null;
         if (!oldName.equals(newName)) {
             name = newName;
         }
@@ -94,17 +95,32 @@ class ChangeDatabaseControl {
                 data.editRecipe(oldName, newName, servings);
                 EditFoodRecipeDatabase.addRecipe(oldName, newName, servings);
             } else {
-                delete(oldName);
-                data.addRecipe(newName, servings);
-                EditFoodRecipeDatabase.addRecipe(null, newName, servings);
+                Recipe rec = (Recipe) data.findItem(oldName);
+                HashMap<String, Double> ingredients = rec.showIngredientList();
+                //If only the name has been changed, we can just edit the recipe as normal
+                // If the number of servings has changed, the unit nutrition of the recipe has changed,
+                // So we need to keep a reference to the existing recipe, and create a new one with the new
+                // values.
+                // Note that when the ingredients are edited/added/deleted, it is automatically
+                // applied to the recipe - therefore this cannot be accounted for here.
+                // Working on it!
+                if (servings == rec.weight()) {
+                    data.editRecipe(oldName, newName, servings);
+                    EditFoodRecipeDatabase.addRecipe(oldName, newName, servings);
+                } else {
+                    delete(oldName);
+                    Recipe newRec = data.addRecipe(newName, servings);
+                    for (String ingredient: ingredients.keySet()) {
+                        double weight = ingredients.get(ingredient);
+                        newRec.addIngredient(ingredient, weight);
+                    }
+                    EditFoodRecipeDatabase.addRecipe(null, newName, servings);
+                }
+                
             }
             aGUI.updateResults();
             return true;
         }
-        //Recipe rec = (Recipe) data.findItem(oldName);
-        //rec.edit(newName, servings);
-        //Edit in SQL database
-
     }
 
     boolean saveEditedFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
@@ -118,18 +134,31 @@ class ChangeDatabaseControl {
         if (!nameCheck(name, disp)) {
             return false;
         } else {      
-            /* If the food is not contained in a recipe or in the diary, we can just edit it
-               Otherwise we need to account for the recipe/diary entries
-               I have chosen to keep a reference to the old food (in the same way as when deleting
-               items) so that already-existing recipe ingredient/diary entries are not changed,
-               therefore essentially "delete" the old food and create a new one */                  
+            /* If the food is not contained in a recipe or in the diary, we can just edit it.
+               Otherwise we need to account for the recipe/diary entries.
+               If only the name/display name has changed, we can edit as normal and just update the name
+               in the corresponding diary/recipe entries.
+               For cases when the nutrition/unit nutrition has changed, I have chosen to keep a reference 
+               to the old food (in the same way as when deleting items) so that already-existing recipe 
+               ingredient/diary entries are not changed, therefore essentially "delete" the old food and 
+               create a new one */                  
             if (!EditFoodRecipeDatabase.checkIfContains(null, oldName, "food")) {
                 data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             } else {
-                delete(oldName);
-                data.addFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                EditFoodRecipeDatabase.addFood(null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                Food food = (Food) data.findItem(oldName);
+                double[] newNutr = {calories, fat, satfat, carbs, sugar, fibre, protein, salt};
+                //If only the name or display name has been edited, then we can edit as normal
+                // But if the nutrition or unit nutrition of the food has changed, then we need to keep a reference
+                // to the current food.
+                if (Arrays.equals(newNutr, food.showNutrition()) && amount == food.showAmount() && unit.equals(food.showUnit())) {
+                    data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                } else {
+                    delete(oldName);
+                    data.addFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    EditFoodRecipeDatabase.addFood(null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                }   
             }
             aGUI.updateResults();
             return true;
@@ -175,7 +204,6 @@ class ChangeDatabaseControl {
     void addIngredientToRecipe(String foodName, double amount) {
         //Recipe recipe = (Recipe)data.findItem(recipeName);
         SupFood ingredient = data.findItem(foodName);
-
         recipe.addIngredientFromGUI(ingredient.showName(), amount);
         rGUI.populateIngredients();
     }
@@ -215,6 +243,4 @@ class ChangeDatabaseControl {
         Recipe item = (Recipe) data.findItem(name);
         return item.numberIngredients();
     }
-
-    void updateIngredientsList() {}
 }

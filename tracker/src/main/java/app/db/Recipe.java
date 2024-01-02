@@ -94,7 +94,7 @@ public class Recipe extends SupFood {
         SupFood ingredient;
         boolean ingredientExists = false;
         try {
-            ingredient = data.addFromDatabase(name);
+            ingredient = data.findItem(name);
             if (ingredient instanceof Food) {
                 Food ingr = (Food) ingredient;
                 ingredientExists = addFoodIngredient(ingr, name, weight);
