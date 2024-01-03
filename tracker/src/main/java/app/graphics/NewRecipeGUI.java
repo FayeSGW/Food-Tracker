@@ -59,7 +59,7 @@ class NewRecipeGUI {
         deleteButton.addActionListener(new deleteRecipe()); buttonsPanel.add(deleteButton);
         donePanel = new JPanel(); whole.add(donePanel);
         doneButton = new JButton("Done"); doneButton.setEnabled(false); 
-        doneButton.addActionListener(new finished(this)); donePanel.add(doneButton);
+        doneButton.addActionListener(new finished()); donePanel.add(doneButton);
 
         infoLabel = new JLabel(); whole.add(infoLabel);
 
