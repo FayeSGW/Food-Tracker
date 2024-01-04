@@ -97,14 +97,12 @@ class ChangeDatabaseControl {
             } else {
                 Recipe rec = (Recipe) data.findItem(oldName);
                 HashMap<String, Double> ingredients = rec.showIngredientList();
-                //If only the name has been changed, we can just edit the recipe as normal
+                //If only the name has been changed, or no ingredients have been added/removed/
+                // changed, we can just edit the recipe as normal
                 // If the number of servings has changed, the unit nutrition of the recipe has changed,
                 // So we need to keep a reference to the existing recipe, and create a new one with the new
                 // values.
-                // Note that when the ingredients are edited/added/deleted, it is automatically
-                // applied to the recipe - therefore this cannot be accounted for here.
-                // Working on it!
-                if (servings == rec.weight()) {
+                if (servings == rec.weight() && rec.showTempIngredients().size() == 0) {
                     data.editRecipe(oldName, newName, servings);
                     EditFoodRecipeDatabase.addRecipe(oldName, newName, servings);
                 } else {

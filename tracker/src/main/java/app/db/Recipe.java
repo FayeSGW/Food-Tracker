@@ -33,6 +33,10 @@ public class Recipe extends SupFood {
         return ingredientsList;
     }
 
+    public HashMap<String, Double> showTempIngredients() {
+        return tempIngredients;
+    }
+
     public int numberIngredients() {
         return ingredientsList.size();
     }
@@ -106,10 +110,10 @@ public class Recipe extends SupFood {
         }
     }
 
-    public void save() {
-        for (String name: tempIngredients.keySet()) {
-            Food food = (Food) data.findItem(name);
-            double amount = tempIngredients.get(name);
+    public void save(String saveType) {
+        for (String foodName: tempIngredients.keySet()) {
+            Food food = (Food) data.findItem(foodName);
+            double amount = tempIngredients.get(foodName);
             double[] nutr = food.showUnitNutrition();
             food.addRecipe(this);
             for (String type: food.showFoodTypes()) {
@@ -120,10 +124,25 @@ public class Recipe extends SupFood {
                 weighted[i] = nutr[i] * weight;
                 nutrition[i] = nutrition[i] + weighted[i];
             } 
-            ingredientsList.put(name, amount);
-            EditFoodRecipeDatabase.addRecipeIngredient(this.name, name, amount);
+            ingredientsList.put(foodName, amount);
+            EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount, saveType);
         }
     }
+
+    public void saveEdited() {
+        //First remove ingredients that have been chosen for removal
+        for (String foodName: tempIngredients.keySet()) {
+            if (tempIngredients.get(foodName) == 0.0) {
+                Food food = (Food) data.findItem(foodName);
+                removeIngredient1(food, foodName);
+                tempIngredients.remove(foodName);
+                EditFoodRecipeDatabase.removeIngredient(name, foodName);
+            } 
+        }
+        //Then update the rest of the ingredients
+        save("edit");
+    }
+
     //This is separated from the main addIngredient() method to allow for unit testing
     public boolean addFoodIngredient(Food food, String name, double weight) {
         double[] nutr = food.showUnitNutrition();
@@ -220,18 +239,20 @@ public class Recipe extends SupFood {
             food.removeRecipe(this);
             ingredientsList.remove(name);
         }
-        
     }
 
     public void removeIngredient(String name) {
-        Food food = (Food) data.findItem(name);
+        tempIngredients.put(name, 0.0);
+
+        /*Food food = (Food) data.findItem(name);
         removeIngredient1(food, name);        
-        EditFoodRecipeDatabase.removeIngredient(this.name, name);
+        EditFoodRecipeDatabase.removeIngredient(this.name, name);*/
     }
 
     public void editIngredient(String name, double amount) {
-        removeIngredient(name);
-        addIngredientFromGUI(name, amount);
+        tempIngredients.put(name, amount);
+        /*removeIngredient(name);
+        addIngredientFromGUI(name, amount);*/
     }
 
     // ----------------------------TYPES------------------------

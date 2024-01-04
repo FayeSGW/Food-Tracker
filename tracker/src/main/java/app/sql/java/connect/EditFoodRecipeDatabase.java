@@ -11,19 +11,26 @@ import app.diary.*;
 
 public class EditFoodRecipeDatabase {
 
-    public static void addRecipeIngredient(String recipeName, String foodName, double amount) {
+    public static void addRecipeIngredient(String recipeName, String foodName, double amount, String type) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?)";
+        String exString = "UPDATE RecipeIngredients SET IngredientAmount = ? WHERE RecipeName = ? AND FoodName = ?";
 
         try {
             conn = Connect.connect();
-            stmt = conn.prepareStatement(newString);
-
-            stmt.setString(1, recipeName);
-            stmt.setString(2, foodName);
-            stmt.setDouble(3, amount);
-
+            if (type.equals("new")) {
+                stmt = conn.prepareStatement(newString);
+                stmt.setString(1, recipeName);
+                stmt.setString(2, foodName);
+                stmt.setDouble(3, amount);
+            } else if (type.equals("edit")) {
+                stmt = conn.prepareStatement(exString);
+                stmt.setDouble(1, amount);
+                stmt.setString(2, recipeName);
+                stmt.setString(3, foodName);
+            }
+            
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());
