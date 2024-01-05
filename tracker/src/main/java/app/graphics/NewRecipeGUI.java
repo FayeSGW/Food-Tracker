@@ -96,7 +96,7 @@ class NewRecipeGUI {
     }
 
     void updateIngredientsPanel() {
-        HashMap<String, Double> list = control.showIngredientsInRecipe();
+        HashMap<String, Double> list = control.showAllCurrentIngredients();
         for (String ingredient: list.keySet()) {
             JLabel name = new JLabel(String.format("%s %.0f", ingredient, list.get(ingredient)));
             ingredientsPanel.add(name);
@@ -173,13 +173,20 @@ class NewRecipeGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             if (control.ingredientsInRecipe(recipeName) == 0) {
-                control.delete(recipeName);
+                if (control.tempIngredientsInRecipe(recipeName) == 0) {
+                    control.delete(recipeName);
+                } else {
+                    control.saveRecipeWithIngredients();
+                }  
+            } else if (control.tempIngredientsInRecipe(recipeName) > 0) {
+                control.saveRecipeWithChangedIngredients();
             }
             
+            //If either the recipe name or the number of servings has changed, edit the recipe object
             String name = nameField.getText();
             double servings = Double.parseDouble(amountField.getText());
             if (!control.checkRecipeName(name) || !control.checkRecipeServings(servings)) {
-                control.editRecipe(recipeName, name, servings);
+                control.saveEditedRecipe(recipeName, name, servings);
             }
             window.dispose();
         }

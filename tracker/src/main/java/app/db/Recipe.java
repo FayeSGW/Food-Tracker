@@ -37,6 +37,21 @@ public class Recipe extends SupFood {
         return tempIngredients;
     }
 
+    public HashMap<String, Double> showAllCurrentIngredients() {
+        HashMap<String, Double> all = new HashMap<>();
+        for (String name: ingredientsList.keySet()) {
+            all.put(name, ingredientsList.get(name));
+        }
+        for (String name: tempIngredients.keySet()) {
+            if (tempIngredients.get(name) == 0.0) {
+                all.remove(name);
+            } else {
+                all.put(name, tempIngredients.get(name));
+            }
+        }
+        return all;
+    }
+
     public int numberIngredients() {
         return ingredientsList.size();
     }
@@ -110,7 +125,7 @@ public class Recipe extends SupFood {
         }
     }
 
-    public void save(String saveType) {
+    public void save() {
         for (String foodName: tempIngredients.keySet()) {
             Food food = (Food) data.findItem(foodName);
             double amount = tempIngredients.get(foodName);
@@ -125,7 +140,7 @@ public class Recipe extends SupFood {
                 nutrition[i] = nutrition[i] + weighted[i];
             } 
             ingredientsList.put(foodName, amount);
-            EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount, saveType);
+            EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount);
         }
     }
 
@@ -140,7 +155,7 @@ public class Recipe extends SupFood {
             } 
         }
         //Then update the rest of the ingredients
-        save("edit");
+        save();
     }
 
     //This is separated from the main addIngredient() method to allow for unit testing

@@ -11,26 +11,21 @@ import app.diary.*;
 
 public class EditFoodRecipeDatabase {
 
-    public static void addRecipeIngredient(String recipeName, String foodName, double amount, String type) {
+    public static void addRecipeIngredient(String recipeName, String foodName, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?)";
-        String exString = "UPDATE RecipeIngredients SET IngredientAmount = ? WHERE RecipeName = ? AND FoodName = ?";
+        String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?) ON CONFLICT(RecipeName, FoodName) DO UPDATE SET IngredientAmount = ?";
+        //String exString = "UPDATE RecipeIngredients SET IngredientAmount = ? WHERE RecipeName = ? AND FoodName = ?";
 
         try {
             conn = Connect.connect();
-            if (type.equals("new")) {
-                stmt = conn.prepareStatement(newString);
-                stmt.setString(1, recipeName);
-                stmt.setString(2, foodName);
-                stmt.setDouble(3, amount);
-            } else if (type.equals("edit")) {
-                stmt = conn.prepareStatement(exString);
-                stmt.setDouble(1, amount);
-                stmt.setString(2, recipeName);
-                stmt.setString(3, foodName);
-            }
-            
+
+            stmt = conn.prepareStatement(newString);
+            stmt.setString(1, recipeName);
+            stmt.setString(2, foodName);
+            stmt.setDouble(3, amount);
+            stmt.setDouble(4, amount);
+
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());
