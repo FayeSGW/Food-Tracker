@@ -111,7 +111,7 @@ class ChangeDatabaseControl {
                     Recipe newRec = data.addRecipe(newName, servings);
                     for (String ingredient: ingredients.keySet()) {
                         double weight = ingredients.get(ingredient);
-                        newRec.addIngredient(ingredient, weight);
+                        newRec.addIngredientFromDB(ingredient, weight);
                     }
                     EditFoodRecipeDatabase.addRecipe(null, newName, servings);
                 }
@@ -199,7 +199,7 @@ class ChangeDatabaseControl {
     }
 
     //Save a newly-created recipe object
-    boolean saveNewRecipe(String name, double amount) {
+    boolean createRecipe(String name, double amount) {
         if (!databaseCheck(name, name)) {
             return false;
         }
@@ -211,7 +211,7 @@ class ChangeDatabaseControl {
     //Add an ingredient to a recipe
     void addIngredientToRecipe(String foodName, double amount) {
         SupFood ingredient = data.findItem(foodName);
-        recipe.addIngredientFromGUI(ingredient.showName(), amount);
+        recipe.addTempIngredient(ingredient.showName(), amount);
         rGUI.populateIngredients();
     }
 
@@ -219,8 +219,8 @@ class ChangeDatabaseControl {
         recipe.save();
     }
 
-    void saveRecipeWithChangedIngredients() {
-        recipe.saveEdited();
+    void cancelRecipeEdit() {
+        recipe.clearTemp();
     }
 
     //Edit a recipe ingredient
@@ -228,7 +228,7 @@ class ChangeDatabaseControl {
         Recipe recipe = (Recipe) data.findItem(recipeName);
         Food food = (Food) data.findItem(foodName);
         if (amount == 0) {
-            recipe.removeIngredient(food.showName());
+            recipe.removeTempIngredient(food.showName());
         } else {
             recipe.editIngredient(food.showName(), amount);
         }
@@ -256,11 +256,12 @@ class ChangeDatabaseControl {
             fullDeletion = EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
         }
         data.delete(fullName, displayName, fullDeletion);
+        aGUI.updateResults();
     }
 
     int ingredientsInRecipe(String name) {
         Recipe item = (Recipe) data.findItem(name);
-        return item.numberIngredients();
+        return item.showIngredientList().size();
     }
 
     int tempIngredientsInRecipe(String name) {

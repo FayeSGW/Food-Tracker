@@ -36,7 +36,7 @@ public class Recipe extends SupFood {
     public HashMap<String, Double> showTempIngredients() {
         return tempIngredients;
     }
-
+    //returns list of all saved ingredients and temp ingredients, to show them in the edit recipe window
     public HashMap<String, Double> showAllCurrentIngredients() {
         HashMap<String, Double> all = new HashMap<>();
         for (String name: ingredientsList.keySet()) {
@@ -50,10 +50,6 @@ public class Recipe extends SupFood {
             }
         }
         return all;
-    }
-
-    public int numberIngredients() {
-        return ingredientsList.size();
     }
 
     public void edit(String name, double servings) {
@@ -72,47 +68,35 @@ public class Recipe extends SupFood {
 
     // ----------------------------INGREDIENTS--------------------------
     public double showIngredientWeight(String name) {
-        double weight = ingredientsList.get(name);
+        double weight = 0;
+        if (tempIngredients.keySet().contains(name)) {
+            weight = tempIngredients.get(name);
+        } else if (ingredientsList.keySet().contains(name)) {
+            weight = ingredientsList.get(name);
+        }
         return weight;
     }
 
-    public boolean addToTempFood(Food food, String name, double weight) {
-        double[] nutr = food.showUnitNutrition();
-        boolean ingredientExists = false;
-        if (!tempIngredients.containsKey(name)) {
-            tempIngredients.put(name, weight);
-        } else {
-            ingredientExists = true;
-            double oldWeight = ingredientsList.get(name);
-            double newWeight = oldWeight + weight;
-            tempIngredients.put(name, newWeight);
-        }
-        food.addRecipe(this);
-        for (String type: food.showFoodTypes()) {
-            addFoodType(type);
-        }
-        double[] weighted = new double[8];
-        for (int i = 0; i < nutrition.length; i++) {
-            weighted[i] = nutr[i] * weight;
-            nutrition[i] = nutrition[i] + weighted[i];
-        } 
-        return ingredientExists;
-    }
-
-    public boolean addToTemp(String name, double weight) {
+    public void addTempIngredient(String name, double weight) {
         SupFood ingredient;
-        boolean ingredientExists = false;
         try {
             ingredient = data.findItem(name);
             if (ingredient instanceof Food) {
-                Food ingr = (Food) ingredient;
-                ingredientExists = addToTempFood(ingr, name, weight);  
+                if (ingredientsList.containsKey(name)) {
+                    tempIngredients.put(name, ingredientsList.get(name));
+                }
+                if (!tempIngredients.containsKey(name)) {
+                    tempIngredients.put(name, weight);
+                } else {
+                    double oldWeight = tempIngredients.get(name);
+                    double newWeight = oldWeight + weight;
+                    tempIngredients.put(name, newWeight);
+                }
             } else {
                 Recipe rec = (Recipe) ingredient;
                 addFromRecipeTemp(rec, weight);
             }
         } catch (NullPointerException e) {} 
-        return ingredientExists; 
     }
 
     public void addFromRecipeTemp(Recipe rec, double servings) {
@@ -121,57 +105,53 @@ public class Recipe extends SupFood {
             double totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
             weight = (double) newWeight;
-            addToTemp(name, weight);
+            addTempIngredient(name, weight);
         }
+    }
+
+    public void editIngredient(String name, double amount) {
+        tempIngredients.put(name, amount);
+    }
+
+    public void removeTempIngredient(String name) {
+        tempIngredients.put(name, 0.0);
     }
 
     public void save() {
         for (String foodName: tempIngredients.keySet()) {
             Food food = (Food) data.findItem(foodName);
-            double amount = tempIngredients.get(foodName);
-            double[] nutr = food.showUnitNutrition();
-            food.addRecipe(this);
-            for (String type: food.showFoodTypes()) {
-                addFoodType(type);
-            }
-            double[] weighted = new double[8];
-            for (int i = 0; i < nutrition.length; i++) {
-                weighted[i] = nutr[i] * weight;
-                nutrition[i] = nutrition[i] + weighted[i];
-            } 
-            ingredientsList.put(foodName, amount);
-            EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount);
-        }
-    }
-
-    public void saveEdited() {
-        //First remove ingredients that have been chosen for removal
-        for (String foodName: tempIngredients.keySet()) {
             if (tempIngredients.get(foodName) == 0.0) {
-                Food food = (Food) data.findItem(foodName);
-                removeIngredient1(food, foodName);
+                removeIngredientPermanently(food, foodName);
                 tempIngredients.remove(foodName);
                 EditFoodRecipeDatabase.removeIngredient(name, foodName);
-            } 
+            } else {
+                double amount = tempIngredients.get(foodName);
+                double[] nutr = food.showUnitNutrition();
+                food.addRecipe(this);
+                for (String type: food.showFoodTypes()) {
+                    addFoodType(type);
+                }
+                double[] weighted = new double[8];
+                for (int i = 0; i < nutrition.length; i++) {
+                    weighted[i] = nutr[i] * weight;
+                    nutrition[i] = nutrition[i] + weighted[i];
+                } 
+                ingredientsList.put(foodName, amount);
+                EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount);
+            }
         }
-        //Then update the rest of the ingredients
-        save();
     }
 
-    //This is separated from the main addIngredient() method to allow for unit testing
-    public boolean addFoodIngredient(Food food, String name, double weight) {
-        double[] nutr = food.showUnitNutrition();
-        boolean ingredientExists = false;
-        if (!ingredientsList.containsKey(name)) {
-            ingredientsList.put(name, weight);
-        } else {
-            ingredientExists = true;
-            double oldWeight = ingredientsList.get(name);
-            double newWeight = oldWeight + weight;
-            ingredientsList.put(name, newWeight);
-        }
-        food.addRecipe(this);
-        for (String type: food.showFoodTypes()) {
+    public void clearTemp() {
+        tempIngredients.clear();
+    }
+
+    public void addIngredientFromDB(String name, double weight) {
+        Food ingredient = (Food) data.findItem(name);
+        double[] nutr = ingredient.showUnitNutrition();
+        ingredientsList.put(name, weight);
+        ingredient.addRecipe(this);
+        for (String type: ingredient.showFoodTypes()) {
             addFoodType(type);
         }
         double[] weighted = new double[8];
@@ -179,45 +159,6 @@ public class Recipe extends SupFood {
             weighted[i] = nutr[i] * weight;
             nutrition[i] = nutrition[i] + weighted[i];
         } 
-        return ingredientExists;
-    }
-
-    public boolean addIngredient(String name, double weight) {
-        SupFood ingredient;
-        boolean ingredientExists = false;
-        try {
-            ingredient = data.findItem(name);
-            if (ingredient instanceof Food) {
-                Food ingr = (Food) ingredient;
-                ingredientExists = addFoodIngredient(ingr, name, weight);  
-            } else {
-                Recipe rec = (Recipe) ingredient;
-                addFromRecipe(rec, weight);
-            }
-        } catch (NullPointerException e) {} 
-        return ingredientExists;
-    }
-
-    public void addIngredientFromGUI(String foodName, double amount) {
-        boolean ingredientsExists = addToTemp(foodName, amount);
-        // If ingredient has previously been added to the recipe, remove it from the database and then
-        // re-add with the updated amount
-        /*if (ingredientsExists) {
-            EditFoodRecipeDatabase.removeIngredient(name, foodName);
-        }
-        EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, ingredientsList.get(foodName)); */
-    }
-
-    // This allows the user to add an existing recipe to this one, resulting in all the ingredients from
-    // that recipe being added to this.
-    public void addFromRecipe(Recipe rec, double servings) {
-        for (String name: rec.showIngredientList().keySet()) {
-            double weight = rec.showIngredientList().get(name);
-            double totalServings = rec.weight();
-            double newWeight = weight * ((double) servings / totalServings);
-            weight = (double) newWeight;
-            addIngredient(name, weight);
-        }
     }
 
     /*public boolean checkIngredientFoodTypes(String ingr, String type) {
@@ -235,7 +176,7 @@ public class Recipe extends SupFood {
         return false;
     }*/
 
-    public void removeIngredient1(Food food, String name) {
+    public void removeIngredientPermanently(Food food, String name) {
         if (ingredientsList.keySet().contains(name)) {
             double[] weighted = new double[8];
             double weight = ingredientsList.get(name);
@@ -254,20 +195,6 @@ public class Recipe extends SupFood {
             food.removeRecipe(this);
             ingredientsList.remove(name);
         }
-    }
-
-    public void removeIngredient(String name) {
-        tempIngredients.put(name, 0.0);
-
-        /*Food food = (Food) data.findItem(name);
-        removeIngredient1(food, name);        
-        EditFoodRecipeDatabase.removeIngredient(this.name, name);*/
-    }
-
-    public void editIngredient(String name, double amount) {
-        tempIngredients.put(name, amount);
-        /*removeIngredient(name);
-        addIngredientFromGUI(name, amount);*/
     }
 
     // ----------------------------TYPES------------------------

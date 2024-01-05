@@ -118,7 +118,7 @@ public class GetFoodsDB {
                 if (deleted == 1) {
                     rec.setDeleted();
                 }
-                rec.addIngredient(ingredient, ingredientAmount);
+                rec.addIngredientFromDB(ingredient, ingredientAmount);
                 rec.addInstructions(instructs);
             }
         } catch (SQLException e) {

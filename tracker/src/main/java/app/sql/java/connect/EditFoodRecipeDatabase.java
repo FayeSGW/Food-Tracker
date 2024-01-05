@@ -15,8 +15,6 @@ public class EditFoodRecipeDatabase {
         Connection conn = null;
         PreparedStatement stmt = null;
         String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?) ON CONFLICT(RecipeName, FoodName) DO UPDATE SET IngredientAmount = ?";
-        //String exString = "UPDATE RecipeIngredients SET IngredientAmount = ? WHERE RecipeName = ? AND FoodName = ?";
-
         try {
             conn = Connect.connect();
 
@@ -43,7 +41,6 @@ public class EditFoodRecipeDatabase {
         Connection conn = null;
         PreparedStatement stmt = null;
         String strng = "UPDATE Recipes SET Instructions = ? WHERE RecipeName = ?";
-
         try {
             conn = Connect.connect();
             stmt = conn.prepareStatement(strng);
@@ -68,7 +65,6 @@ public class EditFoodRecipeDatabase {
         Connection conn = null;
         PreparedStatement stmt = null;
         String strng = "DELETE FROM RecipeIngredients WHERE RecipeName = ? AND FoodName = ?";
-
         try {
             conn = Connect.connect();
             stmt = conn.prepareStatement(strng);
@@ -123,7 +119,6 @@ public class EditFoodRecipeDatabase {
         PreparedStatement stmt = null;
         String newString = "INSERT INTO Foods(FoodName, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
         String exString = "UPDATE Foods SET FoodName = ?, DisplayName = ?, Weight = ?, Unit = ?, Calories = ?, Fat = ?, SaturatedFat = ?, Carbohydrates = ?, Sugar = ?, Fibre = ?, Protein = ?, Salt = ?, Barcode = ? WHERE FoodName  = ?";
-
         try {
             conn = Connect.connect();
 
@@ -163,10 +158,10 @@ public class EditFoodRecipeDatabase {
     }
 
     public static boolean checkIfContains(Connection conn, String itemName, String itemType) {
-            PreparedStatement stmtDiary = null, stmtRecipes = null;
-            String searchRecipes = null, searchDiary = null;
-            ResultSet rsRecipes = null, rsDiary = null;
-            boolean contains = true;
+        PreparedStatement stmtDiary = null, stmtRecipes = null;
+        String searchRecipes = null, searchDiary = null;
+        ResultSet rsRecipes = null, rsDiary = null;
+        boolean contains = true;
         try {
             if (conn == null) {
                 conn = Connect.connect();
@@ -268,5 +263,4 @@ public class EditFoodRecipeDatabase {
         // in-memory database to update it too
         return actuallyDeleted;
     }
-
 }

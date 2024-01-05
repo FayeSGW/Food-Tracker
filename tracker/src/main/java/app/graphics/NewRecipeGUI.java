@@ -55,10 +55,10 @@ class NewRecipeGUI {
         buttonsPanel = new JPanel(); whole.add(buttonsPanel);
         addIngredientButton = new JButton("Add Ingredient"); addIngredientButton.setEnabled(false); 
         addIngredientButton.addActionListener(new addIngredient()); buttonsPanel.add(addIngredientButton);
-        deleteButton = new JButton("Delete"); deleteButton.setEnabled(false);
-        deleteButton.addActionListener(new deleteRecipe()); buttonsPanel.add(deleteButton);
+        deleteButton = new JButton("Cancel"); deleteButton.setEnabled(false);
+        deleteButton.addActionListener(new cancel()); buttonsPanel.add(deleteButton);
         donePanel = new JPanel(); whole.add(donePanel);
-        doneButton = new JButton("Done"); doneButton.setEnabled(false); 
+        doneButton = new JButton("Save"); doneButton.setEnabled(false); 
         doneButton.addActionListener(new finished()); donePanel.add(doneButton);
 
         infoLabel = new JLabel(); whole.add(infoLabel);
@@ -140,8 +140,7 @@ class NewRecipeGUI {
                 }
 
                 if (name != null) {
-                    boolean success = control.saveNewRecipe(name, servings);
-                    //System.out.println(success);
+                    boolean success = control.createRecipe(name, servings);
                     if (success) {
                         control.recipe(name);
                         setRecipeName(name);
@@ -160,35 +159,39 @@ class NewRecipeGUI {
         }
     }
 
-    class deleteRecipe implements ActionListener {
+    class cancel implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.delete(recipeName);
+            if (control.ingredientsInRecipe(recipeName) == 0) {
+                control.delete(recipeName); 
+            } else {
+                control.cancelRecipeEdit();
+            }
             window.dispose();
         }
     }
 
     class finished implements ActionListener {
-
         @Override
         public void actionPerformed (ActionEvent e) {
-            if (control.ingredientsInRecipe(recipeName) == 0) {
-                if (control.tempIngredientsInRecipe(recipeName) == 0) {
-                    control.delete(recipeName);
+            try {
+                control.saveRecipeWithIngredients();
+                
+                //If either the recipe name or the number of servings has changed, edit the recipe object
+                String name = ExHandling.checkForNull("Name", nameField.getText());
+                double servings;
+                if (amountField.getText() == null || amountField.getText().equals("")) {
+                    servings = 1;
                 } else {
-                    control.saveRecipeWithIngredients();
-                }  
-            } else if (control.tempIngredientsInRecipe(recipeName) > 0) {
-                control.saveRecipeWithChangedIngredients();
+                    servings = ExHandling.checkDoubles("Amount", amountField.getText());
+                }
+                if (!control.checkRecipeName(name) || !control.checkRecipeServings(servings)) {
+                    control.saveEditedRecipe(recipeName, name, servings);
+                }
+                window.dispose();
+            } catch (NoNegativeException | NoNullException n) {
+                infoLabel.setText(n.getMessage());
             }
-            
-            //If either the recipe name or the number of servings has changed, edit the recipe object
-            String name = nameField.getText();
-            double servings = Double.parseDouble(amountField.getText());
-            if (!control.checkRecipeName(name) || !control.checkRecipeServings(servings)) {
-                control.saveEditedRecipe(recipeName, name, servings);
-            }
-            window.dispose();
         }
     }
 }

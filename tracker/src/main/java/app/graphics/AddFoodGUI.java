@@ -176,7 +176,6 @@ class AddFoodGUI {
         public void actionPerformed (ActionEvent e) {
             try {
                 model.clear();
-                
                 ArrayList<String> results = getSearchResults();
                 if (results.size() == 0) {
                     model.addElement("Nothing found!");
