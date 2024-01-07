@@ -12,26 +12,38 @@ public class Database {
     protected String name;
     protected HashMap<String, SupFood> database = new HashMap<String, SupFood>();
     protected HashMap<String, SupFood> displayDatabase = new HashMap<>(); 
+    public HashMap<Integer, SupFood> indexedDatabase = new HashMap<>();
     private HashSet<SupFood> searchResults;
 
     public Database(String name) {
         this.name = name;
     }
 
-    public void addFood(String name, String nickname, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        if (nameCheck(name) && nicknameCheck(nickname)) {
-            Food food = new Food(this, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+    public Food addFood(Integer index, int deleted, String name, String nickname, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        Food food = null;
+        if (deleted == 1) {
+            food = new Food(this, index, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            food.setDeleted();
+        } else if (nameCheck(name) && nicknameCheck(nickname)) {
+            food = new Food(this, index, name, nickname, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             database.put(name, food);
             displayDatabase.put(nickname, food);
         }
+        indexedDatabase.put(index, food);
+        return food;
     }
 
-    public Recipe addRecipe(String name, double servings) {
+    public Recipe addRecipe(Integer index, int deleted, String name, double servings) {
         Recipe recipe = null;
+        if (deleted == 1) {
+            recipe = new Recipe(this, index, name, servings);
+            recipe.setDeleted();
+        }
         if (nameCheck(name)) {
-            recipe = new Recipe(this, name, servings);
+            recipe = new Recipe(this, index, name, servings);
             database.put(name, recipe);
         }
+        indexedDatabase.put(index, recipe);
         return recipe;
     }
 
@@ -53,18 +65,22 @@ public class Database {
         return database;
     }
 
-    public void editFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public int editFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         Food food = (Food) findItem(oldName);
         food.edit(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
         database.remove(oldName); displayDatabase.remove(oldDisplayName);
         database.put(newName, food); displayDatabase.put(displayName, food);
+        indexedDatabase.put(food.showIndex(), food);
+        return food.showIndex();
     }
 
-    public void editRecipe(String oldName, String newName, double amount) {
+    public int editRecipe(String oldName, String newName, double amount) {
         Recipe recipe = (Recipe) findItem(oldName);
         recipe.edit(newName, amount);
         database.remove(oldName); displayDatabase.remove(oldName);
         database.put(newName, recipe); displayDatabase.put(newName, recipe);
+        indexedDatabase.put(recipe.showIndex(), recipe);
+        return recipe.showIndex();
     }
 
     //If "full" is true, it means that the item is not referenced by any recipes in the database or any entries in the diary, and
@@ -72,10 +88,11 @@ public class Database {
     public void delete(String fullName, String displayName, boolean full) {
         SupFood food = database.get(fullName);
         food.setDeleted();
-        if (full) {
-            database.remove(fullName);
-            displayDatabase.remove(displayName);
-        }
+        database.remove(fullName);
+        displayDatabase.remove(displayName);
+        /*if (!full) {
+            indexedDatabase.put(food.showIndex(), food); 
+        }*/
     }
 
     public HashSet<SupFood> searchDatabase(String item, String constraint) {
@@ -115,38 +132,6 @@ public class Database {
         return searchResults; 
     }
 
-    /*public HashSet<SupFood> searchForRecipes(String item) {
-        searchResults = new HashSet<>();
-        for (String food: database.keySet()) {
-            if (food.toLowerCase().contains(item.toLowerCase())) {
-                SupFood result = database.get(food);
-                if (result.isDeleted()) {
-                    continue;
-                }
-                if (result instanceof Recipe) {
-                    searchResults.add(result);
-                }
-            }
-        }
-        return searchResults; 
-    }
-
-    public HashSet<SupFood> searchForFoods(String item) {
-        searchResults = new HashSet<>();
-        for (String food: database.keySet()) {
-            if (food.toLowerCase().contains(item.toLowerCase())) {
-                SupFood result = database.get(food);
-                if (result.isDeleted()) {
-                    continue;
-                }
-                if (result instanceof Food) {
-                    searchResults.add(result);
-                }
-            }
-        }
-        return searchResults; 
-    }*/
-
     /*public SupFood addFromDatabase(String name) {
         if (!database.containsKey(name) && !displayDatabase.containsKey(name)) {
             System.out.println(name + " Not in database!");
@@ -163,6 +148,10 @@ public class Database {
             item = displayDatabase.get(name);
         }
         return item;        
+    }
+
+    public SupFood getItemFromIndex(int index) {
+        return indexedDatabase.get(index);
     }
 
     public boolean isRecipe(String name) {

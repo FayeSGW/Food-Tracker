@@ -48,7 +48,7 @@ class CopyMealGUI {
         label = new JLabel("Choose meal to copy to: "); whole.add(label, BorderLayout.NORTH);
 
         choices = new JPanel(); whole.add(choices, BorderLayout.CENTER);
-        chooseDate = new JButton("Date"); chooseDate.addActionListener(new date());
+        chooseDate = new JButton("Date"); chooseDate.addActionListener(new Date());
         choices.add(chooseDate);
         mealChooser = new JComboBox<>(mealsList); mealChooser.setSelectedIndex(index);
         choices.add(mealChooser);
@@ -61,7 +61,7 @@ class CopyMealGUI {
         window.setVisible(true);
     }
 
-    class date implements ActionListener {
+    class Date implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
             control.openCalendar("copy");
@@ -73,6 +73,7 @@ class CopyMealGUI {
         public void actionPerformed (ActionEvent e) {
             String toMeal = (String)mealChooser.getSelectedItem();
             control.copyMeal(fromMeal, toMeal);
+            window.dispose();
         }
     }
 

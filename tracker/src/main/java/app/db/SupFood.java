@@ -10,12 +10,25 @@ public abstract class SupFood {
     protected double weight;
     protected Database data;
     protected boolean deleted = false;
+    private int index;
+    static int indexCounter = 0;
 
-    public SupFood(Database data, String name, double weight) {
+    public SupFood(Database data, Integer index, String name, double weight) {
+        if (index != null) {
+            this.index = index;
+            indexCounter = index;
+        } else {
+            indexCounter++;
+            this.index = indexCounter;
+        }
         this.name = name;
         this.weight = weight;
         nutrition = new double[8];
         this.data = data;
+    }
+
+    public int showIndex() {
+        return index;
     }
 
     public abstract String showName();

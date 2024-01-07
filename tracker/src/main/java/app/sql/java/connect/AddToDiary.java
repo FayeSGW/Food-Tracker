@@ -174,11 +174,11 @@ public class AddToDiary {
         
     }
 
-    public static void removeFood(String date, String meal, String name, String type) {
+    public static void removeFood(String date, String meal, int index, String type) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String foodString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND FoodName = ?";
-        String recipeString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND RecipeName = ?";
+        String foodString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND FoodID = ?";
+        String recipeString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND RecipeID = ?";
 
         try {
             conn = Connect.connect();
@@ -191,7 +191,7 @@ public class AddToDiary {
 
             stmt.setString(1, date);
             stmt.setString(2, meal);
-            stmt.setString(3, name);
+            stmt.setInt(3, index);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("aa nei " + e.getMessage());

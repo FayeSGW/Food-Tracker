@@ -59,8 +59,8 @@ public class GetFoodsDB {
     }
 
     public static void getFoods(Connection conn, Database d) {
-        String foods = "SELECT FoodName, Deleted, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
-        String recipes = "SELECT FoodName, Deleted, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients INNER JOIN Recipes ON RecipeIngredients.RecipeName = Recipes.RecipeName";
+        String foods = "SELECT FoodID, FoodName, Deleted, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
+        String recipes = "SELECT RecipeID, FoodID, FoodName, Deleted, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients RIGHT JOIN Recipes USING (RecipeID)";
         Statement stmt = null;
         //Statement stmt2 = null;
         ResultSet frs = null;
@@ -73,6 +73,7 @@ public class GetFoodsDB {
             
             //Adding foods to database
             while (frs.next()) {
+                int index = frs.getInt("FoodID");
                 String name = frs.getString("FoodName");
                 int deleted = frs.getInt("Deleted");
                 String displayName = frs.getString("DisplayName");
@@ -91,34 +92,38 @@ public class GetFoodsDB {
                 double salt = frs.getDouble("Salt");
                 String barcode = frs.getString("Barcode");
 
-                d.addFood(name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                if (deleted == 1) {
-                    Food food = (Food)d.findItem(name);
-                    food.setDeleted();
-                }
+                Food food = d.addFood(index, deleted, name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                System.out.println(index + " " + name);
             }
 
             //Adding recipes to database
             //stmt = conn.createStatement();
             rrs = stmt.executeQuery(recipes);
             while (rrs.next()) {
+                int index = rrs.getInt("RecipeID");
                 String recipeName = rrs.getString("RecipeName");
                 int deleted = frs.getInt("Deleted");
                 double servings = rrs.getDouble("Servings");
                 String ingredient = rrs.getString("FoodName");
+                int foodIndex = rrs.getInt("FoodID");
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
                 String instructs = rrs.getString("Instructions");
                 
-                System.out.println(recipeName);
-                Recipe rec = (Recipe)d.findItem(recipeName);
+                Recipe rec = null;
+                if (deleted == 1) {
+                    rec = (Recipe)d.getItemFromIndex(index);
+                } else {
+                    rec = (Recipe)d.findItem(recipeName);
+                }
+
                 if (rec == null) {
-                    rec = d.addRecipe(recipeName, servings);
+                    rec = d.addRecipe(index, deleted, recipeName, servings);
+                }
+
+                if (foodIndex > 0) {
+                    rec.addIngredientByIndex(foodIndex, ingredientAmount);
                 }
                 
-                if (deleted == 1) {
-                    rec.setDeleted();
-                }
-                rec.addIngredientFromDB(ingredient, ingredientAmount);
                 rec.addInstructions(instructs);
             }
         } catch (SQLException e) {
@@ -136,7 +141,7 @@ public class GetFoodsDB {
 
     public static void getDiary(Connection conn, Diary diary) {
         String dayString = "SELECT Date, Water , Weight FROM Days";
-        String mealStrng = "SELECT Meal, FoodName, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
+        String mealStrng = "SELECT Meal, FoodID, FoodName, RecipeID, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
         String exercises = "SELECT ID, WorkoutName, Minutes, Seconds, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 
         Statement dayStmt = null, foodStmt = null, exStmt = null;
@@ -164,7 +169,9 @@ public class GetFoodsDB {
             
             while (frs.next()) {
                 String meal = frs.getString("Meal");
+                int foodID = frs.getInt("FoodID");
                 String food = frs.getString("FoodName");
+                int recipeID = frs.getInt("RecipeID");
                 String recipe = frs.getString("RecipeName");
                 double amount = frs.getDouble("Amount");
 
@@ -174,9 +181,9 @@ public class GetFoodsDB {
                 Day dayObj = diary.goToDay(date);
 
                 if (recipe == null) {
-                    dayObj.addFood(meal, food, amount);
+                    dayObj.addByIndex(meal, foodID, amount);
                 } else {
-                    dayObj.addFood(meal, recipe, amount);
+                    dayObj.addByIndex(meal, recipeID, amount);
                 }
             }
 

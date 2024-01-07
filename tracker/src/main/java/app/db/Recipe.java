@@ -14,8 +14,8 @@ public class Recipe extends SupFood {
     private HashSet<String> mealType = new HashSet<>();
     private String instructions;
 
-    public Recipe(Database data, String name, double servings) {
-        super(data, name, servings);
+    public Recipe(Database data, Integer index, String name, double servings) {
+        super(data, index, name, servings);
     }
     
     // ---------------------------------BASE RECIPE-------------------------
@@ -146,10 +146,19 @@ public class Recipe extends SupFood {
         tempIngredients.clear();
     }
 
-    public void addIngredientFromDB(String name, double weight) {
+    public void addIngredientByName(String name, double weight) {
         Food ingredient = (Food) data.findItem(name);
+        addIngredientFromDB(ingredient, weight);
+    }
+
+    public void addIngredientByIndex(int index, double weight) {
+        Food ingredient = (Food) data.getItemFromIndex(index);
+        addIngredientFromDB(ingredient, weight);
+    }
+
+    private void addIngredientFromDB(Food ingredient, double weight) {
         double[] nutr = ingredient.showUnitNutrition();
-        ingredientsList.put(name, weight);
+        ingredientsList.put(ingredient.showName(), weight);
         ingredient.addRecipe(this);
         for (String type: ingredient.showFoodTypes()) {
             addFoodType(type);

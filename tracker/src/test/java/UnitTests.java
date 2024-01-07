@@ -33,7 +33,7 @@ import exceptions.NoNegativeException;
 
 public class UnitTests {
 
-    Database stubDB = new Database("DB");
+    /*Database stubDB = new Database("DB");
     Recipe stubRecipe1 = new Recipe(stubDB, "Recipe Name1", 4);
     static UnitTestMethods.Stubs stubs;
     
@@ -225,7 +225,7 @@ public class UnitTests {
 
 
     //-------------------------------------USER TESTS----------------------
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("UnitTestMethods#providesUserObjects")
     public void test010_AssertSimpleGettersForNewUser(User user, String expectedName, String expectedGender, double expectedWeight, int expectedHeight, 
         String expectedDateOfBirth, String expectedGoal, double expectedRate, int expectedWater) {

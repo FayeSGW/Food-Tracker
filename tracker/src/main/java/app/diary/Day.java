@@ -49,7 +49,12 @@ public class Day {
         return date;
     }
 
-    public void addFood(String meal, String item, double amount) {
+    public void addByIndex(String meal, int index, double amount) {
+        SupFood item = database.getItemFromIndex(index);
+        addFood(meal, item, amount);
+    }
+
+    public void addFood(String meal, SupFood item, double amount) {
         String name = meal.toLowerCase().trim();
         double[] foodNutrition = new double[8];
         if (name.equals("breakfast")) {
@@ -64,15 +69,14 @@ public class Day {
         for (int i = 0; i < nutrition.length; i++) {
             nutrition[i] = nutrition[i] + foodNutrition[i];
             remainingNutrition[i] = remainingNutrition[i] - foodNutrition[i];
-
         }
     }
 
-    public void addFoodFromGUI(String meal, String item, double amount) {
-        SupFood food = database.findItem(item);
+    public void addFoodFromGUI(String meal, String name, double amount) {
+        SupFood food = database.findItem(name);
         String fullName = food.showName();
         String date = showDate().toString();
-        addFood(meal, fullName, amount);
+        addFood(meal, food, amount);
         AddToDiary.addFood(user, date, meal, fullName, amount);
     }
 
@@ -81,7 +85,7 @@ public class Day {
         return goals;
     }
 
-    public void remove(String meal, String item) {
+    public void remove(String meal, int item) {
         String name = meal.toLowerCase().trim();
         String date = showDate().toString();
         double[] nutr = new double[8];
@@ -98,7 +102,7 @@ public class Day {
             nutrition[i] = nutrition[i] - nutr[i];
             remainingNutrition[i] = remainingNutrition[i] + nutr[i];
         }
-        SupFood food = database.findItem(item);
+        SupFood food = database.getItemFromIndex(item);
 
         if (food instanceof Food) {
             AddToDiary.removeFood(date, meal, item, "food");
@@ -108,17 +112,18 @@ public class Day {
         
     }
 
-    public void edit(String meal, String item, double weight) {
+    public void edit(String meal, int item, double weight) {
         String name = meal.toLowerCase().trim();
         double[] nutr = new double[8];
+        String foodName = database.getItemFromIndex(item).showName();
 
         remove(meal, item);
-        addFoodFromGUI(meal, item, weight);
+        addFoodFromGUI(name, foodName, weight);
     }
 
     public void copyMeal(Meal fromMeal, String toMeal, Day toDay) {
-        HashMap<String, ArrayList<Object>> foodList = fromMeal.showFoods();
-        for (String item: foodList.keySet()) {
+        HashMap<Integer, ArrayList<Object>> foodList = fromMeal.showFoods();
+        for (Integer item: foodList.keySet()) {
             ArrayList<Object> details = foodList.get(item);
             double amount = (double) details.get(1);
             toDay.addFoodFromGUI(toMeal, item, amount);

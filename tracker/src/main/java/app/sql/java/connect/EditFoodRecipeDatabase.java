@@ -85,21 +85,21 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    public static void addRecipe(String oldName, String newName, double servings) {
+    public static void addRecipe(int index, String oldName, String newName, double servings) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String newString = "INSERT INTO Recipes(RecipeName, Servings) VALUES(?, ?)";
-        String exString = "UPDATE Recipes SET RecipeName = ?, Servings = ? WHERE RecipeName = ?";
+        String newString = "INSERT INTO Recipes(RecipeName, Servings, RecipeID) VALUES(?, ?, ?)";
+        String exString = "UPDATE Recipes SET RecipeName = ?, Servings = ? WHERE RecipeID = ?";
         try {
             conn = Connect.connect();
             if (oldName == null) {
                 stmt = conn.prepareStatement(newString);
             } else {
                 stmt = conn.prepareStatement(exString);
-                stmt.setString(3, oldName);
             }
             stmt.setString(1, newName);
             stmt.setDouble(2, servings);
+            stmt.setInt(3, index);
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -114,11 +114,11 @@ public class EditFoodRecipeDatabase {
         }
     }
 
-    public static void addFood(String oldName, String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+    public static void addFood(int index, String oldName, String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String newString = "INSERT INTO Foods(FoodName, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        String exString = "UPDATE Foods SET FoodName = ?, DisplayName = ?, Weight = ?, Unit = ?, Calories = ?, Fat = ?, SaturatedFat = ?, Carbohydrates = ?, Sugar = ?, Fibre = ?, Protein = ?, Salt = ?, Barcode = ? WHERE FoodName  = ?";
+        String newString = "INSERT INTO Foods(FoodName, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode, FoodID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String exString = "UPDATE Foods SET FoodName = ?, DisplayName = ?, Weight = ?, Unit = ?, Calories = ?, Fat = ?, SaturatedFat = ?, Carbohydrates = ?, Sugar = ?, Fibre = ?, Protein = ?, Salt = ?, Barcode = ? WHERE FoodID  = ?";
         try {
             conn = Connect.connect();
 
@@ -126,8 +126,6 @@ public class EditFoodRecipeDatabase {
                 stmt = conn.prepareStatement(newString);
             } else {
                 stmt = conn.prepareStatement(exString);
-
-                stmt.setString(14, oldName);
             }
             stmt.setString(1, name);
             stmt.setString(2, displayName);
@@ -142,6 +140,7 @@ public class EditFoodRecipeDatabase {
             stmt.setDouble(11, protein);
             stmt.setDouble(12, salt);
             stmt.setString(13, barcode);
+            stmt.setInt(14, index);
 
             stmt.executeUpdate();
             

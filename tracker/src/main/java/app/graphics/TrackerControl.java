@@ -159,16 +159,17 @@ class TrackerControl {
         updateNutrition();
     }
 
-    ArrayList<String> showFoodsinMeal(String mealName) {
+    HashMap<Integer, ArrayList<Object>> showFoodsinMeal(String mealName) {
         Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
-        return meal.showFoodNames();
+        //ArrayList<Integer> list = new ArrayList<>(meal.showFoods().keySet());
+        return meal.showFoods();
     }
 
-    String[] showFoodItemNutrition(String mealName, String foodName) {
+    String[] showFoodItemNutrition(String mealName, int index) {
         Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
-        double[] nutrition = meal.showFoodItemNutrition(foodName);
+        double[] nutrition = meal.showFoodItemNutrition(index);
         String[] nutritionString = new String[8];
         for (int i = 0; i < 8; i++) {
             nutritionString[i] = Integer.toString((int)nutrition[i]);
@@ -177,10 +178,10 @@ class TrackerControl {
         return nutritionString;
     }
 
-    String showFoodItemAmount(String mealName, String foodName) {
+    String showFoodItemAmount(String mealName, int index) {
         Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
-        return meal.showFoodItemAmount(foodName);
+        return meal.showFoodItemAmount(index);
     }
 
     //Functionality for user to update their weight
@@ -207,7 +208,6 @@ class TrackerControl {
     void editExercise(LocalDate date, Integer index, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.goToDay(date);
         day.editExercise(index, oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
-        
     }
 
     void editExerciseDialogue(String type, Integer index) {

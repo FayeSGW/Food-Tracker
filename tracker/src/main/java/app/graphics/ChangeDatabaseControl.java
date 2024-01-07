@@ -95,8 +95,8 @@ class ChangeDatabaseControl {
              * I have chosen to keep a reference to the old recipe (in the same way as when deleting items) so that already-existing 
              * diary entries are not changed; this essentially "deletes" the old recipe and creates a new one */                  
             if (!EditFoodRecipeDatabase.checkIfContains(null, oldName, "recipe")) {
-                data.editRecipe(oldName, newName, servings);
-                EditFoodRecipeDatabase.addRecipe(oldName, newName, servings);
+                int index = data.editRecipe(oldName, newName, servings);
+                EditFoodRecipeDatabase.addRecipe(index, oldName, newName, servings);
             } else {
                 Recipe rec = (Recipe) data.findItem(oldName);
                 HashMap<String, Double> ingredients = rec.showIngredientList();
@@ -104,16 +104,16 @@ class ChangeDatabaseControl {
                  * the recipe has changed. We need to keep a reference to the existing recipe for existing diary entries and 
                  * create a new one with the new values. */
                 if (servings == rec.weight() && rec.showTempIngredients().size() == 0) {
-                    data.editRecipe(oldName, newName, servings);
-                    EditFoodRecipeDatabase.addRecipe(oldName, newName, servings);
+                    int index = data.editRecipe(oldName, newName, servings);
+                    EditFoodRecipeDatabase.addRecipe(index, oldName, newName, servings);
                 } else {
                     delete(oldName);
-                    Recipe newRec = data.addRecipe(newName, servings);
+                    Recipe newRec = data.addRecipe(null, 0, newName, servings);
                     for (String ingredient: ingredients.keySet()) {
                         double weight = ingredients.get(ingredient);
-                        newRec.addIngredientFromDB(ingredient, weight);
+                        newRec.addIngredientByName(ingredient, weight);
                     }
-                    EditFoodRecipeDatabase.addRecipe(null, newName, servings);
+                    EditFoodRecipeDatabase.addRecipe(newRec.showIndex(), null, newName, servings);
                 }
             }
             aGUI.updateResults();
@@ -141,8 +141,8 @@ class ChangeDatabaseControl {
              * same way as when deleting items) so that already-existing recipe ingredient/diary entries are not changed-
              * This essentially "deletes" the old food and creates a new one */                  
             if (!EditFoodRecipeDatabase.checkIfContains(null, oldName, "food")) {
-                data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                int index = data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                EditFoodRecipeDatabase.addFood(index, oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             } else {
                 Food food = (Food) data.findItem(oldName);
                 double[] newNutr = {calories, fat, satfat, carbs, sugar, fibre, protein, salt};
@@ -150,12 +150,12 @@ class ChangeDatabaseControl {
                  * But if the nutrition or unit nutrition of the food has changed, then we need to keep a reference
                  * to the current food.*/
                 if (Arrays.equals(newNutr, food.showNutrition()) && amount == food.showAmount() && unit.equals(food.showUnit())) {
-                    data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                    EditFoodRecipeDatabase.addFood(oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    int index = data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    EditFoodRecipeDatabase.addFood(index, oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 } else {
                     delete(oldName);
-                    data.addFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                    EditFoodRecipeDatabase.addFood(null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    Food newFood = data.addFood(null, 0, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    EditFoodRecipeDatabase.addFood(newFood.showIndex(), null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 }   
             }
             aGUI.updateResults();
@@ -192,8 +192,8 @@ class ChangeDatabaseControl {
         if (!databaseCheck(name, displayName)) {
             return false;
         } else {
-            data.addFood(name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-            EditFoodRecipeDatabase.addFood(null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            Food food = data.addFood(null, 0, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            EditFoodRecipeDatabase.addFood(food.showIndex(), null, name, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             return true;
         }
     }
@@ -203,8 +203,8 @@ class ChangeDatabaseControl {
         if (!databaseCheck(name, name)) {
             return false;
         }
-        data.addRecipe(name, amount);
-        EditFoodRecipeDatabase.addRecipe(null, name, amount);
+        Recipe rec = data.addRecipe(null, 0, name, amount);
+        EditFoodRecipeDatabase.addRecipe(rec.showIndex(), null, name, amount);
         return true;
     }
 

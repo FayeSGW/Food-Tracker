@@ -245,7 +245,6 @@ class DiaryGUI extends JPanel {
     }
 
     void clearMealPanels() {
-        //System.out.println("." + breakfastFoodsPanel.getComponentCount());
         for (JPanel panel: mealPanels) {
             Component[] foodPanels = panel.getComponents();
             for (Component foodPanel: foodPanels) {
@@ -272,10 +271,49 @@ class DiaryGUI extends JPanel {
     }
 
     void updateMealPanels(String mealName) {
-        ArrayList<String> foodsList = control.showFoodsinMeal(mealName);
-        for (int i = 0; i < foodsList.size(); i++) {
-            String foodName = foodsList.get(i);
-            String displayName = control.showFoodDisplayName(foodName);
+        HashMap <Integer, ArrayList<Object>> foodsList = control.showFoodsinMeal(mealName);
+
+        for (Integer index: foodsList.keySet()) {
+            ArrayList<Object> details = foodsList.get(index);
+            String foodName = (String)details.get(0);
+            String displayName = (String)details.get(3);
+            String foodAmount = control.showFoodItemAmount(mealName, index);
+            String[] foodNutrition = control.showFoodItemNutrition(mealName, index);
+
+            JPanel foodItem = new JPanel();
+            JPanel mp;
+            
+            if (mealName.equals("Breakfast")) {
+                mp = breakfastFoodsPanel;
+            } else if (mealName.equals("Lunch")) {
+                mp = lunchFoodsPanel;
+            } else if (mealName.equals("Dinner")) {
+                mp = dinnerFoodsPanel;
+            } else {
+                mp = snacksFoodsPanel;
+            }
+
+            mp.add(foodItem);
+            
+            JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 15));
+            JLabel calories = new JLabel(foodNutrition[0], SwingConstants.CENTER); calories.setPreferredSize(new Dimension(47, 15));
+            JLabel carbs = new JLabel(foodNutrition[3] + " g", SwingConstants.CENTER); carbs.setPreferredSize(new Dimension(34, 15));
+            JLabel fat = new JLabel(foodNutrition[1] + " g", SwingConstants.CENTER); fat.setPreferredSize(new Dimension(25, 15));
+            JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
+            JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
+            foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
+;
+            name.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.editMealDialogue(mealName, foodName);
+                }
+            });
+        }
+        /*for (int i = 0; i < foodsList.size(); i++) {
+            ArrayList<Object> details = foodsList.get(i);
+            String foodName = (String)details.get(0);
+            String displayName = (String)details.get(3);
             String foodAmount = control.showFoodItemAmount(mealName, foodName);
             String[] foodNutrition = control.showFoodItemNutrition(mealName, foodName);
             JPanel foodItem = new JPanel();
@@ -300,19 +338,19 @@ class DiaryGUI extends JPanel {
             JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
             JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
             foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
-
+;
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.editMealDialogue(mealName, foodName);
                 }
-            });
+            });*/
 
             /*for (JPanel panel: mealPanels) {
                 panel.repaint();
             }*/
             //mp.repaint();
-        }
+        //}
     }
 
     void updateExercisePanel() {

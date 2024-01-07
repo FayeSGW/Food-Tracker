@@ -11,8 +11,8 @@ public class Food extends SupFood{
     private HashSet<String> foodType;
     private HashSet<Recipe> inRecipes;
 
-    public Food(Database data, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        super(data, name, weight);
+    public Food(Database data, Integer index, String name, String displayName, double weight, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
+        super(data, index, name, weight);
         if (displayName == null) {
             this.displayName = name;
         } else {

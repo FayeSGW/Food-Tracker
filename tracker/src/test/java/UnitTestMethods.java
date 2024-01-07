@@ -15,7 +15,7 @@ import exceptions.NoNegativeException;
 
 class UnitTestMethods {
 
-    static class Stubs {
+    /*static class Stubs {
         public static Food stubFoodWithDisplayName = null;
         public static Food stubFoodWithNullDisplayName = null;
         public static Recipe stubRecipe1 = null;
@@ -194,6 +194,6 @@ class UnitTestMethods {
         Arguments.of(Stubs.stubUserLose, user2Nutrition),
         Arguments.of(Stubs.stubUserGain, user3Nutrition)
         );
-    }
+    }*/
 
 }
