@@ -133,35 +133,44 @@ public class AddToDiary {
         }
     }
 
-    public static void addFood(User user, String date, String meal, String name, double amount) {
+    public static void addFood(Database data, String type, String date, String meal, String name, int id, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String string = "";
-        int nameIndex = 0;
-        //String date = day.showDate().toString();
 
-        Database data = user.accessDatabase();
-        if (data.isRecipe(name)) {
-            string = "INSERT INTO FoodsInDiary(Meal, RecipeName, Amount, Date) VALUES (?,?,?,?)";
-            //System.out.println(name + " " + data.isRecipe(name));
-            //nameIndex = 5;
+        if (data.isRecipe(id)) {
+            if (type.equals("new")) {
+                string = "INSERT INTO FoodsInDiary(Meal, RecipeName, Amount, Date, RecipeID) VALUES (?,?,?,?,?)";
+            } else {
+                string = "UPDATE FoodsInDiary SET Amount = ? WHERE Meal = ? AND RecipeID = ? AND Date = ?";
+            }
         } else {
-            string = "INSERT INTO FoodsInDiary(Meal, FoodName, Amount, Date) VALUES (?,?,?,?)";
-            //nameIndex = 4;
+            if (type.equals("new")) {
+                string = "INSERT INTO FoodsInDiary(Meal, FoodName, Amount, Date, FoodID) VALUES (?,?,?,?,?)";
+            } else {
+                string = "UPDATE FoodsInDiary SET Amount = ? WHERE Meal = ? AND FoodID = ? AND Date = ?";
+            }
         }
 
         try {
             conn = Connect.connect();
             stmt = conn.prepareStatement(string);
-
-            stmt.setString(1, meal);
-            stmt.setString(2, name);
-            stmt.setDouble(3, amount);
-            stmt.setString(4, date);
+            if (type.equals("new")) {
+                stmt.setString(1, meal);
+                stmt.setString(2, name);
+                stmt.setDouble(3, amount);
+                stmt.setString(4, date);
+                stmt.setInt(5, id);
+            } else {
+                stmt.setDouble(1, amount);
+                stmt.setString(2, meal);
+                stmt.setInt(3, id);
+                stmt.setString(4, date);
+            }
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(":( "+ e.getErrorCode());
+            System.out.println(":( "+ e.getMessage());
         } finally {
             try {
                 stmt.close();
@@ -170,11 +179,9 @@ public class AddToDiary {
                 System.out.println("!");
             }
         }
-
-        
     }
 
-    public static void removeFood(String date, String meal, int index, String type) {
+    public static void removeFood(Database data, String date, String meal, int index) {
         Connection conn = null;
         PreparedStatement stmt = null;
         String foodString = "DELETE FROM FoodsInDiary WHERE Date = ? AND Meal = ? AND FoodID = ?";
@@ -183,7 +190,7 @@ public class AddToDiary {
         try {
             conn = Connect.connect();
 
-            if (type.equals("food")) {
+            if (!data.isRecipe(index)) {
                 stmt = conn.prepareStatement(foodString);
             } else {
                 stmt = conn.prepareStatement(recipeString);

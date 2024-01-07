@@ -3,6 +3,8 @@ package app.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import exceptions.*;
 
@@ -96,9 +98,9 @@ class NewRecipeGUI {
     }
 
     void updateIngredientsPanel() {
-        HashMap<String, Double> list = control.showAllCurrentIngredients();
-        for (String ingredient: list.keySet()) {
-            JLabel name = new JLabel(String.format("%s %.0f", ingredient, list.get(ingredient)));
+        HashMap<Integer, ArrayList<Object>> list = control.showAllCurrentIngredients();
+        for (Integer ingredient: list.keySet()) {
+            JLabel name = new JLabel(String.format("%s %.0f", list.get(ingredient).get(0), list.get(ingredient).get(1)));
             ingredientsPanel.add(name);
             name.addMouseListener(new MouseAdapter() {
                 @Override

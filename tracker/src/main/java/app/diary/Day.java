@@ -22,7 +22,7 @@ public class Day {
     public Day(LocalDate date, User user) {
         this.date = date;
         this.user = user;
-        this.database = user.accessDatabase();
+        database = user.accessDatabase();
         breakfast = new Meal("Breakfast", date, database);
         lunch = new Meal("Lunch", date, database);
         dinner = new Meal("Dinner", date, database);
@@ -72,12 +72,22 @@ public class Day {
         }
     }
 
-    public void addFoodFromGUI(String meal, String name, double amount) {
+    public void addFoodFromGUI(String meal, String name, double amount, String type) {
         SupFood food = database.findItem(name);
+        saveToDB(meal, food, amount, type);
+    }
+
+    public void addFoodByIndex(String meal, int index, double amount, String type) {
+        SupFood food = database.getItemFromIndex(index);
+        saveToDB(meal, food, amount, type);
+    }
+
+    public void saveToDB(String meal, SupFood food, double amount, String type) {
         String fullName = food.showName();
         String date = showDate().toString();
         addFood(meal, food, amount);
-        AddToDiary.addFood(user, date, meal, fullName, amount);
+
+        AddToDiary.addFood(database, type, date, meal, fullName, food.showIndex(), amount);
     }
 
     public double[] showGoals() {
@@ -85,9 +95,14 @@ public class Day {
         return goals;
     }
 
-    public void remove(String meal, int item) {
-        String name = meal.toLowerCase().trim();
+    public void removeFromDB(String meal, int item) {
         String date = showDate().toString();
+        removeFromMemory(meal, item);
+        AddToDiary.removeFood(database, date, meal, item);
+    }
+
+    public void removeFromMemory(String meal, int item) {
+        String name = meal.toLowerCase().trim();
         double[] nutr = new double[8];
         if (name.equals("breakfast")) {
             nutr = breakfast.remove(item);
@@ -102,14 +117,6 @@ public class Day {
             nutrition[i] = nutrition[i] - nutr[i];
             remainingNutrition[i] = remainingNutrition[i] + nutr[i];
         }
-        SupFood food = database.getItemFromIndex(item);
-
-        if (food instanceof Food) {
-            AddToDiary.removeFood(date, meal, item, "food");
-        } else {
-            AddToDiary.removeFood(date, meal, item, "reciped");
-        }
-        
     }
 
     public void edit(String meal, int item, double weight) {
@@ -117,8 +124,8 @@ public class Day {
         double[] nutr = new double[8];
         String foodName = database.getItemFromIndex(item).showName();
 
-        remove(meal, item);
-        addFoodFromGUI(name, foodName, weight);
+        removeFromMemory(meal, item);
+        addFoodByIndex(meal, item, weight, "edit");
     }
 
     public void copyMeal(Meal fromMeal, String toMeal, Day toDay) {
@@ -126,7 +133,7 @@ public class Day {
         for (Integer item: foodList.keySet()) {
             ArrayList<Object> details = foodList.get(item);
             double amount = (double) details.get(1);
-            toDay.addFoodFromGUI(toMeal, item, amount);
+            toDay.addFoodByIndex(toMeal, item, amount, "new");
         }
     }
 

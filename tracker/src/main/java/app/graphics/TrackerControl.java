@@ -140,7 +140,7 @@ class TrackerControl {
     //Functionality for Diary tab
     void addFoodToDiary(String meal, String name, double amount) {
         Day day = diary.goToDay(showCurrentDate());
-        day.addFoodFromGUI(meal, name, amount);
+        day.addFoodFromGUI(meal, name, amount, "new");
         updateNutrition();
     }
 
@@ -255,12 +255,12 @@ class TrackerControl {
         dbControl.newRecipeGUI();
     }
 
-    void removeFromMeal(String mealName, String foodName) {
-        SupFood food = data.findItem(foodName);
+    void removeFromMeal(String mealName, int index) {
+        //SupFood food = data.getItemFromIndex(index);
         Day day = diary.goToDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.remove(food.showName());
-        day.remove(mealName, food.showName());
+        day.removeFromDB(mealName, index);
     }
 
     void clearMeal(String mealName) {
@@ -271,9 +271,9 @@ class TrackerControl {
         updateNutrition();
     }
 
-    void editRecipeIngredientDialogue(String recipeName, String foodName) {
-        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "recipe", recipeName);
-        SupFood food = data.findItem(foodName);
+    void editRecipeIngredientDialogue(String recipeName, int index) {
+        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "recipe", recipeName, index);
+        SupFood food = data.getItemFromIndex(index);
         String unit = food.showUnit();
         Recipe recipe = (Recipe) data.findItem(recipeName);
 
@@ -288,22 +288,22 @@ class TrackerControl {
         dbControl.editRecipeIngredient(foodName, newAmount);
     }
 
-    void editMealDialogue(String mealName, String foodName) {
-        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "diary", mealName);
-        SupFood food = data.findItem(foodName);
+    void editMealDialogue(String mealName, int index) {
+        EditFoodEntryGUI fGUI = new EditFoodEntryGUI(this, "diary", mealName, index);
+        SupFood food = data.getItemFromIndex(index);
         Day day = diary.goToDay(showCurrentDate());
         Meal meal = day.showMeal(mealName);
 
-        ArrayList<Object> data = meal.showFood(foodName);
+        ArrayList<Object> data = meal.showFood(index);
         fGUI.existingData(food.showDisplayName(), (double)data.get(1), (String)data.get(2));
     }
 
-    void editMeal(String mealName, String foodName, double newAmount) {
-        SupFood food = data.findItem(foodName);
+    void editMeal(String mealName, int index, double newAmount) {
+        //SupFood food = data.getItemFromIndex(index);
         Day day = diary.goToDay(showCurrentDate());
         //Meal meal = day.showMeal(mealName);
         //meal.edit(food.showName(), newAmount);
-        day.edit(mealName, food.showName(), newAmount);
+        day.edit(mealName, index, newAmount);
     }
 
 

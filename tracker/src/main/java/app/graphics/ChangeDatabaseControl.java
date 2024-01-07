@@ -1,6 +1,7 @@
 package app.graphics;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import app.sql.java.connect.*;
@@ -240,7 +241,7 @@ class ChangeDatabaseControl {
         return list;
     }
 
-    HashMap<String, Double> showAllCurrentIngredients() {
+    HashMap<Integer, ArrayList<Object>> showAllCurrentIngredients() {
         return recipe.showAllCurrentIngredients();
     }
 

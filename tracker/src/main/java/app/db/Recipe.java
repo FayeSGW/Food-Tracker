@@ -3,11 +3,14 @@ package app.db;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
 
 import app.sql.java.connect.*;
 
 public class Recipe extends SupFood {
     private HashMap<String, Double> ingredientsList = new HashMap<>();
+    private HashMap<Integer, ArrayList<Object>> ingList = new HashMap<>();
+    private HashMap<Integer, ArrayList<Object>> tempList = new HashMap<>();
     private HashMap<String, Double> tempIngredients = new HashMap<>();
     private HashMap<String, Integer> foodTypes = new HashMap<>();
     private HashSet<String> recipeType = new HashSet<>();
@@ -37,8 +40,20 @@ public class Recipe extends SupFood {
         return tempIngredients;
     }
     //returns list of all saved ingredients and temp ingredients, to show them in the edit recipe window
-    public HashMap<String, Double> showAllCurrentIngredients() {
-        HashMap<String, Double> all = new HashMap<>();
+    public HashMap<Integer, ArrayList<Object>> showAllCurrentIngredients() {
+        HashMap<Integer, ArrayList<Object>> list = new HashMap<>();
+        for (Integer index: ingList.keySet()) {
+            list.put(index, ingList.get(index));
+        }
+        for (Integer index: tempList.keySet()) {
+            if ((double)tempList.get(index).get(1) == 0.0) {
+                list.remove(index);
+            } else {
+                list.put(index, tempList.get(index));
+            }
+        }
+        return list;
+        /*HashMap<String, Double> all = new HashMap<>();
         for (String name: ingredientsList.keySet()) {
             all.put(name, ingredientsList.get(name));
         }
@@ -49,7 +64,7 @@ public class Recipe extends SupFood {
                 all.put(name, tempIngredients.get(name));
             }
         }
-        return all;
+        return all;*/
     }
 
     public void edit(String name, double servings) {
@@ -79,18 +94,26 @@ public class Recipe extends SupFood {
 
     public void addTempIngredient(String name, double weight) {
         SupFood ingredient;
+        ArrayList<Object> details = new ArrayList<>();
         try {
             ingredient = data.findItem(name);
+            int index = ingredient.showIndex();
             if (ingredient instanceof Food) {
-                if (ingredientsList.containsKey(name)) {
-                    tempIngredients.put(name, ingredientsList.get(name));
-                }
-                if (!tempIngredients.containsKey(name)) {
-                    tempIngredients.put(name, weight);
-                } else {
-                    double oldWeight = tempIngredients.get(name);
+                if (ingList.containsKey(index)) {
+                    double oldWeight = (double)ingList.get(index).get(1);
                     double newWeight = oldWeight + weight;
                     tempIngredients.put(name, newWeight);
+                    details.add(name); details.add(newWeight);
+                    tempList.put(index, details);
+                }
+                if (!tempList.containsKey(index)) {
+                    details.add(name); details.add(weight);
+                    tempList.put(index, details);
+                } else {
+                    double oldWeight = (double)tempList.get(index).get(1);
+                    double newWeight = oldWeight + weight;
+                    details.add(name); details.add(newWeight);
+                    tempList.put(index, details);
                 }
             } else {
                 Recipe rec = (Recipe) ingredient;
@@ -118,7 +141,32 @@ public class Recipe extends SupFood {
     }
 
     public void save() {
-        for (String foodName: tempIngredients.keySet()) {
+        for (int index: tempList.keySet()) {
+            Food food = (Food) data.getItemFromIndex(index);
+            ArrayList<Object> details = tempList.get(index);
+            if ((double)details.get(1) == 0.0) {
+                removeIngredientPermanently(food, index);
+                tempList.remove(index);
+                EditFoodRecipeDatabase.removeIngredient(name, (String)details.get(0));
+            } else {
+                double amount = (double)details.get(1);
+                double[] nutr = food.showUnitNutrition();
+                food.addRecipe(this);
+                for (String type: food.showFoodTypes()) {
+                    addFoodType(type);
+                }
+                double[] weighted = new double[8];
+                for (int i = 0; i < nutrition.length; i++) {
+                    weighted[i] = nutr[i] * weight;
+                    nutrition[i] = nutrition[i] + weighted[i];
+                } 
+                details.set(1, amount);
+                ingList.put(index, details);
+                EditFoodRecipeDatabase.addRecipeIngredient(name, showIndex(), (String)details.get(0), index, amount);
+            }
+        }
+
+        /*for (String foodName: tempIngredients.keySet()) {
             Food food = (Food) data.findItem(foodName);
             if (tempIngredients.get(foodName) == 0.0) {
                 removeIngredientPermanently(food, foodName);
@@ -139,7 +187,7 @@ public class Recipe extends SupFood {
                 ingredientsList.put(foodName, amount);
                 EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount);
             }
-        }
+        }*/
     }
 
     public void clearTemp() {
@@ -185,7 +233,26 @@ public class Recipe extends SupFood {
         return false;
     }*/
 
-    public void removeIngredientPermanently(Food food, String name) {
+    public void removeIngredientPermanently(Food food, int index) {
+        if (ingList.keySet().contains(index)) {
+            double[] weighted = new double[8];
+            double weight = (double)ingList.get(index).get(1);
+            for (int i = 0; i < nutrition.length; i++) {
+                weighted[i] = food.showUnitNutrition()[i] * weight; 
+                nutrition[i] = nutrition[i] - weighted[i];
+            }
+            for (String type: food.showFoodTypes()) {
+                /*if (!checkIngredientFoodTypes(name, type)) {
+                    removeFoodType(type);
+                }*/
+                if (type != null) {
+                    removeFoodType(type);
+                }
+            }
+            food.removeRecipe(this);
+            ingList.remove(index);
+        }
+
         if (ingredientsList.keySet().contains(name)) {
             double[] weighted = new double[8];
             double weight = ingredientsList.get(name);

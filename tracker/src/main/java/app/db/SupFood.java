@@ -14,7 +14,7 @@ public abstract class SupFood {
     static int indexCounter = 0;
 
     public SupFood(Database data, Integer index, String name, double weight) {
-        if (index != null) {
+        if (index != null && index > this.index) {
             this.index = index;
             indexCounter = index;
         } else {

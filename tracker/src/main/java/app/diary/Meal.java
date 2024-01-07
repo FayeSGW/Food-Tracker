@@ -62,7 +62,7 @@ public class Meal {
                 nutrition[i] = nutrition[i] + weighted[i];
             }
         } catch (NullPointerException e) {
-            System.out.println("Not in database! ");
+            System.out.println("Not in database! " + food.showName());
         }
         return weighted;
     }
@@ -93,7 +93,7 @@ public class Meal {
         ArrayList<Object> lst = foodlst.get(index);
         lst.set(1, weight);
 
-        SupFood food = (SupFood) lst.get(0);
+        SupFood food = data.getItemFromIndex(index);
         double[] removed = remove(index);
         foodLst.put(index, lst);
         //foodNamesList.add(index);
@@ -110,13 +110,13 @@ public class Meal {
         double[] weighted = new double[8];
         ArrayList<Object> lst = foodLst.get(index);
         double weight = (double) lst.get(1);
-        SupFood food = (SupFood) lst.get(0);
+        SupFood food = data.getItemFromIndex(index);
         for (int i = 0; i < nutrition.length; i++) {
             weighted[i] = food.showUnitNutrition()[i] * weight;
             nutrition[i] = nutrition[i] - weighted[i];
         }
         foodLst.remove(index);
-        foodNamesList.remove(index);
+        foodNamesList.remove(lst.get(0));
         return weighted;
     }
    
@@ -137,8 +137,8 @@ public class Meal {
         return foodNamesList;
     }
 
-    public ArrayList<Object> showFood(String name) {
-        return foodlst.get(name);
+    public ArrayList<Object> showFood(int index) {
+        return foodLst.get(index);
     }
 
     public String showFoodItemAmount(int index) {
@@ -153,7 +153,7 @@ public class Meal {
 
     public double[] showFoodItemNutrition(int index) {
         ArrayList<Object> details = foodLst.get(index);
-        SupFood food = (SupFood)details.get(0);
+        SupFood food = data.getItemFromIndex(index);
         double weight = (double)details.get(1);
         double[] unitNutrition = food.showUnitNutrition();
         double[] weightedNutrition = new double[8];

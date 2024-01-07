@@ -8,6 +8,7 @@ class EditFoodEntryGUI {
     TrackerControl control;
     String type;
     String mealName, recipeName;
+    int foodIndex;
 
     JFrame window;
     JPanel whole, foodPanel, amountPanel, buttonsPanel;
@@ -15,10 +16,11 @@ class EditFoodEntryGUI {
     JLabel foodNameLabel, currentAmount, unitLabel;
     JTextField amountField;
 
-    EditFoodEntryGUI(TrackerControl control, String type, String mealName) {
+    EditFoodEntryGUI(TrackerControl control, String type, String mealName, int index) {
         this.control = control;
         this.type = type;
         this.mealName = mealName;
+        foodIndex = index;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -63,7 +65,7 @@ class EditFoodEntryGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             if (type.equals("diary")) {
-                control.removeFromMeal(mealName, foodNameLabel.getText());
+                control.removeFromMeal(mealName, foodIndex);
                 control.updateNutrition();
             } else {
                 control.editRecipeIngredient(mealName, foodNameLabel.getText(), 0);
@@ -84,7 +86,7 @@ class EditFoodEntryGUI {
             double amount = Double.parseDouble(amountField.getText());
 
             if (type.equals("diary")) {
-                control.editMeal(mealName, foodName, amount);
+                control.editMeal(mealName, foodIndex, amount);
                 control.updateNutrition();
             } else {
                 control.editRecipeIngredient(mealName, foodName, amount); //mealname here is the recipe name

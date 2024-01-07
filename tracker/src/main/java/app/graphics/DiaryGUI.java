@@ -306,7 +306,7 @@ class DiaryGUI extends JPanel {
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    control.editMealDialogue(mealName, foodName);
+                    control.editMealDialogue(mealName, index);
                 }
             });
         }

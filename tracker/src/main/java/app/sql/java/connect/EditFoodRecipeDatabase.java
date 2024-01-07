@@ -11,10 +11,10 @@ import app.diary.*;
 
 public class EditFoodRecipeDatabase {
 
-    public static void addRecipeIngredient(String recipeName, String foodName, double amount) {
+    public static void addRecipeIngredient(String recipeName, int recipeID, String foodName, int foodID, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
-        String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount) VALUES(?,?,?) ON CONFLICT(RecipeName, FoodName) DO UPDATE SET IngredientAmount = ?";
+        String newString = "INSERT INTO RecipeIngredients(RecipeName, FoodName, IngredientAmount, RecipeID, FoodID) VALUES(?,?,?,?,?) ON CONFLICT(RecipeName, FoodName) DO UPDATE SET IngredientAmount = ?";
         try {
             conn = Connect.connect();
 
@@ -22,7 +22,9 @@ public class EditFoodRecipeDatabase {
             stmt.setString(1, recipeName);
             stmt.setString(2, foodName);
             stmt.setDouble(3, amount);
-            stmt.setDouble(4, amount);
+            stmt.setInt(4, recipeID);
+            stmt.setInt(5, foodID);
+            stmt.setDouble(6, amount);
 
             stmt.executeUpdate();
         } catch (SQLException e) {

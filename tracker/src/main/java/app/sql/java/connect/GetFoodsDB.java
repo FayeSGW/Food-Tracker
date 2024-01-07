@@ -93,7 +93,7 @@ public class GetFoodsDB {
                 String barcode = frs.getString("Barcode");
 
                 Food food = d.addFood(index, deleted, name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                System.out.println(index + " " + name);
+                
             }
 
             //Adding recipes to database
@@ -179,11 +179,15 @@ public class GetFoodsDB {
                 
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.goToDay(date);
+                
+                
 
                 if (recipe == null) {
                     dayObj.addByIndex(meal, foodID, amount);
+                    System.out.println(foodID + " " + food);
                 } else {
                     dayObj.addByIndex(meal, recipeID, amount);
+                    System.out.println(recipeID + " " + recipe);
                 }
             }
 

@@ -154,8 +154,8 @@ public class Database {
         return indexedDatabase.get(index);
     }
 
-    public boolean isRecipe(String name) {
-        SupFood item = findItem(name);
+    public boolean isRecipe(int index) {
+        SupFood item = getItemFromIndex(index);
         if (item instanceof Recipe) {
             return true;
         }
