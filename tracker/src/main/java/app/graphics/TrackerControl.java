@@ -144,8 +144,9 @@ class TrackerControl {
         updateNutrition();
     }
 
-    void addFoodDialogue(int index, String type) {
+    AddFoodGUI addFoodDialogue(int index, String type) {
         AddFoodControl aControl = new AddFoodControl(this, index, type, dbControl);
+        return aControl.showGUI();
     }
 
     String showFoodDisplayName(String fullName) {

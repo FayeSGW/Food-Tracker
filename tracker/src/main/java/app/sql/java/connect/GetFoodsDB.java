@@ -11,7 +11,6 @@ import app.diary.*;
 import exceptions.NoNegativeException;
 
 public class GetFoodsDB {
-
     public static User getUser() {
         String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate, Water FROM UserData";
         Connection conn = null;
@@ -62,12 +61,9 @@ public class GetFoodsDB {
         String foods = "SELECT FoodID, FoodName, Deleted, DisplayName, Weight, Unit, Calories, Fat, SaturatedFat, Carbohydrates, Sugar, Fibre, Protein, Salt, Barcode FROM Foods";
         String recipes = "SELECT RecipeID, FoodID, FoodName, Deleted, Servings, IngredientAmount, Recipes.RecipeName, Instructions FROM RecipeIngredients RIGHT JOIN Recipes USING (RecipeID)";
         Statement stmt = null;
-        //Statement stmt2 = null;
-        ResultSet frs = null;
-        ResultSet rrs = null;
+        ResultSet frs = null, rrs = null;
 
         try {
-            //conn = connect();
             stmt = conn.createStatement();
             frs = stmt.executeQuery(foods);
             
@@ -92,19 +88,18 @@ public class GetFoodsDB {
                 double salt = frs.getDouble("Salt");
                 String barcode = frs.getString("Barcode");
 
-                Food food = d.addFood(index, deleted, name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                d.addFood(index, deleted, name, displayName, weight, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 
             }
 
-            //Adding recipes to database
-            //stmt = conn.createStatement();
+            //Adding recipes and their ingredients to database
             rrs = stmt.executeQuery(recipes);
             while (rrs.next()) {
                 int index = rrs.getInt("RecipeID");
                 String recipeName = rrs.getString("RecipeName");
                 int deleted = frs.getInt("Deleted");
                 double servings = rrs.getDouble("Servings");
-                String ingredient = rrs.getString("FoodName");
+                //String ingredient = rrs.getString("FoodName");
                 int foodIndex = rrs.getInt("FoodID");
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
                 String instructs = rrs.getString("Instructions");
@@ -121,7 +116,7 @@ public class GetFoodsDB {
                 }
 
                 if (foodIndex > 0) {
-                    rec.addIngredientByIndex(foodIndex, ingredientAmount);
+                    rec.addNonTempIngredient(foodIndex, ingredientAmount);
                 }
                 
                 rec.addInstructions(instructs);
@@ -153,17 +148,14 @@ public class GetFoodsDB {
 
             while (drs.next()) {
                 String dateString = drs.getString("Date");
-                
                 int water = drs.getInt("Water");
                 double weight = drs.getDouble("Weight");
-
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.addSavedDays(date);
 
                 dayObj.addWater(water);
                 dayObj.addWeight(weight);
             }
-
             foodStmt = conn.createStatement();
             frs = foodStmt.executeQuery(mealStrng);
             
@@ -174,14 +166,11 @@ public class GetFoodsDB {
                 int recipeID = frs.getInt("RecipeID");
                 String recipe = frs.getString("RecipeName");
                 double amount = frs.getDouble("Amount");
-
                 String dateString = frs.getString("Date");
                 
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.goToDay(date);
                 
-                
-
                 if (recipe == null) {
                     dayObj.addByIndex(meal, foodID, amount);
                     System.out.println(foodID + " " + food);
@@ -190,7 +179,6 @@ public class GetFoodsDB {
                     System.out.println(recipeID + " " + recipe);
                 }
             }
-
             exStmt = conn.createStatement();
             ers = exStmt.executeQuery(exercises);
 
@@ -201,9 +189,7 @@ public class GetFoodsDB {
                 int exMins = ers.getInt("Minutes");
                 int exSecs = ers.getInt("Seconds");
                 int exCals = ers.getInt("Calories");
-
                 String dateString = ers.getString("Date");
-                
                 LocalDate date = LocalDate.parse(dateString);
                 Day dayObj = diary.goToDay(date);
                 

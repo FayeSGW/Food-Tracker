@@ -1,16 +1,11 @@
 package app.sql.java.connect;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import app.db.*;
-import app.diary.*;
-
 public class EditFoodRecipeDatabase {
-
     public static void addRecipeIngredient(String recipeName, int recipeID, String foodName, int foodID, double amount) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -124,9 +119,9 @@ public class EditFoodRecipeDatabase {
         try {
             conn = Connect.connect();
 
-            if (oldName == null) {
+            if (oldName == null) { //This is a new food to add to the database
                 stmt = conn.prepareStatement(newString);
-            } else {
+            } else { //This is a food already in the database to be edited
                 stmt = conn.prepareStatement(exString);
             }
             stmt.setString(1, name);
@@ -198,9 +193,7 @@ public class EditFoodRecipeDatabase {
         return contains;
     }
 
-    public static boolean deleteFood(String name, String type) {
-        boolean actuallyDeleted = false;
-        
+    public static void deleteFood(String name, String type) {
         Connection conn = null;
         PreparedStatement stmt = null, stmt2 = null;
         //Deletion queries
@@ -229,7 +222,6 @@ public class EditFoodRecipeDatabase {
                 stmt.setString(2, name);
                 stmt.executeUpdate();
             } else {
-                actuallyDeleted = true;
                 if (type.equals("food")) {
                     stmt = conn.prepareStatement(foodString);
                 } else if (type.equals("recipe")) {
@@ -260,8 +252,5 @@ public class EditFoodRecipeDatabase {
                 System.out.println("!");
             } 
         }
-        //If the item was able to be deleted from the saved database, pass this to the 
-        // in-memory database to update it too
-        return actuallyDeleted;
     }
 }

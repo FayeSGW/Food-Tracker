@@ -46,6 +46,7 @@ class ChangeDatabaseControl {
     //Opens a window for editing a food or recipe, and populates the window's field with the relevant data
     void editFoodorRecipeGUI(String foodName, AddFoodGUI gui) {
         aGUI = gui;
+        System.out.println(aGUI);
         SupFood supFood = data.findItem(foodName);
         if (supFood instanceof Food) {
             Food food = (Food)supFood;
@@ -63,7 +64,7 @@ class ChangeDatabaseControl {
 
     //--------------------------------------EDITING OBJECTS---------------------------------
     void edit() {
-        tControl.addFoodDialogue(0, "edit");
+        aGUI = tControl.addFoodDialogue(0, "edit");
     }
 
     //Check of recipe name for use in the GUI
@@ -111,7 +112,7 @@ class ChangeDatabaseControl {
                     Recipe newRec = data.addRecipe(null, 0, newName, servings);
                     for (int id: ingredients.keySet()) {
                         double weight = (double)ingredients.get(id).get(1);
-                        newRec.addIngredientByIndex(id, weight);
+                        newRec.addNonTempIngredient(id, weight);
                     }
                     EditFoodRecipeDatabase.addRecipe(newRec.showIndex(), null, newName, servings);
                 }
@@ -243,13 +244,12 @@ class ChangeDatabaseControl {
         SupFood item = data.findItem(name);
         String fullName = item.showName();
         String displayName = item.showDisplayName();
-        boolean fullDeletion = true;
         if (item instanceof Food) {
-            fullDeletion = EditFoodRecipeDatabase.deleteFood(fullName, "food");
+            EditFoodRecipeDatabase.deleteFood(fullName, "food");
         } else {
-            fullDeletion = EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
+            EditFoodRecipeDatabase.deleteFood(fullName, "recipe");
         }
-        data.delete(fullName, displayName, fullDeletion);
+        data.delete(fullName, displayName);
         aGUI.updateResults();
     }
 

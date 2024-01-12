@@ -20,7 +20,10 @@ class AddFoodControl {
         this.cControl = cControl;
         gui = new AddFoodGUI(this, index, type);
         data = tControl.showUser().accessDatabase();
+    }
 
+    AddFoodGUI showGUI() {
+        return gui;
     }
 
     ArrayList<String> searchDatabase(String string, String constraint) {

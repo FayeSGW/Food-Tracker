@@ -84,7 +84,7 @@ public class Database {
 
     //If "full" is true, it means that the item is not referenced by any recipes in the database or any entries in the diary, and
     // therefore can be fully deleted from the external database
-    public void delete(String fullName, String displayName, boolean full) {
+    public void delete(String fullName, String displayName) {
         SupFood food = database.get(fullName);
         food.setDeleted();
         database.remove(fullName);
@@ -130,14 +130,6 @@ public class Database {
         }
         return searchResults; 
     }
-
-    /*public SupFood addFromDatabase(String name) {
-        if (!database.containsKey(name) && !displayDatabase.containsKey(name)) {
-            System.out.println(name + " Not in database!");
-            return null;
-        }
-        return findItem(name);
-    }*/
 
     public SupFood findItem(String name) {
         SupFood item = null;

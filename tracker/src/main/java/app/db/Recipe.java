@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import app.sql.java.connect.*;
 
 public class Recipe extends SupFood {
-    //private HashMap<String, Double> ingredientsList = new HashMap<>();
     private HashMap<Integer, ArrayList<Object>> ingList = new HashMap<>();
     private HashMap<Integer, ArrayList<Object>> tempList = new HashMap<>();
-    private HashMap<String, Double> tempIngredients = new HashMap<>();
     private HashMap<String, Integer> foodTypes = new HashMap<>();
     private HashSet<String> recipeType = new HashSet<>();
     private HashSet<String> mealType = new HashSet<>();
@@ -36,8 +34,8 @@ public class Recipe extends SupFood {
         return ingList;
     }
 
-    public HashMap<String, Double> showTempIngredients() {
-        return tempIngredients;
+    public HashMap<Integer, ArrayList<Object>> showTempIngredients() {
+        return tempList;
     }
     //returns list of all saved ingredients and temp ingredients, to show them in the edit recipe window
     public HashMap<Integer, ArrayList<Object>> showAllCurrentIngredients() {
@@ -53,18 +51,6 @@ public class Recipe extends SupFood {
             }
         }
         return list;
-        /*HashMap<String, Double> all = new HashMap<>();
-        for (String name: ingredientsList.keySet()) {
-            all.put(name, ingredientsList.get(name));
-        }
-        for (String name: tempIngredients.keySet()) {
-            if (tempIngredients.get(name) == 0.0) {
-                all.remove(name);
-            } else {
-                all.put(name, tempIngredients.get(name));
-            }
-        }
-        return all;*/
     }
 
     public void edit(String name, double servings) {
@@ -89,12 +75,6 @@ public class Recipe extends SupFood {
         } else if (ingList.keySet().contains(index)) {
             weight = (double) ingList.get(index).get(1);
         }
-
-        /*if (tempIngredients.keySet().contains(name)) {
-            weight = tempIngredients.get(name);
-        } else if (ingredientsList.keySet().contains(name)) {
-            weight = ingredientsList.get(name);
-        }*/
         return weight;
     }
 
@@ -108,7 +88,6 @@ public class Recipe extends SupFood {
                 if (ingList.containsKey(index)) {
                     double oldWeight = (double)ingList.get(index).get(1);
                     double newWeight = oldWeight + weight;
-                    tempIngredients.put(name, newWeight);
                     details.add(name); details.add(newWeight);
                     tempList.put(index, details);
                 }
@@ -136,28 +115,18 @@ public class Recipe extends SupFood {
             weight = (double) newWeight;
             addTempIngredient(index, weight);
         }
-        
-        /*for (String name: rec.showIngredientList().keySet()) {
-            double weight = rec.showIngredientList().get(name);
-            double totalServings = rec.weight();
-            double newWeight = weight * ((double) servings / totalServings);
-            weight = (double) newWeight;
-            addTempIngredient(name, weight);
-        }*/
     }
 
     public void editIngredient(int index, String name, double amount) {
         ArrayList<Object> details = new ArrayList<>();
         details.add(name); details.add(amount);
         tempList.put(index, details);
-        tempIngredients.put(name, amount);
     }
 
     public void removeTempIngredient(int index) {
         ArrayList<Object> details = tempList.get(index);
         details.set(1, 0.0);
         tempList.put(index, details);
-        tempIngredients.put(name, 0.0);
     }
 
     public void save() {
@@ -186,52 +155,18 @@ public class Recipe extends SupFood {
                 EditFoodRecipeDatabase.addRecipeIngredient(name, showIndex(), (String)details.get(0), index, amount);
             }
         }
-
-        /*for (String foodName: tempIngredients.keySet()) {
-            Food food = (Food) data.findItem(foodName);
-            if (tempIngredients.get(foodName) == 0.0) {
-                removeIngredientPermanently(food, foodName);
-                tempIngredients.remove(foodName);
-                EditFoodRecipeDatabase.removeIngredient(name, foodName);
-            } else {
-                double amount = tempIngredients.get(foodName);
-                double[] nutr = food.showUnitNutrition();
-                food.addRecipe(this);
-                for (String type: food.showFoodTypes()) {
-                    addFoodType(type);
-                }
-                double[] weighted = new double[8];
-                for (int i = 0; i < nutrition.length; i++) {
-                    weighted[i] = nutr[i] * weight;
-                    nutrition[i] = nutrition[i] + weighted[i];
-                } 
-                ingredientsList.put(foodName, amount);
-                EditFoodRecipeDatabase.addRecipeIngredient(name, foodName, amount);
-            }
-        }*/
     }
 
     public void clearTemp() {
         tempList.clear();
-        tempIngredients.clear();
     }
 
-    public void addIngredientByName(String name, double weight) {
-        Food ingredient = (Food) data.findItem(name);
-        addIngredientFromDB(ingredient, weight);
-    }
-
-    public void addIngredientByIndex(int index, double weight) {
+    public void addNonTempIngredient(int index, double weight) {
         Food ingredient = (Food) data.getItemFromIndex(index);
-        addIngredientFromDB(ingredient, weight);
-    }
-
-    private void addIngredientFromDB(Food ingredient, double weight) {
         double[] nutr = ingredient.showUnitNutrition();
         ArrayList<Object> details = new ArrayList<>();
         details.add(ingredient.showName()); details.add(weight);
         ingList.put(ingredient.showIndex(), details);
-        //ingredientsList.put(ingredient.showName(), weight);
         ingredient.addRecipe(this);
         for (String type: ingredient.showFoodTypes()) {
             addFoodType(type);
@@ -243,21 +178,6 @@ public class Recipe extends SupFood {
         } 
     }
 
-    /*public boolean checkIngredientFoodTypes(String ingr, String type) {
-        //for (Food ingredient: showIngredients().values()) {
-        //    if (!ingredient.showName().equals(ingr) && ingredient.showFoodTypes().contains(type)) {
-        //        return true;
-        //    } 
-        //}
-        for (String name: showIngredientList().keySet()) {
-            Food food = (Food) data.findItem(name);
-            if (!name.equals(ingr) && food.showFoodTypes().contains(type)) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
     public void removeIngredientPermanently(Food food, int index) {
         if (ingList.keySet().contains(index)) {
             double[] weighted = new double[8];
@@ -267,9 +187,6 @@ public class Recipe extends SupFood {
                 nutrition[i] = nutrition[i] - weighted[i];
             }
             for (String type: food.showFoodTypes()) {
-                /*if (!checkIngredientFoodTypes(name, type)) {
-                    removeFoodType(type);
-                }*/
                 if (type != null) {
                     removeFoodType(type);
                 }
@@ -277,25 +194,6 @@ public class Recipe extends SupFood {
             food.removeRecipe(this);
             ingList.remove(index);
         }
-
-       /* if (ingredientsList.keySet().contains(name)) {
-            double[] weighted = new double[8];
-            double weight = ingredientsList.get(name);
-            for (int i = 0; i < nutrition.length; i++) {
-                weighted[i] = food.showUnitNutrition()[i] * weight; 
-                nutrition[i] = nutrition[i] - weighted[i];
-            }
-            for (String type: food.showFoodTypes()) {
-                /*if (!checkIngredientFoodTypes(name, type)) {
-                    removeFoodType(type);
-                }*/
-                /*if (type != null) {
-                    removeFoodType(type);
-                }
-            }
-            food.removeRecipe(this);
-            ingredientsList.remove(name);
-        }*/
     }
 
     // ----------------------------TYPES------------------------
