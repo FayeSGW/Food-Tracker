@@ -277,15 +277,12 @@ class TrackerControl {
         String unit = food.showUnit();
         Recipe recipe = (Recipe) data.findItem(recipeName);
 
-        double ingredientWeight = recipe.showIngredientWeight(food.showName());
+        double ingredientWeight = recipe.showIngredientWeight(index);
         fGUI.existingData(food.showDisplayName(), ingredientWeight, unit);
     }
 
-    void editRecipeIngredient(String recipeName, String foodName, double newAmount) {
-        /*Recipe recipe = (Recipe) data.findItem(recipeName);
-        Food food = (Food) data.findItem(foodName);
-        recipe.editIngredient(food.showName(), newAmount);*/
-        dbControl.editRecipeIngredient(foodName, newAmount);
+    void editRecipeIngredient(String recipeName, int index, double newAmount) {
+        dbControl.editRecipeIngredient(index, newAmount);
     }
 
     void editMealDialogue(String mealName, int index) {

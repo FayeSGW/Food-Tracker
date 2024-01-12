@@ -68,7 +68,7 @@ class EditFoodEntryGUI {
                 control.removeFromMeal(mealName, foodIndex);
                 control.updateNutrition();
             } else {
-                control.editRecipeIngredient(mealName, foodNameLabel.getText(), 0);
+                control.editRecipeIngredient(mealName, foodIndex, 0);
             }
             
             window.dispose();
@@ -89,7 +89,7 @@ class EditFoodEntryGUI {
                 control.editMeal(mealName, foodIndex, amount);
                 control.updateNutrition();
             } else {
-                control.editRecipeIngredient(mealName, foodName, amount); //mealname here is the recipe name
+                control.editRecipeIngredient(mealName, foodIndex, amount); //mealname here is the recipe name
             }
             
             window.dispose();

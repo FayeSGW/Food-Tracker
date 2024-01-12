@@ -34,16 +34,15 @@ public class Database {
     }
 
     public Recipe addRecipe(Integer index, int deleted, String name, double servings) {
-        Recipe recipe = null;
+        Recipe recipe = new Recipe(this, index, name, servings);
         if (deleted == 1) {
-            recipe = new Recipe(this, index, name, servings);
             recipe.setDeleted();
+            indexedDatabase.put(index, recipe);
         }
         if (nameCheck(name)) {
-            recipe = new Recipe(this, index, name, servings);
             database.put(name, recipe);
+            indexedDatabase.put(index, recipe);
         }
-        indexedDatabase.put(index, recipe);
         return recipe;
     }
 

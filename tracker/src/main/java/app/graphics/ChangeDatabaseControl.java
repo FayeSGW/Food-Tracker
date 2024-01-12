@@ -57,8 +57,7 @@ class ChangeDatabaseControl {
             recipeName = recipe.showName();
             newRecipeGUI();
             rGUI.setRecipeName(recipeName);
-            HashMap<String, Double> ingredients = showIngredientsInRecipe();
-            rGUI.existingRecipeData(recipeName, recipe.weight(), ingredients);
+            rGUI.existingRecipeData(recipeName, recipe.weight());
         }
     }
 
@@ -100,7 +99,7 @@ class ChangeDatabaseControl {
                 EditFoodRecipeDatabase.addRecipe(index, oldName, newName, servings);
             } else {
                 Recipe rec = (Recipe) data.findItem(oldName);
-                HashMap<String, Double> ingredients = rec.showIngredientList();
+                HashMap<Integer, ArrayList<Object>> ingredients = rec.showIngredientList();
                 /* If the number of servings has changed, or ingredients have been added/removed/edited, the unit nutrition of 
                  * the recipe has changed. We need to keep a reference to the existing recipe for existing diary entries and 
                  * create a new one with the new values. */
@@ -110,9 +109,9 @@ class ChangeDatabaseControl {
                 } else {
                     delete(oldName);
                     Recipe newRec = data.addRecipe(null, 0, newName, servings);
-                    for (String ingredient: ingredients.keySet()) {
-                        double weight = ingredients.get(ingredient);
-                        newRec.addIngredientByName(ingredient, weight);
+                    for (int id: ingredients.keySet()) {
+                        double weight = (double)ingredients.get(id).get(1);
+                        newRec.addIngredientByIndex(id, weight);
                     }
                     EditFoodRecipeDatabase.addRecipe(newRec.showIndex(), null, newName, servings);
                 }
@@ -130,7 +129,6 @@ class ChangeDatabaseControl {
         if (!oldDisplayName.equals(displayName)) {
             disp = displayName;
         }
-        System.out.println(databaseCheck(name, disp));
         if (!databaseCheck(name, disp)) {
             return false;
         } else {      
@@ -212,7 +210,7 @@ class ChangeDatabaseControl {
     //Add an ingredient to a recipe
     void addIngredientToRecipe(String foodName, double amount) {
         SupFood ingredient = data.findItem(foodName);
-        recipe.addTempIngredient(ingredient.showName(), amount);
+        recipe.addTempIngredient(ingredient.showIndex(), amount);
         rGUI.populateIngredients();
     }
 
@@ -225,20 +223,15 @@ class ChangeDatabaseControl {
     }
 
     //Edit a recipe ingredient
-    void editRecipeIngredient(String foodName, double amount) {
+    void editRecipeIngredient(int index, double amount) {
         Recipe recipe = (Recipe) data.findItem(recipeName);
-        Food food = (Food) data.findItem(foodName);
+        Food food = (Food) data.getItemFromIndex(index);
         if (amount == 0) {
-            recipe.removeTempIngredient(food.showName());
+            recipe.removeTempIngredient(index);
         } else {
-            recipe.editIngredient(food.showName(), amount);
+            recipe.editIngredient(index, food.showName(), amount);
         }
         rGUI.populateIngredients();
-    }
-
-    HashMap<String, Double> showIngredientsInRecipe() {
-        HashMap<String, Double> list = recipe.showIngredientList();
-        return list;
     }
 
     HashMap<Integer, ArrayList<Object>> showAllCurrentIngredients() {

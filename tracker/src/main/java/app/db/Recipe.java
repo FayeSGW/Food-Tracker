@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import app.sql.java.connect.*;
 
 public class Recipe extends SupFood {
-    private HashMap<String, Double> ingredientsList = new HashMap<>();
+    //private HashMap<String, Double> ingredientsList = new HashMap<>();
     private HashMap<Integer, ArrayList<Object>> ingList = new HashMap<>();
     private HashMap<Integer, ArrayList<Object>> tempList = new HashMap<>();
     private HashMap<String, Double> tempIngredients = new HashMap<>();
@@ -32,8 +32,8 @@ public class Recipe extends SupFood {
         return "servings";
     }
 
-    public HashMap<String, Double> showIngredientList() {
-        return ingredientsList;
+    public HashMap<Integer, ArrayList<Object>> showIngredientList() {
+        return ingList;
     }
 
     public HashMap<String, Double> showTempIngredients() {
@@ -82,22 +82,28 @@ public class Recipe extends SupFood {
     }
 
     // ----------------------------INGREDIENTS--------------------------
-    public double showIngredientWeight(String name) {
+    public double showIngredientWeight(int index) {
         double weight = 0;
-        if (tempIngredients.keySet().contains(name)) {
+        if (tempList.keySet().contains(index)) {
+            weight = (double) tempList.get(index).get(1);
+        } else if (ingList.keySet().contains(index)) {
+            weight = (double) ingList.get(index).get(1);
+        }
+
+        /*if (tempIngredients.keySet().contains(name)) {
             weight = tempIngredients.get(name);
         } else if (ingredientsList.keySet().contains(name)) {
             weight = ingredientsList.get(name);
-        }
+        }*/
         return weight;
     }
 
-    public void addTempIngredient(String name, double weight) {
+    public void addTempIngredient(int index, double weight) {
         SupFood ingredient;
         ArrayList<Object> details = new ArrayList<>();
         try {
-            ingredient = data.findItem(name);
-            int index = ingredient.showIndex();
+            ingredient = data.getItemFromIndex(index);
+            String name = ingredient.showName();
             if (ingredient instanceof Food) {
                 if (ingList.containsKey(index)) {
                     double oldWeight = (double)ingList.get(index).get(1);
@@ -123,20 +129,34 @@ public class Recipe extends SupFood {
     }
 
     public void addFromRecipeTemp(Recipe rec, double servings) {
-        for (String name: rec.showIngredientList().keySet()) {
+        for (int index: rec.showIngredientList().keySet()) {
+            double weight = (double)rec.showIngredientList().get(index).get(1);
+            double totalServings = rec.weight();
+            double newWeight = weight * ((double) servings / totalServings);
+            weight = (double) newWeight;
+            addTempIngredient(index, weight);
+        }
+        
+        /*for (String name: rec.showIngredientList().keySet()) {
             double weight = rec.showIngredientList().get(name);
             double totalServings = rec.weight();
             double newWeight = weight * ((double) servings / totalServings);
             weight = (double) newWeight;
             addTempIngredient(name, weight);
-        }
+        }*/
     }
 
-    public void editIngredient(String name, double amount) {
+    public void editIngredient(int index, String name, double amount) {
+        ArrayList<Object> details = new ArrayList<>();
+        details.add(name); details.add(amount);
+        tempList.put(index, details);
         tempIngredients.put(name, amount);
     }
 
-    public void removeTempIngredient(String name) {
+    public void removeTempIngredient(int index) {
+        ArrayList<Object> details = tempList.get(index);
+        details.set(1, 0.0);
+        tempList.put(index, details);
         tempIngredients.put(name, 0.0);
     }
 
@@ -162,6 +182,7 @@ public class Recipe extends SupFood {
                 } 
                 details.set(1, amount);
                 ingList.put(index, details);
+                clearTemp();
                 EditFoodRecipeDatabase.addRecipeIngredient(name, showIndex(), (String)details.get(0), index, amount);
             }
         }
@@ -191,6 +212,7 @@ public class Recipe extends SupFood {
     }
 
     public void clearTemp() {
+        tempList.clear();
         tempIngredients.clear();
     }
 
@@ -206,7 +228,10 @@ public class Recipe extends SupFood {
 
     private void addIngredientFromDB(Food ingredient, double weight) {
         double[] nutr = ingredient.showUnitNutrition();
-        ingredientsList.put(ingredient.showName(), weight);
+        ArrayList<Object> details = new ArrayList<>();
+        details.add(ingredient.showName()); details.add(weight);
+        ingList.put(ingredient.showIndex(), details);
+        //ingredientsList.put(ingredient.showName(), weight);
         ingredient.addRecipe(this);
         for (String type: ingredient.showFoodTypes()) {
             addFoodType(type);
@@ -253,7 +278,7 @@ public class Recipe extends SupFood {
             ingList.remove(index);
         }
 
-        if (ingredientsList.keySet().contains(name)) {
+       /* if (ingredientsList.keySet().contains(name)) {
             double[] weighted = new double[8];
             double weight = ingredientsList.get(name);
             for (int i = 0; i < nutrition.length; i++) {
@@ -264,13 +289,13 @@ public class Recipe extends SupFood {
                 /*if (!checkIngredientFoodTypes(name, type)) {
                     removeFoodType(type);
                 }*/
-                if (type != null) {
+                /*if (type != null) {
                     removeFoodType(type);
                 }
             }
             food.removeRecipe(this);
             ingredientsList.remove(name);
-        }
+        }*/
     }
 
     // ----------------------------TYPES------------------------

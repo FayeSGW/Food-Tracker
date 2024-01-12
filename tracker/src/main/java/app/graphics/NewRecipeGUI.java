@@ -118,7 +118,7 @@ class NewRecipeGUI {
         }
     }
 
-    void existingRecipeData(String name, double servings, HashMap<String, Double> ingredients) {
+    void existingRecipeData(String name, double servings) {
         nameField.setText(name);
         amountField.setText(Double.toString(servings));
         doneButton.setText("Save Edits");
