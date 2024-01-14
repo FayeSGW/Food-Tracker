@@ -60,10 +60,6 @@ public class Database {
         return true;
     }
 
-    public HashMap<String, SupFood> access() {
-        return database;
-    }
-
     public int editFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         Food food = (Food) findItem(oldName);
         food.edit(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);

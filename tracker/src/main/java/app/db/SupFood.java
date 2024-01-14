@@ -10,7 +10,7 @@ public abstract class SupFood {
     protected double weight;
     protected Database data;
     protected boolean deleted = false;
-    private int index;
+    protected int index;
     static int indexCounter = 0;
 
     public SupFood(Database data, Integer index, String name, double weight) {

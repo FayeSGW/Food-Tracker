@@ -144,9 +144,14 @@ public class Recipe extends SupFood {
                 for (String type: food.showFoodTypes()) {
                     addFoodType(type);
                 }
+                if (ingList.keySet().contains(index)) {
+                    double oldAmount = (double)ingList.get(index).get(1);
+                    double newAmount = oldAmount - amount;
+                    amount = newAmount;
+                }
                 double[] weighted = new double[8];
                 for (int i = 0; i < nutrition.length; i++) {
-                    weighted[i] = nutr[i] * weight;
+                    weighted[i] = nutr[i] * amount;
                     nutrition[i] = nutrition[i] + weighted[i];
                 } 
                 details.set(1, amount);
@@ -165,7 +170,13 @@ public class Recipe extends SupFood {
         Food ingredient = (Food) data.getItemFromIndex(index);
         double[] nutr = ingredient.showUnitNutrition();
         ArrayList<Object> details = new ArrayList<>();
-        details.add(ingredient.showName()); details.add(weight);
+        double amount = weight;
+        if (ingList.containsKey(index)) {
+            double oldWeight = (double)ingList.get(index).get(1);
+            double newWeight = oldWeight + weight;
+            amount = newWeight;
+        }
+        details.add(ingredient.showName()); details.add(amount);
         ingList.put(ingredient.showIndex(), details);
         ingredient.addRecipe(this);
         for (String type: ingredient.showFoodTypes()) {

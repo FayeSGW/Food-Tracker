@@ -57,30 +57,20 @@ public class Food extends SupFood{
     //Add food type, and then add that type to all recipes which contain this food as an ingredient
     public void addFoodType(String type) {
         foodType.add(type);
-        for (SupFood food: data.access().values()) {
-            if (food instanceof Recipe) {
-                Recipe recipe = (Recipe) food;
-                if (recipe.showIngredientList().keySet().contains(name)) {
-                    recipe.addFoodType(type);
-                }
-            }
+        for (Recipe recipe: inRecipes) {
+            recipe.addFoodType(type);
         }
     }
 
 
     public void removeFoodType(String type) {
-        foodType.remove(type);
-        for (Recipe recipe: inRecipes) {
-            recipe.removeFoodType(type);
-        }
-        /*for (SupFood food: data.access().values()) {
-            if (food instanceof Recipe) {
-                Recipe recipe = (Recipe) food;
-                if (!recipe.checkIngredientFoodTypes(name, type)) {
-                    recipe.removeFoodType(type);
-                }
+        boolean removed = foodType.remove(type);
+        if (removed) { 
+        //Only remove food type from recipes if it has actually been removed from the ingredient
+            for (Recipe recipe: inRecipes) {
+                recipe.removeFoodType(type);
             }
-        }*/
+        }
     }
 
     public HashSet<String> showFoodTypes() {

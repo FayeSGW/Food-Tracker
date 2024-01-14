@@ -193,7 +193,6 @@ class AddFoodGUI {
         public void valueChanged (ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 String name = foodsList.getSelectedValue();
-                //System.out.println(name);
                 if (!type.equals("edit") && !(name == null)) {
                     String unit = control.showUnit(name);
                     unitLabel.setText(unit);
