@@ -29,7 +29,9 @@ public class Database {
             database.put(name, food);
             displayDatabase.put(nickname, food);
         }
-        indexedDatabase.put(index, food);
+        if (food != null) {
+            indexedDatabase.put(food.showIndex(), food);
+        }
         return food;
     }
 

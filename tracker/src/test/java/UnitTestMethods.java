@@ -37,9 +37,9 @@ class UnitTestMethods {
                 stubRecipe1 = new Recipe(mockDB, null, "Recipe Name1", 4);
                 stubRecipe2 = new Recipe(mockDB, null, "Recipe Name2", 1);
 
-                stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
-                stubUserLose = new User("Elizabeth", "F", 60.0, 160, "1990-12-12", "L", 0.5, 10);
-                stubUserGain = new User("Percy", "M", 65.5, 200, "1995-06-07", "G", 1.0, 7);
+                stubUserMaintain = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8);
+                stubUserLose = new User("Elizabeth", "Female", 60.0, 160, "1990-12-12", "Lose", 0.5, 10);
+                stubUserGain = new User("Percy", "Male", 65.5, 200, "1995-06-07", "Gain", 1.0, 7);
             } catch (NoNegativeException e) {}
         }
         
@@ -165,36 +165,45 @@ class UnitTestMethods {
     }
 
     protected static Stream<Arguments> providesRecipeObjectsWithIngredientsRemoved() {
-        //test_012
+        Database mockDB = mock();
+        Recipe rec1 = new Recipe(mockDB, null, "Elderberries", 4);
+        Food ingredient1 = Stubs.stubFoodWithDisplayName;
+        Food ingredient2 = Stubs.stubFoodWithNullDisplayName;
 
-        //Recipe3
-        //75 g of ingredient 2, 4 servings
-        double[] nutrition_perServing = {(350*1.5)/4.0, (12.3*1.5)/4.0, (3*1.5)/4.0, (24*1.5)/4.0, (10*1.5)/4.0, 5.250000000000002, (37*1.5)/4.0, ((0.4/50)*75)/4.0};
-        HashMap<String, Double> list3 = new HashMap<>(Map.of("Full Name2", 75.0));
-        Set<Map.Entry<String,Double>> list3Set = list3.entrySet();
-        HashSet<Recipe> ingredient1RecipeList = new HashSet<>();
+        when(mockDB.getItemFromIndex(ingredient1.showIndex())).thenReturn(ingredient1);
+        when(mockDB.getItemFromIndex(ingredient2.showIndex())).thenReturn(ingredient2);
+        rec1.addNonTempIngredient(ingredient1.showIndex(), 100);
+        rec1.addNonTempIngredient(ingredient2.showIndex(), 75);
 
-        //Recipe 1
+        //75 g of ingredient 2, 4 servings (i.e. removed 100g of ingredient 1)
+        double[] nutritionPerServing1 = {(350*1.5)/4.0, (12.3*1.5)/4.0, (3*1.5)/4.0, (24*1.5)/4.0, (10*1.5)/4.0, 5.250000000000002, (37*1.5)/4.0, ((0.4/50)*75)/4.0};
+        HashMap<Integer, ArrayList<Object>> list1 = new HashMap<>(Map.of(Stubs.stubFoodWithNullDisplayName.showIndex(), new ArrayList<Object>(Arrays.asList("Full Name2", 75.0))));
+        Set<Map.Entry<Integer, ArrayList<Object>>> list1Set = list1.entrySet();
+        HashSet<String> expectedFoodTypes1 = new HashSet<>();
+        Collections.addAll(expectedFoodTypes1, "Pasta");
+
         //No ingredients
-        double[] nutrition_perServing2 = {0.0, 0.0,0.0,0.0,0.0,8.881784197001252E-16,0.0,0.0};
-        HashMap<String, Double> list1 = new HashMap<>();
-        Set<Map.Entry<String,Double>> list1Set = list1.entrySet();
-        HashSet<Recipe> ingredient2RecipeList = new HashSet<>();
-        Collections.addAll(ingredient2RecipeList, Stubs.stubRecipe2);
+        double[] nutritionPerServing2 = {0.0, 0.0,0.0,0.0,0.0,8.881784197001252E-16,0.0,0.0};
+        HashMap<String, Double> list2 = new HashMap<>();
+        Set<Map.Entry<String,Double>> list2Set = list2.entrySet();
+        HashSet<String> expectedFoodTypes2 = new HashSet<>();
+        
 
         //Recipe Object - Expected Recipe Name - Expected Number of Ingredients - Expected Ingredients List - Expected Nutrition
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithDisplayName, "Recipe Name1", 1, list3Set, nutrition_perServing, ingredient1RecipeList, 0),
-        Arguments.of(Stubs.stubRecipe1, Stubs.stubFoodWithNullDisplayName, "Recipe Name1", 0, list1Set, nutrition_perServing2, ingredient2RecipeList, 1)
-        );
+        Arguments.of(rec1, ingredient1, 1, list1Set, nutritionPerServing1, 1, expectedFoodTypes1), //Remove ingredient 1
+        Arguments.of(rec1, ingredient1, 1, list1Set, nutritionPerServing1, 1, expectedFoodTypes1), //Try to remove non-existent ingredient 1
+        Arguments.of(rec1, ingredient2, 0, list2Set, nutritionPerServing2, 0, expectedFoodTypes2), //Remove ingredient 2
+        Arguments.of(rec1, ingredient1, 0, list2Set, nutritionPerServing2, 0, expectedFoodTypes2) //Try to remove non-existent ingredient 1
+       );
     }
 
     //--------------------User Arguments----------------------
     protected static Stream<Arguments> providesUserObjects() {
         return Stream.of(
-        Arguments.of(Stubs.stubUserMaintain, "Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8),
-        Arguments.of(Stubs.stubUserLose, "Elizabeth", "F", 60.0, 160, "1990-12-12", "L", 0.5, 10),
-        Arguments.of(Stubs.stubUserGain, "Percy", "M", 65.5, 200, "1995-06-07", "G", 1.0, 7)
+        Arguments.of(Stubs.stubUserMaintain, "Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8),
+        Arguments.of(Stubs.stubUserLose, "Elizabeth", "Female", 60.0, 160, "1990-12-12", "Lose", 0.5, 10),
+        Arguments.of(Stubs.stubUserGain, "Percy", "Male", 65.5, 200, "1995-06-07", "Gain", 1.0, 7)
         );
     }
 
@@ -215,7 +224,7 @@ class UnitTestMethods {
     }
 
     protected static Stream<Arguments> providesUserNutrition() {
-        double[] user1Nutrition = {2498, ((2498*0.25)/9), 30, ((2498*0.5)/4), 50, 33, ((2498*0.25)/4), 6};
+        double[] user1Nutrition = {2492, ((2492*0.25)/9), 30, ((2492*0.5)/4), 50, 33, ((2492*0.25)/4), 6};
         double[] user2Nutrition = {1028, ((1028*0.25)/9), 20, ((1028*0.5)/4), 50, 27, ((1028*0.25)/4), 6};
         double[] user3Nutrition = {3222, ((3222*0.25)/9), 30, ((3222*0.5)/4), 50, 33, ((3222*0.25)/4), 6};
 

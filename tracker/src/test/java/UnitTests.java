@@ -195,7 +195,7 @@ public class UnitTests {
 
         @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithTwoIngredientsAdded")
-        public void test007_AssertTwoIngredientsAddedCorrectly2(Database mockDB, Recipe recipe, Food ingredient1, int ingredient1Amount, Food ingredient2, int ingredient2Amount, String expectedRecipeName, 
+        public void test008_AssertTwoIngredientsAddedCorrectly2(Database mockDB, Recipe recipe, Food ingredient1, int ingredient1Amount, Food ingredient2, int ingredient2Amount, String expectedRecipeName, 
                     int expectedNumberIngredients, Set<Map.Entry<Integer, ArrayList<Object>>> expectedIngredientsList, double[] expectedNutrition, 
                     int expectedNumberFoodTypes, HashSet<String> expectedFoodTypes) {
                      
@@ -212,98 +212,39 @@ public class UnitTests {
             assertIterableEquals(expectedIngredientsList, recipe.showIngredientList().entrySet());
             assertArrayEquals(expectedNutrition, recipe.showUnitNutrition());
             assertEquals(expectedNumberFoodTypes, recipe.showFoodTypes().size());
-            assertIterableEquals(expectedFoodTypes, recipe.showFoodTypes());
-
-            
+            assertIterableEquals(expectedFoodTypes, recipe.showFoodTypes()); 
         }
 
-        /*@Test
-        public void test007_AssertSingleIngredientAddedCorrectly() {
-            //Add food types to ingredient to check that they get added to recipe            
-            ingredient1.addFoodType("Meat"); ingredient1.addFoodType("Chicken");
-            
-            when(mockDB.getItemFromIndex(ingredient1.showIndex())).thenReturn(ingredient1);
-
-            //Exected nutrition values per serving of the recipe, based on the ingredient added
-            double[] nutritionPerServing = {350/4.0, 12.3/4.0, 3/4.0, 24/4.0, 10/4.0, ((14.0/100)*100)/4.0, 37/4.0, 0.4/4.0};
-            //Creating the expected ingredient list for the recipe after the ingredient is added, and converting to to a Set for testing
-            HashMap<Integer, ArrayList<Object>> list1 = new HashMap<>(Map.of(ingredient1.showIndex(), new ArrayList<Object>(Arrays.asList("Full Name1", 100.0))));
-            Set<Map.Entry<Integer, ArrayList<Object>>> expectedIngredientsList = list1.entrySet();
-            //Creating the list of recipes that the ingredient is in
-            HashSet<Recipe> expectedIngredientRecipeList = new HashSet<>();
-            Collections.addAll(expectedIngredientRecipeList, rec);
-            //Creating the expected food types for the recipe after ingredient is added
-            HashSet<String> expectedFoodTypes = new HashSet<>();
-            Collections.addAll(expectedFoodTypes, "Meat", "Chicken");
-            
-            rec.addNonTempIngredient(ingredient1.showIndex(), 100);
-            
-            assertEquals("Elderberries", rec.showName());
-            assertEquals(1, rec.showIngredientList().size());
-            assertIterableEquals(expectedIngredientsList, rec.showIngredientList().entrySet());
-            assertArrayEquals(nutritionPerServing, rec.showUnitNutrition());
-            assertEquals(2, rec.showFoodTypes().size());
-            assertIterableEquals(expectedFoodTypes, rec.showFoodTypes());
-
-            assertEquals(ingredient1.showRecipes().size(), 1);
-            assertIterableEquals(expectedIngredientRecipeList, ingredient1.showRecipes());
-        }
-
-        @Test
-        public void test008_AssertTwoIngredientAddedCorrectly() {
-            ingredient2.addFoodType("Pasta");
-
-            when(mockDB.getItemFromIndex(ingredient1.showIndex())).thenReturn(ingredient1);
-            when(mockDB.getItemFromIndex(ingredient2.showIndex())).thenReturn(ingredient2);
-
-            //Exected nutrition values per serving of the recipe, based on the ingredient added
-            double[] nutritionPerServing = {(350 + 350*1.5)/4.0, (12.3 + 12.3*1.5)/4.0, (3 + 3*1.5)/4.0, (24 + 24*1.5)/4.0, (10 + 10*1.5)/4.0, (((14.0/100)*100) + ((14.0/50)*75))/4.0, (37 + 37*1.5)/4.0, (0.4 + 0.4*1.5)/4.0};
-            //Creating the expected ingredient list for the recipe after the ingredient is added, and converting to to a Set for testing
-            HashMap<Integer, ArrayList<Object>> list1 = new HashMap<>(Map.of(ingredient1.showIndex(), new ArrayList<Object>(Arrays.asList("Full Name1", 100.0)), ingredient2.showIndex(), new ArrayList<Object>(Arrays.asList("Full Name2", 75.0))));
-            Set<Map.Entry<Integer, ArrayList<Object>>> expectedIngredientsList = list1.entrySet();
-            //Creating the expected food types for the recipe after ingredient is added
-            HashSet<String> expectedFoodTypes = new HashSet<>();
-            Collections.addAll(expectedFoodTypes, "Meat", "Chicken", "Pasta");
-
-            rec.addNonTempIngredient(ingredient1.showIndex(), 100);
-            rec.addNonTempIngredient(ingredient2.showIndex(), 75);
-            
-            assertEquals("Elderberries", rec.showName());
-            assertEquals(2, rec.showIngredientList().size());
-            assertIterableEquals(expectedIngredientsList, rec.showIngredientList().entrySet());
-            assertArrayEquals(nutritionPerServing, rec.showUnitNutrition());
-            assertEquals(3, rec.showFoodTypes().size());
-            assertIterableEquals(expectedFoodTypes, rec.showFoodTypes());
-
-            ingredient1.removeFoodType("Meat"); ingredient1.removeFoodType("Chicken");
-            }
-
-        /*@ParameterizedTest
+        @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithIngredientsRemoved")
-        public void test009_AssertIngredientRemovedCorrectly(Recipe recipe, Food ingredient, String expectedRecipeName, int expectedNumberIngredients, 
-                        Set<Map.Entry<String,Double>> expectedIngredientsList, double[] expectedNutrition, HashSet<Recipe> expectedIngredientRecipeList, 
-                        int expectedNumRecipesForIngredient) {
+        public void test009_AssertIngredientsRemovedCorrectly(Recipe recipe, Food ingredient,  
+                    int expectedNumberIngredients, Set<Map.Entry<Integer, ArrayList<Object>>> expectedIngredientsList, double[] expectedNutrition, 
+                    int expectedNumberFoodTypes, HashSet<String> expectedFoodTypes) {
+                     
+            /* First and third tests check that ingredient removed correctly.
+             * Second and fourth tests check that if we attempt to remove an ingredient not in the recipe, nothing happens.
+             * All check that the recipe's nutrition and recipe list is updated correctly.
+             */
+            
             recipe.removeIngredientPermanently(ingredient, ingredient.showIndex());
-            assertEquals(expectedRecipeName, recipe.showName());
             assertEquals(expectedNumberIngredients, recipe.showIngredientList().size());
-            //assertIterableEquals(expectedIngredientsList, recipe.showIngredientList().entrySet());
+            assertIterableEquals(expectedIngredientsList, recipe.showIngredientList().entrySet());
             assertArrayEquals(expectedNutrition, recipe.showUnitNutrition());
-
-            assertEquals(ingredient.showRecipes().size(), expectedNumRecipesForIngredient);
-            assertIterableEquals(expectedIngredientRecipeList, ingredient.showRecipes());
-
-            //Reset stubs
-            stubs.stubFoodWithDisplayName.edit("Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
-            stubs.stubFoodWithNullDisplayName.edit("Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
-            stubs.stubRecipe1.edit("Recipe Name1", 4);
-            stubs.stubRecipe2.edit("Recipe Name2", 1);
-
-        }*/   
+            assertEquals(expectedNumberFoodTypes, recipe.showFoodTypes().size());
+            assertIterableEquals(expectedFoodTypes, recipe.showFoodTypes()); 
+            
+            //Reset ingredient food types
+            if (ingredient == stubs.stubFoodWithDisplayName && recipe.showIngredientList().size() == 0) {
+                stubs.stubFoodWithDisplayName.removeFoodType("Meat");
+                stubs.stubFoodWithDisplayName.removeFoodType("Chicken");
+                stubs.stubFoodWithNullDisplayName.removeFoodType("Pasta");
+            }
+        }
     }
 
 
     //-------------------------------------USER TESTS----------------------
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("UnitTestMethods#providesUserObjects")
     public void test010_AssertSimpleGettersForNewUser(User user, String expectedName, String expectedGender, double expectedWeight, int expectedHeight, 
         String expectedDateOfBirth, String expectedGoal, double expectedRate, int expectedWater) {
@@ -324,7 +265,7 @@ public class UnitTests {
     }
 
     //Will probably get rid of these in favour of exception checking in the GUI
-    @Test
+    /*@Test
     public static void test012_AssertNegativeAgeThrowsException() {
         User user = stubs.stubUserMaintain;
         LocalDate now = LocalDate.of(1995, 01, 01);
@@ -335,7 +276,7 @@ public class UnitTests {
             stubs.stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
         } catch (NoNegativeException e) {}
         
-    }
+    }*/
         
     @Test
     public void test013_AssertNegativeParametersInConstructorThrowException() {
@@ -361,15 +302,15 @@ public class UnitTests {
     @Test
     public void test016_AssertSimpleUserSetters() {
         try {
-            User stubUser = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
+            User stubUser = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "M", 0.0, 8);
             stubUser.changeName("Blackadder");
-            stubUser.changeGender("F");
+            stubUser.changeGender("Female");
             stubUser.changeHeight(180);
             stubUser.changeDOB("1970-11-04");
             stubUser.setWaterGoal(15);
 
             assertEquals("Blackadder", stubUser.showName());
-            assertEquals("F", stubUser.showGender());
+            assertEquals("Female", stubUser.showGender());
             assertEquals(180, stubUser.showHeight());
             assertEquals("1970-11-04", stubUser.showDOB());
             assertEquals(15, stubUser.showWater());

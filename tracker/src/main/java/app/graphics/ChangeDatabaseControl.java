@@ -46,7 +46,6 @@ class ChangeDatabaseControl {
     //Opens a window for editing a food or recipe, and populates the window's field with the relevant data
     void editFoodorRecipeGUI(String foodName, AddFoodGUI gui) {
         aGUI = gui;
-        System.out.println(aGUI);
         SupFood supFood = data.findItem(foodName);
         if (supFood instanceof Food) {
             Food food = (Food)supFood;

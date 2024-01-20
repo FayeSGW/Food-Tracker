@@ -193,6 +193,7 @@ class TrackerControl {
     void updateWeight(LocalDate date, double weight) {
         Day day = diary.goToDay(date);
         day.addWeightFromGUI(weight);
+        uGUI.updateWeight();
     }
 
     //Functionality for user to add/edit workouts

@@ -132,13 +132,13 @@ public class Recipe extends SupFood {
     public void save() {
         for (int index: tempList.keySet()) {
             Food food = (Food) data.getItemFromIndex(index);
-            ArrayList<Object> details = tempList.get(index);
+            ArrayList<Object> details = new ArrayList<>(tempList.get(index));
+            double totalAmount = (double)details.get(1);
             if ((double)details.get(1) == 0.0) {
-                removeIngredientPermanently(food, index);
-                tempList.remove(index);
+                removeIngredientPermanently(food, index); 
                 EditFoodRecipeDatabase.removeIngredient(name, (String)details.get(0));
             } else {
-                double amount = (double)details.get(1);
+                double newAmount = totalAmount;
                 double[] nutr = food.showUnitNutrition();
                 food.addRecipe(this);
                 for (String type: food.showFoodTypes()) {
@@ -146,20 +146,19 @@ public class Recipe extends SupFood {
                 }
                 if (ingList.keySet().contains(index)) {
                     double oldAmount = (double)ingList.get(index).get(1);
-                    double newAmount = oldAmount - amount;
-                    amount = newAmount;
+                    newAmount -= oldAmount;
                 }
                 double[] weighted = new double[8];
                 for (int i = 0; i < nutrition.length; i++) {
-                    weighted[i] = nutr[i] * amount;
+                    weighted[i] = nutr[i] * newAmount;
                     nutrition[i] = nutrition[i] + weighted[i];
                 } 
-                details.set(1, amount);
+                details.set(1, totalAmount);
                 ingList.put(index, details);
-                clearTemp();
-                EditFoodRecipeDatabase.addRecipeIngredient(name, showIndex(), (String)details.get(0), index, amount);
+                EditFoodRecipeDatabase.addRecipeIngredient(name, showIndex(), (String)details.get(0), index, totalAmount);
             }
         }
+        clearTemp();
     }
 
     public void clearTemp() {
@@ -190,6 +189,9 @@ public class Recipe extends SupFood {
     }
 
     public void removeIngredientPermanently(Food food, int index) {
+        if (food == null) {
+            return;
+        }
         if (ingList.keySet().contains(index)) {
             double[] weighted = new double[8];
             double weight = (double)ingList.get(index).get(1);

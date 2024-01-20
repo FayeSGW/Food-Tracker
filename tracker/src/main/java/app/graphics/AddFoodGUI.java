@@ -214,6 +214,7 @@ class AddFoodGUI {
         public void actionPerformed (ActionEvent e) {
             String name = foodsList.getSelectedValue();
             control.editItem(name);
+            window.dispose();
         }
     }
 
@@ -236,11 +237,15 @@ class AddFoodGUI {
                 if (type.equals("diary")) {
                     String meal = (String)mealChooser.getSelectedItem();
                     control.addFoodToDiary(meal, itemName, amount);
+                    amountInput.setText("");
+                    searchBar.requestFocusInWindow();
                 } else {
+                    System.out.println(type);
                     control.addFoodToRecipe(itemName, amount);
+                    window.dispose();
                 }
-                amountInput.setText("");
-                searchBar.requestFocusInWindow();
+
+                
             } catch (NumberFormatException | NoNegativeException | NoNullException n) {}
         }
     }

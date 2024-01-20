@@ -93,6 +93,10 @@ class UserGUI extends JPanel {
         dobLabel2.setText(string);
     }
 
+    public void updateWeight() {
+        weightField.setText(Double.toString(uControl.userWeight()));
+    }
+
     class calendarDOB implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
@@ -167,7 +171,6 @@ class UserGUI extends JPanel {
                 return true;
             }
             return false;
-
         }
     }
     
