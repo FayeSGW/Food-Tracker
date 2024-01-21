@@ -15,7 +15,8 @@ public class Day {
     private ArrayList<Exercise> workouts;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
     private double calorieGoal, carbGoal, fatGoal, proteinGoal;
-    private double todaysWeight = 0;
+    private double todaysWeight = 0, todaysBodyFat = 0;
+    private HashMap<String, Double> measurements = new HashMap<>();
     private User user;
     private Database database;
 
@@ -43,6 +44,15 @@ public class Day {
         this.workouts = new ArrayList<>();
         remainingWater = user.showWater();
         
+        measurements.put("Waist", 0.0);
+        measurements.put("Hips", 0.0);
+        measurements.put("Calf", 0.0);
+        measurements.put("Thigh", 0.0);
+        measurements.put("Upper Arm", 0.0);
+        measurements.put("Chest", 0.0);
+        if (user.showGender().equals("Female")) {
+            measurements.put("Underwire", 0.0);
+        }   
     }
 
     public LocalDate showDate() {
@@ -292,6 +302,34 @@ public class Day {
             return dinner;
         } else {
             return snacks;
+        }
+    }
+
+    public Double getSingleMeasurement(String type) {
+        return measurements.get(type);
+    }
+
+    public HashMap<String, Double> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurement(String type, double value) {
+        if (measurements.containsKey(type)) {
+            measurements.put(type, value);
+            if (value > 0) {
+                user.setMeasurement(date, type, value);
+            }
+        }
+    }
+
+    public double getBodyFatPercentage() {
+        return todaysBodyFat;
+    }
+
+    public void setBodyFatPercentage(double value) {
+        todaysBodyFat = value;
+        if (value > 0) {
+            user.updateBodyFat(date, value);
         }
     }
 }

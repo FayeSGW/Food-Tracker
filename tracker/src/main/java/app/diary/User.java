@@ -3,28 +3,26 @@ package app.diary;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
-import java.lang.Math.*;
 
 import exceptions.*;
-
 import app.db.*;
 import app.sql.java.connect.*;
 
 public class User implements java.io.Serializable {
     private String name, gender, goal, dateOfBirth;
     private int height, age, water;
-    private double weight, rate;
+    private double weight, rate, bodyFat = 0;
     private double[] nutrition = new double[8];
     private Database data;
     private Diary diary;
     private HashMap<String, Double> measurements = new HashMap<>();
-    private LocalDate today = LocalDate.now();
+    public LocalDate today = LocalDate.now();
 
 
     //Gender = Male/Female, weight in kg, height in cm, DOB as YYYY-MM-DD, goal = loss,gain, maintain
     public User(String name, String gender, double weight, int height, String dateOfBirth, 
         String goal, double rate, int water) throws NoNegativeException {
-        //No excpetion checking for these because their values are limited by the GUI
+        //No exception checking for these because their values are limited by the GUI
         this.name = name;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
@@ -39,12 +37,23 @@ public class User implements java.io.Serializable {
         this.data = new Database(name + "'s Database");
         this.diary = new Diary(name, this);    
         
-        updateNutrition();
-        measurements.put("Waist", null);
-        measurements.put("Hips", null);
-        measurements.put("Calf", null);
-        measurements.put("Thigh", null);
-        measurements.put("Upper Arm", null);
+        updateNutrition(today);
+        measurements.put("Waist", 0.0);
+        measurements.put("Hips", 0.0);
+        measurements.put("Calf", 0.0);
+        measurements.put("Thigh", 0.0);
+        measurements.put("Upper Arm", 0.0);
+        measurements.put("Chest", 0.0);
+        if (gender.equals("Female")) {
+            measurements.put("Underwire", 0.0);
+        }
+        
+    }
+
+    //In order to pass mocks
+    public void setTesting(Diary diary, Database db) {
+        data = db;
+        this.diary = diary;
     }
 
     //Throws exception if user tries to input negative value for certain parameters
@@ -99,7 +108,11 @@ public class User implements java.io.Serializable {
         return calories;
     }
 
-    public void updateNutrition() {
+    public void updateNutrition(LocalDate date) {
+        int age = this.age;
+        try {
+            age = calculateAge(date);
+        } catch (NoNegativeException e) {}
         double msj = 0;
         double hb = 0;
         double fibre = 0;
@@ -145,7 +158,7 @@ public class User implements java.io.Serializable {
             }
         }
         this.weight = weight;
-        updateNutrition();
+        updateNutrition(date);
 
         //This should now be handled in the GUI
         /*try {
@@ -160,7 +173,7 @@ public class User implements java.io.Serializable {
     public void updateGoal(double rate, String goal) {
         this.rate = rate;
         this.goal = goal;
-        updateNutrition();
+        updateNutrition(today);
     }
 
     public void changeName(String name) {
@@ -199,28 +212,12 @@ public class User implements java.io.Serializable {
         return dateOfBirth;
     }
 
-    public int showAge() {
-        return age;
-    }
-
     public String showGoal() {
         return goal;
     }
 
     public double showRate() {
         return rate;
-    }
-
-    public String showGoalString() {
-        String g = "";
-        if (goal.equals("Maintain")) {
-            return "Maintain weight";
-        } else if (goal.equals("Lose")) {
-            g = "Lose";
-        } else {
-            g = "Gain";
-        }
-        return String.format("%s %d kg per week", g, rate);
     }
 
     public double[] showNutrition() {
@@ -236,21 +233,45 @@ public class User implements java.io.Serializable {
     }
 
     public void addNewMeasurementType(String type) {
-        if (!measurements.keySet().contains(type)) {
+        if (!measurements.containsKey(type)) {
             measurements.put(type, null);
         }
     }
 
-    public void setCurrentMeasurement(String type, double measurement) {
-        measurements.put(type, measurement);
+    public void setMeasurement(LocalDate date, String type, double measurement) {
+        if (measurements.containsKey(type)) {
+            diary.addDay(date);
+
+            for (LocalDate day: diary.showDays()) {
+                if (day.isAfter(date) && diary.getDay(day).getSingleMeasurement(type) > 0) {
+                    return;
+                }
+            }
+            measurements.put(type, measurement);
+        }
     }
 
     public HashMap<String, Double> getMeasurements() {
         return measurements;
     }
 
-    public Double getSingleMeasurements(String type) {
+    public double getSingleMeasurement(String type) {
         return measurements.get(type);
+    }
+
+    public void updateBodyFat(LocalDate date, double value) {
+        diary.addDay(date);
+        
+        for (LocalDate day: diary.showDays()) {
+            if (day.isAfter(date) && diary.getDay(day).getBodyFatPercentage() > 0) {
+                return;
+            }
+        }
+        bodyFat = value;
+    }
+
+    public double showBodyFat() {
+        return bodyFat;
     }
 
     @Override
