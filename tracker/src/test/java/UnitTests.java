@@ -3,29 +3,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 import java.time.LocalDate;
 import java.lang.Exception;
 
@@ -64,13 +52,15 @@ public class UnitTests {
         assertArrayEquals(expectedUnitNutritionArray, food.showUnitNutrition());
         assertEquals(expectedBarcode, food.showBarcode());
         assertEquals(expectedNumberFoodTypes, food.showFoodTypes().size());
+        assertEquals(false, food.isDeleted());
     }
 
     @ParameterizedTest
     @MethodSource("UnitTestMethods#providesEditedFoodObjects")
     public void test002_AssertEditsApplyCorrectly(Food food, String newName, String newDisplayName, double newWeight, String newUnit, String newAmountString, 
         double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein,
-        double salt, double[] expectedNutritionArray, double[] expectedUnitNutritionArray, String newBarcode, int expectedNumberFoodTypes) {
+        double salt, double[] expectedNutritionArray, double[] expectedUnitNutritionArray, String newBarcode, int expectedNumberFoodTypes,
+        boolean expectedDeletionStatus) {
 
         food.edit(newName, newDisplayName, newWeight, newUnit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, newBarcode);
 
@@ -83,15 +73,16 @@ public class UnitTests {
         assertArrayEquals(expectedNutritionArray, food.showNutrition());
         assertArrayEquals(expectedUnitNutritionArray, food.showUnitNutrition());
         assertEquals(expectedNumberFoodTypes, food.showFoodTypes().size());
+        assertEquals(expectedDeletionStatus, food.isDeleted());
 
         //Reset food stubs for use in other tests
         if (food == stubs.stubFoodWithDisplayName) {
             stubs.stubFoodWithDisplayName.edit("Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
+            stubs.stubFoodWithDisplayName.setNotDeleted();
         } else if (food == stubs.stubFoodWithNullDisplayName) {
             stubs.stubFoodWithNullDisplayName.edit("Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
         }
     }
-
 
     @Nested
     @DisplayName("Adding and Removing Food Types")
@@ -151,6 +142,7 @@ public class UnitTests {
     public void test005_AssertGettersForNewRecipe(Recipe recipe, String expectedName, int expectedID, int expectedServings, int expectedNumberIngredients, 
                 double[] expectedNutrition) {
         assertEquals(expectedName, recipe.showName());
+        assertEquals(expectedName, recipe.showDisplayName());
         assertEquals(expectedID, recipe.showIndex());
         assertEquals(expectedServings, recipe.weight());
         assertEquals(expectedNumberIngredients, recipe.showIngredientList().size());
@@ -170,12 +162,6 @@ public class UnitTests {
     @Nested
     @TestMethodOrder(MethodOrderer.DisplayName.class)
     class TestingIngredientsAddingandRemoving {
-
-        //Create database mock and recipe object to use in these tests
-        /*Database mockDB = mock();
-        Recipe rec = new Recipe(mockDB, null, "Elderberries", 4);
-        Food ingredient1 = stubs.stubFoodWithDisplayName;
-        Food ingredient2 = stubs.stubFoodWithNullDisplayName;*/
 
         @ParameterizedTest
         @MethodSource("UnitTestMethods#providesRecipeObjectsWithOneIngredientAdded")
@@ -265,7 +251,7 @@ public class UnitTests {
     }
 
     //Will probably get rid of these in favour of exception checking in the GUI
-    /*@Test
+    @Test
     public static void test012_AssertNegativeAgeThrowsException() {
         User user = stubs.stubUserMaintain;
         LocalDate now = LocalDate.of(1995, 01, 01);
@@ -276,7 +262,7 @@ public class UnitTests {
             stubs.stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
         } catch (NoNegativeException e) {}
         
-    }*/
+    }
         
     @Test
     public void test013_AssertNegativeParametersInConstructorThrowException() {
@@ -295,7 +281,14 @@ public class UnitTests {
 
     @ParameterizedTest
     @MethodSource("UnitTestMethods#providesUserNutrition")
-    public void test015_AssertNutritionCalculatedCorrectly(User user, double[] expectedNutrition) throws Exception {
+    public void test015_AssertNutritionCalculatedCorrectly(User user, double[] expectedNutrition, LocalDate date) throws Exception {
+        /*
+         * First three tests assert that nutrition is expected for different users
+         * Fourth test checks that when age changes, the expected nutrition also changes
+         * - so that as users get older, their values update
+         */
+        
+        user.updateNutrition(date);
         assertArrayEquals(expectedNutrition, user.showNutrition());
     }
 
@@ -318,24 +311,34 @@ public class UnitTests {
         
     }
     
-    /*@Test
-    public void test017_AssertWeightUpdatedCorrectly() {
-        try {
-            User stubUser = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
-            //Dates to use
-            LocalDate firstDate = LocalDate.of(2023, 10, 01);
-            LocalDate secondDate = LocalDate.of(2023, 9, 15);
-            LocalDate thirdDate = LocalDate.of(2023, 10, 30);
+    @ParameterizedTest
+    @MethodSource("UnitTestMethods#providesUserWeightUpdates")
+    public void test017_AssertWeightUpdatedCorrectly(User user, LocalDate date, HashSet<LocalDate> diary, double weight, double expectedWeight, double[] expectedNutrition) {
+        /*
+         * First test asserts that "standard" update works as expected
+         * Second test checks that if a weight it added on a previous date, the user's current values for weight and 
+         * nutrition are not changed
+         * Third tests checks standard update again
+         */
 
-            //Original values
-            double OGWeight = 90.0;
-            double[] OGNutrition = {2498, ((2498*0.25)/9), 30, ((2498*0.5)/4), 50, 33, ((2498*0.25)/4), 6};
+        Diary mockDiary = mock();
+        Database mockDB = mock();
+        Day mockDay = mock();
 
-            //Edit on 
-        } catch (NoNegativeException n) {}
-    }*/
-    //Assert when weight updated, nutrition updated properly
-    //Assert weight updated properly according to date (needs multiples)
+        user.setTesting(mockDiary, mockDB);
+        when(mockDiary.addDay(date)).thenReturn(mockDay);
+        when(mockDiary.showDays()).thenReturn(diary);
+        
+        for (LocalDate d: diary) { //Make sure we create a mock Day object for each entry in the diary
+            when(mockDiary.getDay(d)).thenReturn(mockDay);
+        }
+        when(mockDay.showWeight()).thenReturn(1.0);
+
+        user.updateWeight(date, weight);
+        assertEquals(expectedWeight, user.showWeight());
+        assertArrayEquals(expectedNutrition, user.showNutrition());
+    }
+
     //Assert nutrition updates properly when goal updated
     
 

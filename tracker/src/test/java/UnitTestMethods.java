@@ -31,18 +31,17 @@ class UnitTestMethods {
         static {
             try {
                 Database mockDB = new Database("DB");
-                stubFoodWithDisplayName = new Food(mockDB, null, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
+                stubFoodWithDisplayName = new Food(mockDB, 1, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
                 stubFoodWithNullDisplayName = new Food(mockDB, null, "Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
 
-                stubRecipe1 = new Recipe(mockDB, null, "Recipe Name1", 4);
-                stubRecipe2 = new Recipe(mockDB, null, "Recipe Name2", 1);
+                stubRecipe1 = new Recipe(mockDB, 4, "Recipe Name1", 4);
+                stubRecipe2 = new Recipe(mockDB, 5, "Recipe Name2", 1);
 
                 stubUserMaintain = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8);
                 stubUserLose = new User("Elizabeth", "Female", 60.0, 160, "1990-12-12", "Lose", 0.5, 10);
                 stubUserGain = new User("Percy", "Male", 65.5, 200, "1995-06-07", "Gain", 1.0, 7);
             } catch (NoNegativeException e) {}
         }
-        
     }
 
     protected static Stubs getStubs() {
@@ -69,15 +68,18 @@ class UnitTestMethods {
         //test_002
         double[] nutrition_food1 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         double[] unit_food1 = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        Stubs.stubFoodWithDisplayName.setDeleted();
 
         double[] nutrition_food2 = {100.0, 50.0, 1.0, 0.0, 100.0, 50.0, 1.0, 0.0};
         double[] unit_food2 = {1.0, 0.5, 0.01, 0.0, 1.0, 0.5, 0.01, 0.0};
-        
+        Stubs.stubFoodWithNullDisplayName.setDeleted();
+        Stubs.stubFoodWithNullDisplayName.setNotDeleted();
+
         return Stream.of(
         Arguments.of(Stubs.stubFoodWithDisplayName, "New Name1", "New Display Name", 250.0, "x", "250.0 x", 
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nutrition_food1, unit_food1, "barcode", 0),
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nutrition_food1, unit_food1, "barcode", 0, true),
         Arguments.of(Stubs.stubFoodWithNullDisplayName, "New Name2", null, 100.0, "g", "100.0 g", 
-            100.0, 50.0, 1.0, 0.0, 100.0, 50.0, 1.0, 0.0, nutrition_food2, unit_food2, null, 0)
+            100.0, 50.0, 1.0, 0.0, 100.0, 50.0, 1.0, 0.0, nutrition_food2, unit_food2, null, 0, false)
         );
     }
 
@@ -89,8 +91,8 @@ class UnitTestMethods {
         Set<Map.Entry<String,Double>> expectedIngredientList = ingList.entrySet();
         
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 3, 4, 0, expectedNutrition, expectedIngredientList),
-        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 4, 1, 0, expectedNutrition, expectedIngredientList)
+        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 4, 4, 0, expectedNutrition, expectedIngredientList),
+        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 5, 1, 0, expectedNutrition, expectedIngredientList)
         );
     }
 
@@ -224,15 +226,49 @@ class UnitTestMethods {
     }
 
     protected static Stream<Arguments> providesUserNutrition() {
-        double[] user1Nutrition = {2492, ((2492*0.25)/9), 30, ((2492*0.5)/4), 50, 33, ((2492*0.25)/4), 6};
+        LocalDate date = LocalDate.parse("2023-12-12");
+
+        double[] user1Nutrition = {2498, ((2498*0.25)/9), 30, ((2498*0.5)/4), 50, 33, ((2498*0.25)/4), 6};
         double[] user2Nutrition = {1028, ((1028*0.25)/9), 20, ((1028*0.5)/4), 50, 27, ((1028*0.25)/4), 6};
         double[] user3Nutrition = {3222, ((3222*0.25)/9), 30, ((3222*0.5)/4), 50, 33, ((3222*0.25)/4), 6};
 
+        //Checks that nutrition updated when age changes
+        LocalDate date2 = LocalDate.parse("2024-01-10");
+        double[] user1Nutrition2 = {2492, ((2492*0.25)/9), 30, ((2492*0.5)/4), 50, 33, ((2492*0.25)/4), 6};
+
         return Stream.of(
-        Arguments.of(Stubs.stubUserMaintain, user1Nutrition),
-        Arguments.of(Stubs.stubUserLose, user2Nutrition),
-        Arguments.of(Stubs.stubUserGain, user3Nutrition)
+        Arguments.of(Stubs.stubUserMaintain, user1Nutrition, date),
+        Arguments.of(Stubs.stubUserLose, user2Nutrition, date),
+        Arguments.of(Stubs.stubUserGain, user3Nutrition, date),
+        Arguments.of(Stubs.stubUserMaintain, user1Nutrition2, date2)
         );
     }
 
+    protected static Stream<Arguments> providesUserWeightUpdates() {
+        User user = null;
+        try {
+            user = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8);
+        } catch (NoNegativeException e) {}
+        
+        //Dates to use
+        LocalDate firstDate = LocalDate.of(2023, 10, 01);
+        LocalDate secondDate = LocalDate.of(2023, 9, 15);
+        LocalDate thirdDate = LocalDate.of(2023, 10, 30);
+
+        HashSet<LocalDate> diary1 = new HashSet<>(); diary1.add(firstDate);
+        HashSet<LocalDate> diary2 = new HashSet<>(); Collections.addAll(diary2, firstDate, secondDate);
+        HashSet<LocalDate> diary3 = new HashSet<>(); Collections.addAll(diary3, firstDate, secondDate, thirdDate);
+        //New weights
+        double firstWeight = 66.0;
+        double secondWeight = 105.0;
+        double thirdWeight = 87.0;
+        double[] firstNutrition = {2161, ((2161*0.25)/9), 30, ((2161*0.5)/4), 50, 33, ((2161*0.25)/4), 6};
+        double[] thirdNutrition = {2456, ((2456*0.25)/9), 30, ((2456*0.5)/4), 50, 33, ((2456*0.25)/4), 6};
+        
+        return Stream.of(
+        Arguments.of(user, firstDate, diary1, firstWeight, firstWeight, firstNutrition),
+        Arguments.of(user, secondDate, diary2, secondWeight, firstWeight, firstNutrition),
+        Arguments.of(user, thirdDate, diary3, thirdWeight, thirdWeight, thirdNutrition)
+        );
+    }
 }

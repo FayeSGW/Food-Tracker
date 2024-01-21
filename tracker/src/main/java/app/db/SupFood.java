@@ -49,12 +49,6 @@ public abstract class SupFood {
         return weight;
     }
 
-    public void editName() {
-        System.out.println("Give new name: ");
-        String name = scanner.nextLine();
-        this.name = name;
-    }
-
     public double[] showUnitNutrition() {
         double[] unit = new double[8];
         for (int i = 0; i < nutrition.length; i++) {
@@ -67,11 +61,11 @@ public abstract class SupFood {
         deleted = true;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public void setNotDeleted() {
+        deleted = false;
     }
 
-    public String toString() {
-        return "";
+    public boolean isDeleted() {
+        return deleted;
     }
 }

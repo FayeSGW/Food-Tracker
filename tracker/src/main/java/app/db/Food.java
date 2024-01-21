@@ -62,7 +62,6 @@ public class Food extends SupFood{
         }
     }
 
-
     public void removeFoodType(String type) {
         boolean removed = foodType.remove(type);
         if (removed) { 
@@ -94,7 +93,6 @@ public class Food extends SupFood{
     public String showUnit() {
         return unit;
     }
-
 
     public void edit(String name, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
         this.name = name;

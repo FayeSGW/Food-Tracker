@@ -189,9 +189,9 @@ public class Recipe extends SupFood {
     }
 
     public void removeIngredientPermanently(Food food, int index) {
-        if (food == null) {
+        /*if (food == null) {
             return;
-        }
+        }*/
         if (ingList.keySet().contains(index)) {
             double[] weighted = new double[8];
             double weight = (double)ingList.get(index).get(1);

@@ -173,10 +173,8 @@ public class GetFoodsDB {
                 
                 if (recipe == null) {
                     dayObj.addByIndex(meal, foodID, amount);
-                    System.out.println(foodID + " " + food);
                 } else {
                     dayObj.addByIndex(meal, recipeID, amount);
-                    System.out.println(recipeID + " " + recipe);
                 }
             }
             exStmt = conn.createStatement();
