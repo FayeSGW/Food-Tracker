@@ -49,8 +49,4 @@ public class Exercise {
         }
         return mins + ":" + secs;
     }
-
-    public String toString() {
-        return this.name + ": "  + " minutes, " + this.calories + " calories burned.";
-    }
 }

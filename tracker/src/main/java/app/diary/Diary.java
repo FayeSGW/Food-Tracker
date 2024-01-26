@@ -1,11 +1,8 @@
 package app.diary;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Set;
-import java.time.LocalDate;
 
 import app.sql.java.connect.*;
 
@@ -20,10 +17,6 @@ public class Diary implements java.io.Serializable {
         this.user = user;
         diary = new TreeMap<>();
         current = LocalDate.now();
-    }
-
-    public int showWater() {
-        return 8;
     }
 
     public Set<LocalDate> showDays() {
@@ -72,13 +65,4 @@ public class Diary implements java.io.Serializable {
         current = today;
         return diary.get(today);
     }
-
-    public String toString() {
-        String s = "";
-        for (LocalDate date: diary.keySet()) {
-            s += diary.get(date).showDate() + " " + diary.get(date).showWaterDrunk() + " ";
-        }
-        return s;
-    }
-
 }

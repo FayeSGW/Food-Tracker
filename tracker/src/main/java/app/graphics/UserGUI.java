@@ -1,11 +1,9 @@
 package app.graphics;
 
-import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import exceptions.ExHandling;
-import exceptions.NoNegativeException;
+import exceptions.*;
 
 class UserGUI extends JPanel {
     UserControl uControl;
@@ -68,6 +66,7 @@ class UserGUI extends JPanel {
         goalLabel = new JLabel("Goal: ");
         goalChooser = new JComboBox<>(goalList); goalChooser.setSelectedItem(uControl.userGoal());
         goalPanel.add(goalLabel); goalPanel.add(goalChooser);
+        
         if (uControl.userGoal().equals("Maintain")) {
             goalLabel2 = new JLabel("weight.");
         } else {

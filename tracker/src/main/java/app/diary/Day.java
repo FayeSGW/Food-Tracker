@@ -216,8 +216,6 @@ public class Day {
         workout.edit(newName, minutes, seconds, calories);
         
         AddToDiary.addExercise(index, showDate().toString(), newName, minutes, seconds, calories, oldName);
-        //removeExercise(index);
-        //addExercisefromGUI(index, newName, minutes, seconds, calories);
     }
 
     public void removeExercise(Integer index) {

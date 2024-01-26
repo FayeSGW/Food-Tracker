@@ -1,11 +1,9 @@
 package app.db;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import app.sql.java.connect.*;
 
 public class Database {
     transient Scanner input = new Scanner(System.in);

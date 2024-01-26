@@ -167,20 +167,4 @@ public class Meal {
     public String showName() {
         return name;
     }
-
-    public String toString() {
-        ArrayList<String> stringList = new ArrayList<>();
-        ArrayList<Object> lst;
-        for (String food: foodlst.keySet()) {
-            lst = foodlst.get(food);
-            double weight = (double) lst.get(1);
-            String unit = (String) lst.get(2);
-            String strng = String.valueOf(weight) + " " + unit + " " + food;
-            stringList.add(strng);
-        }
-        String meal = name + " on " + date + "\n";
-        String foods = String.join(", ", stringList);
-        String nutrition = String.format("\nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", this.nutrition[0], this.nutrition[1], this.nutrition[2], this.nutrition[3], this.nutrition[4], this.nutrition[5], this.nutrition[6], this.nutrition[7]);
-        return meal + foods + nutrition;
-    }
 }

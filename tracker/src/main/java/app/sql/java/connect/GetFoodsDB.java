@@ -104,12 +104,7 @@ public class GetFoodsDB {
                 double ingredientAmount = rrs.getDouble("IngredientAmount");
                 String instructs = rrs.getString("Instructions");
                 
-                Recipe rec = null;
-                if (deleted == 1) {
-                    rec = (Recipe)d.getItemFromIndex(index);
-                } else {
-                    rec = (Recipe)d.findItem(recipeName);
-                }
+                Recipe rec = (Recipe)d.getItemFromIndex(index);
 
                 if (rec == null) {
                     rec = d.addRecipe(index, deleted, recipeName, servings);
@@ -154,7 +149,10 @@ public class GetFoodsDB {
                 Day dayObj = diary.addSavedDays(date);
 
                 dayObj.addWater(water);
-                dayObj.addWeight(weight);
+                if (weight > 0) {
+                    dayObj.addWeight(weight);
+                }
+                
             }
             foodStmt = conn.createStatement();
             frs = foodStmt.executeQuery(mealStrng);

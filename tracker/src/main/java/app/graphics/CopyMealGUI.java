@@ -10,8 +10,7 @@ class CopyMealGUI {
     TrackerControl control;
     String fromMeal;
     LocalDate fromDate;
-
-    int index;
+    int mealIndex;
 
     JFrame window;
     JPanel whole, choices;
@@ -21,17 +20,11 @@ class CopyMealGUI {
 
     String[] mealsList = {"Breakfast", "Lunch", "Dinner", "Snacks"};
 
-    CopyMealGUI(TrackerControl control, String fromMeal, LocalDate fromDate) {
+    CopyMealGUI(TrackerControl control, String fromMeal, int mealIndex, LocalDate fromDate) {
         this.control = control;
         this.fromMeal = fromMeal;
         this.fromDate = fromDate;
-        
-        for (int i = 0; i < 4; i++) {
-            String meal = mealsList[i];
-            if (fromMeal.equals(meal)) {
-                index = i;
-            }
-        }
+        this.mealIndex = mealIndex;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -50,7 +43,7 @@ class CopyMealGUI {
         choices = new JPanel(); whole.add(choices, BorderLayout.CENTER);
         chooseDate = new JButton("Date"); chooseDate.addActionListener(new Date());
         choices.add(chooseDate);
-        mealChooser = new JComboBox<>(mealsList); mealChooser.setSelectedIndex(index);
+        mealChooser = new JComboBox<>(mealsList); mealChooser.setSelectedIndex(mealIndex);
         choices.add(mealChooser);
 
         copyButton = new JButton("Copy"); copyButton.addActionListener(new Copy());

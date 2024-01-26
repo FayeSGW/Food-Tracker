@@ -61,8 +61,7 @@ class DiaryGUI extends JPanel {
         addExerciseButton = new JButton("Add Workout"); addExerciseButton.addActionListener(new addExercise());
         addButtonsPanel.add(addFoodButton); addButtonsPanel.add(addWaterButton); addButtonsPanel.add(addExerciseButton);
 
-        overviewPanel = new JPanel(); //overviewPanel.setLayout(new BorderLayout());
-        this.add(overviewPanel);
+        overviewPanel = new JPanel(); this.add(overviewPanel);
         
         overviewTitlePanel = new JPanel(); overviewTitlePanel.setLayout(new BoxLayout(overviewTitlePanel, BoxLayout.Y_AXIS));
         overviewCaloriesPanel = new JPanel(); overviewCaloriesPanel.setLayout(new BoxLayout(overviewCaloriesPanel, BoxLayout.Y_AXIS));
@@ -76,7 +75,6 @@ class DiaryGUI extends JPanel {
         overviewPanel.add(overviewTitlePanel); overviewPanel.add(overviewCaloriesPanel); overviewPanel.add(overviewCarbsPanel);
         overviewPanel.add(overviewSugarPanel); overviewPanel.add(overviewFatPanel); overviewPanel.add(overviewSatFatPanel); overviewPanel.add(overviewProteinPanel);
         overviewPanel.add(overviewFibrePanel); overviewPanel.add(overviewSaltPanel);
-
 
         overviewTitle = new JLabel(" "); overviewTitlePanel.add(overviewTitle);
         eatenTitle = new JLabel("Eaten: "); eatenTitle.setAlignmentX(Component.RIGHT_ALIGNMENT); overviewTitlePanel.add(eatenTitle);
@@ -116,7 +114,6 @@ class DiaryGUI extends JPanel {
 
         mealsPanel = new JPanel(); mealsPanel.setLayout(new BoxLayout(mealsPanel, BoxLayout.Y_AXIS));
 
-
         scroll = new JScrollPane(mealsPanel); scroll.getVerticalScrollBar().setUnitIncrement(10);
         this.add(scroll);
 
@@ -135,7 +132,7 @@ class DiaryGUI extends JPanel {
         addToBreakfast = new JButton("Add food"); breakfastTitlePanel.add(addToBreakfast);
         addToBreakfast.addActionListener(new addFood(0));
         copyBreakfast = new JButton("Copy"); breakfastTitlePanel.add(copyBreakfast);
-        copyBreakfast.addActionListener(new copyMeal("Breakfast"));
+        copyBreakfast.addActionListener(new copyMeal("Breakfast", 0));
         breakfastLabelsPanel = new JPanel(); breakfastPanel.add(breakfastLabelsPanel);
         breakfastBlank = new JLabel(""); breakfastBlank.setPreferredSize(new Dimension(200, 26));
         breakfastLabelsPanel.add(breakfastBlank);
@@ -153,7 +150,7 @@ class DiaryGUI extends JPanel {
         addToLunch = new JButton("Add Food"); lunchTitlePanel.add(addToLunch);
         addToLunch.addActionListener(new addFood(1));
         copyLunch = new JButton("Copy"); lunchTitlePanel.add(copyLunch);
-        copyLunch.addActionListener(new copyMeal("Lunch"));
+        copyLunch.addActionListener(new copyMeal("Lunch", 1));
         lunchLabelsPanel = new JPanel(); lunchPanel.add(lunchLabelsPanel);
         lunchBlank = new JLabel(" "); lunchBlank.setPreferredSize(new Dimension(200, 26));
         lunchLabelsPanel.add(lunchBlank);
@@ -171,7 +168,7 @@ class DiaryGUI extends JPanel {
         addToDinner = new JButton("Add Food"); dinnerTitlePanel.add(addToDinner);
         addToDinner.addActionListener(new addFood(2));
         copyDinner = new JButton("Copy"); dinnerTitlePanel.add(copyDinner);
-        copyDinner.addActionListener(new copyMeal("Dinner"));
+        copyDinner.addActionListener(new copyMeal("Dinner", 2));
         dinnerLabelsPanel = new JPanel(); dinnerPanel.add(dinnerLabelsPanel);
         dinnerBlank = new JLabel(" "); dinnerBlank.setPreferredSize(new Dimension(200, 26));
         dinnerLabelsPanel.add(dinnerBlank);
@@ -189,7 +186,7 @@ class DiaryGUI extends JPanel {
         addToSnacks = new JButton("Add Food"); snacksTitlePanel.add(addToSnacks);
         addToSnacks.addActionListener(new addFood(3));
         copySnacks = new JButton("Copy"); snacksTitlePanel.add(copySnacks);
-        copySnacks.addActionListener(new copyMeal("Snacks"));
+        copySnacks.addActionListener(new copyMeal("Snacks", 3));
         snacksLabelsPanel = new JPanel(); snacksPanel.add(snacksLabelsPanel);
         snacksBlank = new JLabel(" "); snacksBlank.setPreferredSize(new Dimension(200, 26));
         snacksLabelsPanel.add(snacksBlank);
@@ -214,9 +211,6 @@ class DiaryGUI extends JPanel {
         mealPanels[0] = breakfastFoodsPanel; mealPanels[1] = lunchFoodsPanel; mealPanels[2] = dinnerFoodsPanel; mealPanels[3] = snacksFoodsPanel;
 
         populateMealPanels();
-        //clearMealPanels();
-
-        //System.out.println(exercisePanel.getComponentCount());
     }
 
     void changeDate(String day, int date, String month) {
@@ -310,47 +304,6 @@ class DiaryGUI extends JPanel {
                 }
             });
         }
-        /*for (int i = 0; i < foodsList.size(); i++) {
-            ArrayList<Object> details = foodsList.get(i);
-            String foodName = (String)details.get(0);
-            String displayName = (String)details.get(3);
-            String foodAmount = control.showFoodItemAmount(mealName, foodName);
-            String[] foodNutrition = control.showFoodItemNutrition(mealName, foodName);
-            JPanel foodItem = new JPanel();
-            JPanel mp;
-            
-            if (mealName.equals("Breakfast")) {
-                mp = breakfastFoodsPanel;
-            } else if (mealName.equals("Lunch")) {
-                mp = lunchFoodsPanel;
-            } else if (mealName.equals("Dinner")) {
-                mp = dinnerFoodsPanel;
-            } else {
-                mp = snacksFoodsPanel;
-            }
-
-            mp.add(foodItem);
-            
-            JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 15));
-            JLabel calories = new JLabel(foodNutrition[0], SwingConstants.CENTER); calories.setPreferredSize(new Dimension(47, 15));
-            JLabel carbs = new JLabel(foodNutrition[3] + " g", SwingConstants.CENTER); carbs.setPreferredSize(new Dimension(34, 15));
-            JLabel fat = new JLabel(foodNutrition[1] + " g", SwingConstants.CENTER); fat.setPreferredSize(new Dimension(25, 15));
-            JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
-            JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
-            foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
-;
-            name.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    control.editMealDialogue(mealName, foodName);
-                }
-            });*/
-
-            /*for (JPanel panel: mealPanels) {
-                panel.repaint();
-            }*/
-            //mp.repaint();
-        //}
     }
 
     void updateExercisePanel() {
@@ -359,7 +312,6 @@ class DiaryGUI extends JPanel {
             JPanel exercise = new JPanel();
             exerciseWorkoutsPanel.add(exercise);
 
-            
             String time = workouts.get(workout).get(1);
             String cals = workouts.get(workout).get(2);
             String workoutName = workouts.get(workout).get(0);
@@ -381,8 +333,6 @@ class DiaryGUI extends JPanel {
     class chooseDate implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            //LocalDate current = control.showCurrentDate();
-            //CalendarGUI cGUI = new CalendarGUI(control, current);
             control.openCalendar(null);
         }
     }
@@ -402,14 +352,14 @@ class DiaryGUI extends JPanel {
     }
 
     class addFood implements ActionListener {
-        int index;
+        int mealIndex;
         addFood(int index) {
-            this.index = index;
+            this.mealIndex = index;
         }
 
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.addFoodDialogue(index, "diary");
+            control.addFoodDialogue(mealIndex, "diary");
         }
     }
 
@@ -429,13 +379,15 @@ class DiaryGUI extends JPanel {
 
     class copyMeal implements ActionListener {
         String meal;
-        copyMeal(String meal) {
+        int mealIndex;
+        copyMeal(String meal, int mealIndex) {
             this.meal = meal;
+            this.mealIndex = mealIndex;
         }
 
         @Override
         public void actionPerformed (ActionEvent e) {
-            control.copyMealDialogue(meal);
+            control.copyMealDialogue(meal, mealIndex);
         }
     }
 }

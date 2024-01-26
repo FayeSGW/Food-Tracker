@@ -23,7 +23,6 @@ class SummaryGUI extends JPanel {
             System.exit(1);
         }
 
-
         summaryDateButtons = new JPanel(new FlowLayout());
         this.add(summaryDateButtons);
 
@@ -64,17 +63,14 @@ class SummaryGUI extends JPanel {
         macrosGraphic = new JPanel(); macrosGraphic.setLayout(new BoxLayout(macrosGraphic, BoxLayout.Y_AXIS));
         macrosPanel.add(macrosText, BorderLayout.WEST); macrosPanel.add(macrosGraphic, BorderLayout.EAST);
 
-        //macrosCarbs = new JPanel(); macros.add(macrosCarbs);
         carbsText = new JPanel(); carbsText.setPreferredSize(new Dimension(150, 25)); macrosText.add(carbsText);
-        carbs = new JLabel("Carbs: ");  //macrosCarbs.add(carbs);
+        carbs = new JLabel("Carbs: ");  
 
-        //macrosProtein = new JPanel(); macros.add(macrosProtein);
         proteinText = new JPanel(); proteinText.setPreferredSize(new Dimension(150, 25)); macrosText.add(proteinText);
-        protein = new JLabel("Protein: "); //macrosProtein.add(protein);
+        protein = new JLabel("Protein: "); 
 
-        //macrosFat = new JPanel(); macros.add(macrosFat);
         fatText = new JPanel(); fatText.setPreferredSize(new Dimension(200, 25)); macrosText.add(fatText);
-        fat = new JLabel("Fat: "); //macrosFat.add(fat);
+        fat = new JLabel("Fat: "); 
         carbsText.add(carbs); proteinText.add(protein); fatText.add(fat);
 
         carbsGraphic = new JPanel(); macrosGraphic.add(carbsGraphic);
@@ -104,7 +100,6 @@ class SummaryGUI extends JPanel {
         waterZero = new JLabel("0"); waterAll.add(waterZero);
         waterProgress = new JProgressBar(); waterAll.add(waterProgress);
         waterGoal = new JLabel(); waterAll.add(waterGoal);
-
     }
 
     void changeDate(String day, int date, String month) {
@@ -207,8 +202,6 @@ class SummaryGUI extends JPanel {
     class chooseDate implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
-            //LocalDate current = control.showCurrentDate();
-            //CalendarGUI cGUI = new CalendarGUI(control, current);
             control.openCalendar(null);
         }
     }
@@ -226,6 +219,4 @@ class SummaryGUI extends JPanel {
             control.goToNextDay();
         }
     }
-
-
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 class AddFoodGUI {
     AddFoodControl control;
-    int index;
+    int mealIndex; //This is used to select the relevant meal in the drop-down box
     String type, editedName; //editedName used to store the new name of items when edited, in order to update the list model 
 
     JFrame window;
@@ -35,7 +35,7 @@ class AddFoodGUI {
     AddFoodGUI (AddFoodControl control, int index, String type) {
         this.control = control;
         searchResult = new ArrayList<>();
-        this.index = index;
+        this.mealIndex = index;
         this.type = type;
 
         try {
@@ -53,19 +53,11 @@ class AddFoodGUI {
         searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(searchPanel, BorderLayout.NORTH);
         searchBar = new JTextField("Search for food or recipe"); searchBar.setPreferredSize(new Dimension(219, 26));
         searchBar.addFocusListener(new focusSearchBar());
-        /*searchBar.addMouseListener(new MouseAdapter() {
-            @Override //This makes it do that the "Search for..." text disappears when the user clicks on the search bar so they don't have to manually delete it
-            public void mouseClicked(MouseEvent e) {
-                if (searchBar.getText().equals("Search for food or recipe")) {
-                    searchBar.setText("");
-                }
-            }
-        });*/
         searchBar.addActionListener(new search());
         
         searchButton = new JButton("Search"); searchButton.setPreferredSize(new Dimension(75, 26));
         searchButton.addActionListener(new search());
-        searchPanel.add(searchBar); /*searchPanel.add(Box.createRigidArea(new Dimension(4,0)));*/ searchPanel.add(searchButton);
+        searchPanel.add(searchBar); searchPanel.add(searchButton);
         checkFoods = new JCheckBox("Show food items", true); checkRecipes = new JCheckBox("Show Recipes", true);
         searchPanel.add(checkFoods); searchPanel.add(checkRecipes);
         
@@ -94,7 +86,7 @@ class AddFoodGUI {
             foodButtons.add(mealLabel);
 
             mealChooser = new JComboBox<>(mealsList); mealChooser.setMaximumSize(new Dimension(100, 30));
-            mealChooser.setSelectedIndex(index);
+            mealChooser.setSelectedIndex(mealIndex);
             mealChooser.setAlignmentX(Component.LEFT_ALIGNMENT); foodButtons.add(mealChooser);
             foodButtons.add(Box.createRigidArea(new Dimension(0,10))); 
         }
@@ -132,6 +124,7 @@ class AddFoodGUI {
     class focusSearchBar implements FocusListener {
         @Override
         public void focusGained(FocusEvent g) {
+            //Clear search bar when user selects it
             if (searchBar.getText().equals("Search for food or recipe")) {
                 searchBar.setText("");
             }
@@ -244,8 +237,6 @@ class AddFoodGUI {
                     control.addFoodToRecipe(itemName, amount);
                     window.dispose();
                 }
-
-                
             } catch (NumberFormatException | NoNegativeException | NoNullException n) {}
         }
     }

@@ -2,7 +2,6 @@ package app.db;
 
 import java.util.HashSet;
 import java.util.Scanner;
-import app.sql.java.connect.*;
 
 public class Food extends SupFood{
     Scanner scanner = new Scanner(System.in);
@@ -24,12 +23,6 @@ public class Food extends SupFood{
         inRecipes = new HashSet<>();
         this.nutrition[0] = calories; this.nutrition[1] = fat; this.nutrition[2] = satfat; this.nutrition[3] = carbs; this.nutrition[4] = sugar; this.nutrition[5] = fibre; this.nutrition[6] = protein; this.nutrition[7] = salt;
         }
-
-    @Override
-    public String toString() {
-        String text = String.format("%s: \n%s \n%.0f calories \n%.1f g fat \n%.1f g saturated fat \n%.1f g carbohydrates\n%.1f g sugar \n%.1f g fibre \n%.1f g protein \n%.1f g salt", name, showWeight(), this.nutrition[0], this.nutrition[1], this.nutrition[2], this.nutrition[3], this.nutrition[4], this.nutrition[5], this.nutrition[6], this.nutrition[7]);
-        return text;
-    }
 
     @Override
     public String showName() {

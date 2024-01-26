@@ -4,15 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.stream.*;
-
-/*class CalTest {
-    public static void main (String [] args) {
-        TrackerControl control = new TrackerControl();
-        CalendarGUI gui = new CalendarGUI(control);
-    }
-}*/
 
 class CalendarGUI {
     TrackerControl control;
@@ -20,7 +12,6 @@ class CalendarGUI {
     LocalDate date, today = LocalDate.now();
     int month, year, day;
     String type;
-
 
     JFrame calendar;
     JPanel whole, monthYear, days, todayText;
@@ -35,7 +26,6 @@ class CalendarGUI {
 
     String[] dayLabelList = {"M", "T", "W", "T", "F", "S", "S"};
     String[] chooseMonthList = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    
     Integer[] chooseYearList;  
     
 
@@ -65,9 +55,9 @@ class CalendarGUI {
 
         //Sets different year ranges for choosing DOB (via User profie) and choosing a day for the diary
         if (type == null || type.equals("copy")) {
-            chooseYearList = IntStream.range(2020, 2027).boxed().toArray(Integer[]::new);
+            chooseYearList = IntStream.range(2020, (today.getYear()+5)).boxed().toArray(Integer[]::new);
         } else if (type.equals("DOB")) {
-            chooseYearList = IntStream.range(1950, 2027).boxed().toArray(Integer[]::new);
+            chooseYearList = IntStream.range(1950, (today.getYear()+1)).boxed().toArray(Integer[]::new);
             today = date;
         }
 
@@ -75,13 +65,15 @@ class CalendarGUI {
         prevMonth = new JButton("<"); prevMonth.addActionListener(new goToPrevMonth());
         months = new JComboBox<>(chooseMonthList); months.setSelectedIndex(month-1);
         months.addActionListener(new chooseMonth());
-        years = new JComboBox<>(chooseYearList); years.setSelectedIndex(setComboBox());
+        years = new JComboBox<>(chooseYearList); years.setSelectedItem(year);
         years.addActionListener(new chooseYear());
         nextMonth = new JButton(">"); nextMonth.addActionListener(new goToNextMonth());
         nextYear = new JButton(">>"); nextYear.addActionListener(new goToNextYear());
         monthYear.add(prevYear); monthYear.add(prevMonth); 
         monthYear.add(months); monthYear.add(years);
         monthYear.add(nextMonth); monthYear.add(nextYear);
+
+        System.out.println(today.getYear());
 
         for (int c = 0; c < 7; c++) {
             JLabel day = new JLabel(dayLabelList[c]);
@@ -122,17 +114,6 @@ class CalendarGUI {
         //calendar.setSize(300,200);
         calendar.setLocationRelativeTo(null);
         calendar.setVisible(true);
-    }
-
-    private int setComboBox() {
-        int index = 0;
-        for (int yr: chooseYearList) {
-            if (yr == year) {
-                return index;
-            }
-            index++;
-        }
-        return -1;
     }
 
     private void update() {
@@ -193,9 +174,9 @@ class CalendarGUI {
         if (month == 1) {
                 month = 12;
                 year = year-1;
-                years.setSelectedIndex(setComboBox());
+                years.setSelectedItem(year);
             } else {
-                month = month-1;
+                month = month - 1;
             }
             months.setSelectedIndex(month-1);
     }
@@ -204,7 +185,7 @@ class CalendarGUI {
         if (month == 12) {
                 month = 1;
                 year = year+1;
-                years.setSelectedIndex(setComboBox());
+                years.setSelectedItem(year);
             } else {
                 month = month + 1;
             }
@@ -231,7 +212,7 @@ class CalendarGUI {
         @Override 
         public void actionPerformed (ActionEvent e) {
             year = year-1;
-            years.setSelectedIndex(setComboBox());
+            years.setSelectedItem(year);
             update();
         }
     }
@@ -240,7 +221,7 @@ class CalendarGUI {
         @Override 
         public void actionPerformed (ActionEvent e) {
             year = year+1;
-            years.setSelectedIndex(setComboBox());
+            years.setSelectedItem(year);
             update();
         }
     }

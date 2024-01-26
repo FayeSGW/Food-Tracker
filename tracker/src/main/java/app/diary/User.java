@@ -273,11 +273,4 @@ public class User implements java.io.Serializable {
     public double showBodyFat() {
         return bodyFat;
     }
-
-    @Override
-    public String toString() {
-        String nutrition = String.format("\nCalories: %.0f \nFat: %.1f \nSaturated Fat: %.1f \nCarbohydrates: %.1f \nSugar: %.1f \nFibre: %.1f \nProtein: %.1f \nSalt: %.1f", this.nutrition[0], this.nutrition[1], this.nutrition[2], this.nutrition[3], this.nutrition[4], this.nutrition[5], this.nutrition[6], this.nutrition[7]);
-        String strng = String.format("Name: %s \nGender: %s \nCurrent weight: %.1f \nHeight: %d \nAge: %d \nRecommended food intake: %s", this.name, this.gender, this.weight, this.height, this.age, nutrition);
-        return strng;
-    }
 }

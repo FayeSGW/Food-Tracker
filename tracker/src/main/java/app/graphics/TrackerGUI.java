@@ -1,7 +1,5 @@
 package app.graphics;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import io.github.cdimascio.dotenv.*;
 
@@ -79,28 +77,11 @@ class TrackerGUI {
         profile = uGUI; 
         tabbedPane.add("Profile", profile);
 
-        //SUMMARY TAB
-        
-
-
-        //DIARY TAB
-
-
-        //HISTORY TAB
-
-
-        //PROFILE TAB
-
-
-
-
         window.pack();
         window.setSize(500, 500);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         //window.setResizable(false);
-
-        //System.out.println(String.format("%s, %s, %s, %s, %s", dGUI.breakfastCalories.getWidth(), dGUI.breakfastCarbs.getWidth(), dGUI.breakfastFat.getWidth(), dGUI.breakfastProtein.getWidth(), dGUI.breakfastFibre.getWidth()));
     }
 
 }

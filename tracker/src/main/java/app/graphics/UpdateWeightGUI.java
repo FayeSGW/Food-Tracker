@@ -3,17 +3,15 @@ package app.graphics;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.time.LocalDate;
 
 import exceptions.ExHandling;
 import exceptions.NoNegativeException;
 import exceptions.NoNullException;
 
-import java.time.LocalDate;
-
 class UpdateWeightGUI {
     TrackerControl control;
     LocalDate date;
-
     JFrame window;
     JPanel whole, text;
     JLabel instructions, unit;
@@ -40,7 +38,7 @@ class UpdateWeightGUI {
         instructions = new JLabel("Input your new weight below:");
         whole.add(instructions, BorderLayout.NORTH);
 
-        input = new JTextField(); //input.addActionListener(new updateWeight(date));
+        input = new JTextField(); 
         whole.add(input, BorderLayout.CENTER);
 
         button = new JButton("Update Weight"); button.addActionListener(new updateWeight(date));
@@ -64,7 +62,7 @@ class UpdateWeightGUI {
                 control.updateWeight(date, weight);
                 window.dispose();
             } catch (NumberFormatException | NoNegativeException | NoNullException n) {
-                
+                //TODO - output in window if invalue value entered
             }
         }
     }
