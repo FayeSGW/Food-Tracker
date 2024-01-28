@@ -15,13 +15,14 @@ public class User implements java.io.Serializable {
     private double[] nutrition = new double[8];
     private Database data;
     private Diary diary;
-    private HashMap<String, Double> measurements = new HashMap<>();
+    private HashMap<String, Double> measurements;
     public LocalDate today = LocalDate.now();
+    private String[] measurementTypes = {"Waist", "Hips", "Calf", "Thigh", "Upper Arm", "Chest", "Underwire", "Body Fat"};
 
 
     //Gender = Male/Female, weight in kg, height in cm, DOB as YYYY-MM-DD, goal = loss,gain, maintain
     public User(String name, String gender, double weight, int height, String dateOfBirth, 
-        String goal, double rate, int water) throws NoNegativeException {
+        String goal, double rate, int water, HashMap<String, Double> measurement) throws NoNegativeException {
         //No exception checking for these because their values are limited by the GUI
         this.name = name;
         this.gender = gender;
@@ -38,15 +39,18 @@ public class User implements java.io.Serializable {
         this.diary = new Diary(name, this);    
         
         updateNutrition(today);
-        measurements.put("Waist", 0.0);
-        measurements.put("Hips", 0.0);
-        measurements.put("Calf", 0.0);
-        measurements.put("Thigh", 0.0);
-        measurements.put("Upper Arm", 0.0);
-        measurements.put("Chest", 0.0);
-        if (gender.equals("Female")) {
-            measurements.put("Underwire", 0.0);
+
+        measurements = measurement;
+        if (measurements != null) {
+            measurements.put("Upper Arm", measurements.get("UpperArm"));
+            measurements.put("Body Fat", measurements.get("BodyFat"));
+            measurements.remove("UpperArm"); measurements.remove("BodyFat");
+        } else {
+            for (String type: measurementTypes) {
+                measurements.put(type, 0.0);
+            }
         }
+        
         
     }
 
@@ -63,7 +67,7 @@ public class User implements java.io.Serializable {
         }
         return value;
     }
-
+ 
     public Database accessDatabase() {
         return data;
     }
@@ -72,14 +76,21 @@ public class User implements java.io.Serializable {
         return diary;
     }
 
-    public void edit(String oldName, String name, String gender, double weight, int height, String dob, String goal, double rate, int water) {
+    public void edit(String oldName, String name, String gender, double weight, int height, String dob, String goal, double rate, int water,
+        double[] measurements) {
         changeName(name);
         changeGender(gender);
-        updateWeight(LocalDate.now(), weight);
         changeHeight(height);
         changeDOB(dob);
         updateGoal(rate, goal);
         setWaterGoal(water);
+
+        Day day = diary.getDay(today);
+        day.addWeightFromGUI(weight);
+        for (int i = 0; i < measurements.length-1; i++) {
+            day.setMeasurementFromGUI(measurementTypes[i], measurements[i], false);
+        }
+        day.setMeasurementFromGUI("Body Fat", measurements[measurements.length-1], true);
         AddToDiary.addUser(this, oldName);
     }
 
@@ -259,18 +270,4 @@ public class User implements java.io.Serializable {
         return measurements.get(type);
     }
 
-    public void updateBodyFat(LocalDate date, double value) {
-        diary.addDay(date);
-        
-        for (LocalDate day: diary.showDays()) {
-            if (day.isAfter(date) && diary.getDay(day).getBodyFatPercentage() > 0) {
-                return;
-            }
-        }
-        bodyFat = value;
-    }
-
-    public double showBodyFat() {
-        return bodyFat;
-    }
 }

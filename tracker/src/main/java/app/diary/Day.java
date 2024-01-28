@@ -50,6 +50,7 @@ public class Day {
         measurements.put("Thigh", 0.0);
         measurements.put("Upper Arm", 0.0);
         measurements.put("Chest", 0.0);
+        measurements.put("Body Fat", 0.0);
         if (user.showGender().equals("Female")) {
             measurements.put("Underwire", 0.0);
         }   
@@ -320,14 +321,10 @@ public class Day {
         }
     }
 
-    public double getBodyFatPercentage() {
-        return todaysBodyFat;
-    }
-
-    public void setBodyFatPercentage(double value) {
-        todaysBodyFat = value;
-        if (value > 0) {
-            user.updateBodyFat(date, value);
-        }
+    public void setMeasurementFromGUI(String type, double value, boolean save) {
+        setMeasurement(type, value);
+        if (save) {
+            AddToDiary.updateMeasurements(this, user);
+        }   
     }
 }

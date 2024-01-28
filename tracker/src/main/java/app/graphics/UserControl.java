@@ -1,6 +1,7 @@
 package app.graphics;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import app.diary.*;
 
@@ -52,13 +53,17 @@ class UserControl {
         return user.showWater();
     }
 
+    public double userMeasurement(String type) {
+        return user.getSingleMeasurement(type);
+    }
+
     public void openCalendar() {
         LocalDate dob = LocalDate.parse(user.showDOB());
         CalendarGUI cGUI = new CalendarGUI(tControl, dob, "DOB");
     }
 
     public void updateUserParameters(String oldName, String newName, String gender, double weight, int height, String dob,
-        String goal, double rate, int water) {
-            user.edit(oldName, newName, gender, weight, height, dob, goal, rate, water);
+        String goal, double rate, int water, double[] measurements) {
+            user.edit(oldName, newName, gender, weight, height, dob, goal, rate, water, measurements);
         }
 }

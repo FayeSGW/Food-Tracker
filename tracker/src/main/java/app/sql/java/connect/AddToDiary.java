@@ -9,7 +9,6 @@ import app.diary.*;
 
 public class AddToDiary {
 
-
     public static void addUser(User user, String oldName) {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -48,6 +47,41 @@ public class AddToDiary {
         }
     }
 
+    public static void updateMeasurements(Day day, User user) {
+        Connection conn = null;
+        PreparedStatement dayStmt = null, userStmt = null;
+        String dayMeasurements = "UPDATE Days SET Waist = ?, Hips = ?, Calf = ?, Thigh = ?, UpperArm = ?, Chest = ?, Underwire = ?, BodyFat = ? WHERE Date = ?";
+        String userMeasurements = "UPDATE UserData SET Waist = ?, Hips = ?, Calf = ?, Thigh = ?, UpperArm = ?, Chest = ?, Underwire = ?, BodyFat = ?";
+        String[] types = {"Waist", "Hips", "Calf", "Thigh", "Upper Arm", "Chest", "Underwire", "Body Fat"};
+
+        try {
+            conn = Connect.connect();
+            dayStmt = conn.prepareStatement(dayMeasurements);
+            userStmt = conn.prepareStatement(userMeasurements);
+
+            dayStmt.setString(9, day.showDate().toString());
+
+            for (int i = 0; i < types.length; i++) {
+                dayStmt.setDouble(i+1, day.getSingleMeasurement(types[i]));
+                userStmt.setDouble(i+1, user.getSingleMeasurement(types[i]));
+            }
+            dayStmt.setDouble(1, day.getSingleMeasurement("Waist"));
+            //dayStmt.setDouble(8, day.getBodyFatPercentage());
+            //userStmt.setDouble(8, user.showBodyFat());
+            dayStmt.executeUpdate();
+            userStmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(":( measurements" + e.getMessage());
+        } finally {
+            try {
+                userStmt.close();
+                dayStmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("!");
+            }
+        }
+    }
 
     public static void updateWeight(Day day, User user) {
         Connection conn = null;
@@ -122,7 +156,7 @@ public class AddToDiary {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(";(" + e.getMessage());
+            System.out.println(":( addDayToDiary" + e.getMessage());
         } finally {
             try {
                 stmt.close();

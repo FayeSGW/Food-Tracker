@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import app.db.*;
 import app.diary.*;
@@ -12,7 +13,7 @@ import exceptions.NoNegativeException;
 
 public class GetFoodsDB {
     public static User getUser() {
-        String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate, Water FROM UserData";
+        String userSearch = "SELECT Name, Gender, Weight, Height, DOB, Goal, Rate, Water, Waist, Hips, Calf, Thigh, UpperArm, Chest, Underwire, BodyFat FROM UserData";
         Connection conn = null;
         Statement userStmt = null;
         ResultSet urs = null;
@@ -33,7 +34,14 @@ public class GetFoodsDB {
                 double rate = urs.getDouble("Rate");
                 int water = urs.getInt("Water");
 
-                user = new User(name, gender, weight, height, DOB, goal, rate, water);
+                String[] measurementTypes = {"Waist", "Hips", "Calf", "Thigh", "UpperArm", "Chest", "Underwire", "BodyFat"};
+                HashMap<String, Double> measurements = new HashMap<>();
+
+                for (String type: measurementTypes) {
+                    measurements.put(type, urs.getDouble(type));
+                }
+
+                user = new User(name, gender, weight, height, DOB, goal, rate, water, measurements);
 
                 Database data = user.accessDatabase();
                 Diary diary = user.accessDiary();
@@ -41,10 +49,21 @@ public class GetFoodsDB {
                 getFoods(conn, data);
                 getDiary(conn, diary);
 
+                //Since Day objects are created during getDiary(), we need to add the body measurements
+                // after this (otherwise we have Primary Key Constraint issues)
+                /*user.setMeasurement(LocalDate.now(), "Waist", waist);
+                user.setMeasurement(LocalDate.now(), "Hips", hips);
+                user.setMeasurement(LocalDate.now(), "Calf", calf);
+                user.setMeasurement(LocalDate.now(), "Thigh", thigh);
+                user.setMeasurement(LocalDate.now(), "Upper Arm", upperArm);
+                user.setMeasurement(LocalDate.now(), "Chest", chest);
+                user.setMeasurement(LocalDate.now(), "Underwire", underwire);
+                user.updateBodyFat(LocalDate.now(), bodyFat);*/
+
                 return user;
             } 
         } catch (NoNegativeException | SQLException e) {
-            System.out.println(":( noes " + e.getMessage());
+            System.out.println(":( getuser " + e.getMessage());
         } finally {
             try {
                 urs.close();
@@ -117,7 +136,7 @@ public class GetFoodsDB {
                 rec.addInstructions(instructs);
             }
         } catch (SQLException e) {
-            System.out.println(":( " + e.getErrorCode());
+            System.out.println(":( getdb" + e.getErrorCode());
         } finally {
             try {
                 frs.close();
@@ -181,7 +200,6 @@ public class GetFoodsDB {
             while (ers.next()) {
                 int index = ers.getInt("ID");
                 String exercise = ers.getString("WorkoutName");
-                System.out.println(exercise);
                 int exMins = ers.getInt("Minutes");
                 int exSecs = ers.getInt("Seconds");
                 int exCals = ers.getInt("Calories");
@@ -192,7 +210,7 @@ public class GetFoodsDB {
                 dayObj.addExercise(index, exercise, exMins, exSecs, exCals);
             }
         } catch (SQLException e) {
-            System.out.println("Noes" + e.getErrorCode());
+            System.out.println(":( getdiary" + e.getErrorCode());
         } finally {
             try {
                 ers.close();
