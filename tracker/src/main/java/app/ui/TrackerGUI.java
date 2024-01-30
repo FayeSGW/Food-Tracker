@@ -71,7 +71,7 @@ class TrackerGUI {
         tabbedPane.add("Profile", profile);
 
         window.pack();
-        window.setSize(500, 500);
+        window.setSize(550, 500);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         //window.setResizable(false);

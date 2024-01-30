@@ -10,14 +10,14 @@ class UserGUI extends JPanel {
     UserControl uControl;
     TrackerControl tControl;
 
-    JPanel whole, headerPanel, leftPanel, rightPanel, namePanel, genderPanel, dobPanel, heightPanel, weightPanel,
+    JPanel whole, headerPanel, leftPanel, centerPanel, rightPanel, namePanel, genderPanel, dobPanel, heightPanel, weightPanel,
         goalPanel, ratePanel, waterPanel, waistPanel, hipsPanel, calfPanel, thighPanel,
         upperArmPanel, chestPanel, underwirePanel, bodyFatPanel, footerPanel;
     JLabel headerLabel, nameLabel, genderLabel, dobLabel, dobLabel2, heightLabel, 
         heightLabel2, weightLabel, weightLabel2, goalLabel, goalLabel2, rateLabel, 
         waterLabel, waterLabel2, waistLabel1, waistLabel2, hipsLabel1, hipsLabel2, calfLabel1,
         calfLabel2, thighLabel1, thighLabel2, upperArmLabel1, upperArmLabel2, chestLabel1,
-        chestLabel2, underwireLabel1, underwireLabel2, bodyFatLabel1, bodyFatLabel2, messageLabel;
+        chestLabel2, underwireLabel1, underwireLabel2, bodyFatLabel1, bodyFatLabel2, messageLabel, space;
     JButton saveButton, dobButton;
     JTextField nameField, heightField, weightField, rateField, waterField, waistField, hipsField,
         calfField, thighField, upperArmField, chestField, underwireField, bodyFatField;
@@ -38,111 +38,119 @@ class UserGUI extends JPanel {
 
         whole = new JPanel(new BorderLayout()); this.add(whole);
         headerPanel = new JPanel(); whole.add(headerPanel, BorderLayout.NORTH);
-        headerLabel = new JLabel("Hi " + uControl.userName() + "!"); headerPanel.add(headerLabel);
+        headerLabel = new JLabel("Hi " + uControl.userName() + "!"); headerLabel.setFont(new Font(headerLabel.getFont().toString(), Font.BOLD, 15));
+        headerPanel.add(headerLabel);
         
-        leftPanel = new JPanel(); leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS)); 
-        leftPanel.setAlignmentX(LEFT_ALIGNMENT); whole.add(leftPanel, BorderLayout.WEST);
-        rightPanel = new JPanel(); rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS)); whole.add(rightPanel, BorderLayout.EAST);
+        leftPanel = new JPanel(); leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS)); 
+        rightPanel = new JPanel(); rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS)); 
+        whole.add(leftPanel, BorderLayout.WEST); whole.add(rightPanel, BorderLayout.EAST);
 
-        namePanel = new JPanel(); //namePanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        namePanel.setPreferredSize(new Dimension(100, 26)); leftPanel.add(namePanel);
-        nameLabel = new JLabel("Name: "); 
-        nameField = new JTextField(uControl.userName());
+        centerPanel = new JPanel(); whole.add(centerPanel, BorderLayout.CENTER);
+        space = new JLabel(); space.setPreferredSize(new Dimension(2,0)); centerPanel.add(space);
+
+        namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); leftPanel.add(namePanel);
+        nameLabel = new JLabel("Name: "); nameLabel.setPreferredSize(new Dimension(80, 23)); 
+        nameField = new JTextField(uControl.userName()); nameField.setHorizontalAlignment(JTextField.CENTER);
+        nameField.setPreferredSize(new Dimension(100, 23));
         namePanel.add(nameLabel); namePanel.add(nameField);
 
-        genderPanel = new JPanel(); //genderPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        genderPanel.setPreferredSize(new Dimension(100, 26)); leftPanel.add(genderPanel);
-        genderLabel = new JLabel("Gender: ");
+        genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); //genderPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        leftPanel.add(genderPanel);
+        genderLabel = new JLabel("Gender: "); genderLabel.setPreferredSize(new Dimension(80, 23)); 
         genderChooser = new JComboBox<>(genderList); genderChooser.setSelectedItem(uControl.userGender());
         genderPanel.add(genderLabel); genderPanel.add(genderChooser);
 
-        dobPanel = new JPanel(); //dobPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        dobPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); //dobPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         leftPanel.add(dobPanel);
-        dobLabel = new JLabel("Date of Birth: "); dobLabel2 = new JLabel(uControl.userDOB());
+        dobLabel = new JLabel("Date of Birth: "); dobLabel.setPreferredSize(new Dimension(80, 23)); 
+        dobLabel2 = new JLabel(uControl.userDOB());
         dobButton = new JButton("Change"); dobButton.addActionListener(new calendarDOB());
         dobPanel.add(dobLabel); dobPanel.add(dobLabel2); dobPanel.add(dobButton);
 
-        heightPanel = new JPanel(); //heightPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        heightPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); //heightPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         leftPanel.add(heightPanel);
-        heightLabel = new JLabel("Height: ");
-        heightField = new JTextField(Integer.toString(uControl.userHeight()));
+        heightLabel = new JLabel("Height: "); heightLabel.setPreferredSize(new Dimension(80, 23)); 
+        heightField = new JTextField(Integer.toString(uControl.userHeight())); heightField.setHorizontalAlignment(JTextField.CENTER);
+        heightField.setPreferredSize(new Dimension(35, 23));
         heightLabel2 = new JLabel(" cm");
         heightPanel.add(heightLabel); heightPanel.add(heightField); heightPanel.add(heightLabel2);
 
-        weightPanel = new JPanel(); rightPanel.add(weightPanel);
-        weightLabel = new JLabel("Weight: ");
-        weightField = new JTextField(Double.toString(uControl.userWeight()));
+        weightPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(weightPanel);
+        weightLabel = new JLabel("Weight: "); weightLabel.setPreferredSize(new Dimension(75, 23));
+        weightField = new JTextField(Double.toString(uControl.userWeight())); weightField.setHorizontalAlignment(JTextField.CENTER);
+        weightField.setPreferredSize(new Dimension(35, 23));
         weightLabel2 = new JLabel(" kg");
         weightPanel.add(weightLabel); weightPanel.add(weightField); weightPanel.add(weightLabel2);
 
-        goalPanel = new JPanel(); //goalPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        goalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); goalPanel.setPreferredSize(new Dimension(290, 30)); 
         leftPanel.add(goalPanel);
-        goalLabel = new JLabel("Goal: ");
-        goalChooser = new JComboBox<>(goalList); goalChooser.setSelectedItem(uControl.userGoal());
+        goalLabel = new JLabel("Goal: "); goalLabel.setPreferredSize(new Dimension(80, 23)); 
+        goalChooser = new JComboBox<>(goalList); goalChooser.setSelectedItem(uControl.userGoal()); goalChooser.addItemListener(new updateGoal());
         goalPanel.add(goalLabel); goalPanel.add(goalChooser);
+        changeGoal(uControl.userGoal());
 
-        if (uControl.userGoal().equals("Maintain")) {
-            goalLabel2 = new JLabel("weight.");
-        } else {
-            rateField = new JTextField(Double.toString(uControl.userRate()));
-            goalPanel.add(rateField);
-            goalLabel2 = new JLabel("kg per week.");
-        }
-        goalPanel.add(goalLabel2);
-
-        waterPanel = new JPanel(); leftPanel.add(waterPanel);   
-        waterLabel = new JLabel("Water Goal: ");
-        waterField = new JTextField(Integer.toString(uControl.userWater()));
+        waterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); leftPanel.add(waterPanel);   
+        waterLabel = new JLabel("Water Goal: "); waterLabel.setPreferredSize(new Dimension(80, 23)); 
+        waterField = new JTextField(Integer.toString(uControl.userWater())); waterField.setHorizontalAlignment(JTextField.CENTER);
+        waterField.setPreferredSize(new Dimension(35, 23));
         waterLabel2 = new JLabel(" glasses per day");
         waterPanel.add(waterLabel); waterPanel.add(waterField); waterPanel.add(waterLabel2);
 
-        waistPanel = new JPanel(); rightPanel.add(waistPanel);
-        waistLabel1 = new JLabel("Waist: ");
+        waistPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(waistPanel);
+        waistLabel1 = new JLabel("Waist: "); waistLabel1.setPreferredSize(new Dimension(75, 23));
         waistField = new JTextField(Double.toString(uControl.userMeasurement("Waist")));
-        waistLabel2 = new JLabel("cm.");
+        waistField.setPreferredSize(new Dimension(35, 23)); waistField.setHorizontalAlignment(JTextField.CENTER);
+        waistLabel2 = new JLabel("cm");
         waistPanel.add(waistLabel1); waistPanel.add(waistField); waistPanel.add(waistLabel2);
 
-        hipsPanel = new JPanel(); rightPanel.add(hipsPanel);
-        hipsLabel1 = new JLabel("Hips: ");
+        hipsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(hipsPanel);
+        hipsLabel1 = new JLabel("Hips: "); hipsLabel1.setPreferredSize(new Dimension(75, 23));
         hipsField = new JTextField(Double.toString(uControl.userMeasurement("Hips")));
-        hipsLabel2 = new JLabel("cm.");
+        hipsField.setPreferredSize(new Dimension(35, 23)); hipsField.setHorizontalAlignment(JTextField.CENTER);
+        hipsLabel2 = new JLabel("cm");
         hipsPanel.add(hipsLabel1); hipsPanel.add(hipsField); hipsPanel.add(hipsLabel2);
 
-        calfPanel = new JPanel(); rightPanel.add(calfPanel);
-        calfLabel1 = new JLabel("Calf: ");
+        calfPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(calfPanel);
+        calfLabel1 = new JLabel("Calf: "); calfLabel1.setPreferredSize(new Dimension(75, 23));
         calfField = new JTextField(Double.toString(uControl.userMeasurement("Calf")));
-        calfLabel2 = new JLabel("cm.");
+        calfField.setPreferredSize(new Dimension(35, 23)); calfField.setHorizontalAlignment(JTextField.CENTER);
+        calfLabel2 = new JLabel("cm");
         calfPanel.add(calfLabel1); calfPanel.add(calfField); calfPanel.add(calfLabel2);
 
-        thighPanel = new JPanel(); rightPanel.add(thighPanel);
-        thighLabel1 = new JLabel("Thigh: ");
+        thighPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(thighPanel);
+        thighLabel1 = new JLabel("Thigh: "); thighLabel1.setPreferredSize(new Dimension(75, 23));
         thighField = new JTextField(Double.toString(uControl.userMeasurement("Thigh")));
-        thighLabel2 = new JLabel("cm.");
+        thighField.setPreferredSize(new Dimension(35, 23)); thighField.setHorizontalAlignment(JTextField.CENTER);
+        thighLabel2 = new JLabel("cm");
         thighPanel.add(thighLabel1); thighPanel.add(thighField); thighPanel.add(thighLabel2);
 
-        upperArmPanel = new JPanel(); rightPanel.add(upperArmPanel);
-        upperArmLabel1 = new JLabel("Upper Arm: ");
+        upperArmPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(upperArmPanel);
+        upperArmLabel1 = new JLabel("Upper Arm: "); upperArmLabel1.setPreferredSize(new Dimension(75, 23));
         upperArmField = new JTextField(Double.toString(uControl.userMeasurement("Upper Arm")));
-        upperArmLabel2 = new JLabel("cm.");
+        upperArmField.setPreferredSize(new Dimension(35, 23)); upperArmField.setHorizontalAlignment(JTextField.CENTER);
+        upperArmLabel2 = new JLabel("cm");
         upperArmPanel.add(upperArmLabel1); upperArmPanel.add(upperArmField); upperArmPanel.add(upperArmLabel2);
 
-        chestPanel = new JPanel(); rightPanel.add(chestPanel);
-        chestLabel1 = new JLabel("Chest: ");
+        chestPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(chestPanel);
+        chestLabel1 = new JLabel("Chest: "); chestLabel1.setPreferredSize(new Dimension(75, 23));
         chestField = new JTextField(Double.toString(uControl.userMeasurement("Chest")));
-        chestLabel2 = new JLabel("cm.");
+        chestField.setPreferredSize(new Dimension(35, 23)); chestField.setHorizontalAlignment(JTextField.CENTER);
+        chestLabel2 = new JLabel("cm");
         chestPanel.add(chestLabel1); chestPanel.add(chestField); chestPanel.add(chestLabel2);
 
         if (uControl.userGender().equals("Female")) {
-            underwirePanel = new JPanel(); rightPanel.add(underwirePanel);
-            underwireLabel1 = new JLabel("Underwire: ");
+            underwirePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(underwirePanel);
+            underwireLabel1 = new JLabel("Underwire: "); underwireLabel1.setPreferredSize(new Dimension(75, 23));
             underwireField = new JTextField(Double.toString(uControl.userMeasurement("Underwire")));
-            underwireLabel2 = new JLabel("cm.");
+            underwireField.setPreferredSize(new Dimension(35, 23)); underwireField.setHorizontalAlignment(JTextField.CENTER);
+            underwireLabel2 = new JLabel("cm");
             underwirePanel.add(underwireLabel1); underwirePanel.add(underwireField); underwirePanel.add(underwireLabel2);
         }
         
-        bodyFatPanel = new JPanel(); rightPanel.add(bodyFatPanel);
-        bodyFatLabel1 = new JLabel("Body Fat: ");
+        bodyFatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); rightPanel.add(bodyFatPanel);
+        bodyFatLabel1 = new JLabel("Body Fat: "); bodyFatLabel1.setPreferredSize(new Dimension(75, 23));
         bodyFatField = new JTextField(Double.toString(uControl.userMeasurement("Body Fat")));
+        bodyFatField.setPreferredSize(new Dimension(35, 23)); bodyFatField.setHorizontalAlignment(JTextField.CENTER);
         bodyFatLabel2 = new JLabel("%");
         bodyFatPanel.add(bodyFatLabel1); bodyFatPanel.add(bodyFatField); bodyFatPanel.add(bodyFatLabel2);
 
@@ -160,10 +168,39 @@ class UserGUI extends JPanel {
         weightField.setText(Double.toString(uControl.userWeight()));
     }
 
+    // Adjust the goalPanel depending on what the Goal is
+    public void changeGoal(String goal) {
+        if (goal.equals("Maintain")) {
+            goalLabel2 = new JLabel("weight.");
+        } else {
+            rateField = new JTextField(Double.toString(uControl.userRate())); rateField.setHorizontalAlignment(JTextField.CENTER);
+            rateField.setPreferredSize(new Dimension(35, 23));
+            goalPanel.add(rateField);
+            goalLabel2 = new JLabel("kg per week.");
+        }
+        goalPanel.add(goalLabel2);
+    }
+
     class calendarDOB implements ActionListener {
         @Override
         public void actionPerformed (ActionEvent e) {
             uControl.openCalendar();
+        }
+    }
+
+    // To update the goal panel if the goal is changed
+    class updateGoal implements ItemListener {
+        @Override
+        public void itemStateChanged (ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                if (rateField != null) {
+                    goalPanel.remove(rateField);
+                }
+                goalPanel.remove(goalLabel2);
+                changeGoal(e.getItem().toString());
+                goalPanel.revalidate();
+                goalPanel.repaint();
+            }
         }
     }
 
@@ -201,7 +238,14 @@ class UserGUI extends JPanel {
                     newWeight = ExHandling.checkDoubles("Weight", newWeightText);
                 } 
 
-                String newRateText = rateField.getText();
+                // If Goal = Maintain when the app is opened, and not changed, then rateField is never initialised
+                // This therefore gives an error for getText()
+                String newRateText;
+                if (rateField == null) {
+                    newRateText = "0";
+                } else {
+                    newRateText = rateField.getText(); 
+                }
                 double newRate = uControl.userRate();
                 if (!ifNullDontUpdate(newRateText)) {
                     newRate = ExHandling.checkDoubles("Rate of weight change", newRateText);
