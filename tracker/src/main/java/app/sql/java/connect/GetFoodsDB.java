@@ -49,17 +49,6 @@ public class GetFoodsDB {
                 getFoods(conn, data);
                 getDiary(conn, diary);
 
-                //Since Day objects are created during getDiary(), we need to add the body measurements
-                // after this (otherwise we have Primary Key Constraint issues)
-                /*user.setMeasurement(LocalDate.now(), "Waist", waist);
-                user.setMeasurement(LocalDate.now(), "Hips", hips);
-                user.setMeasurement(LocalDate.now(), "Calf", calf);
-                user.setMeasurement(LocalDate.now(), "Thigh", thigh);
-                user.setMeasurement(LocalDate.now(), "Upper Arm", upperArm);
-                user.setMeasurement(LocalDate.now(), "Chest", chest);
-                user.setMeasurement(LocalDate.now(), "Underwire", underwire);
-                user.updateBodyFat(LocalDate.now(), bodyFat);*/
-
                 return user;
             } 
         } catch (NoNegativeException | SQLException e) {

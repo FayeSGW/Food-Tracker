@@ -51,7 +51,7 @@ public class Diary implements java.io.Serializable {
     }
 
     public Day goToDay(LocalDate date) {
-        Day day = this.addDay(date);
+        Day day = addDay(date);
         current = date;
         return day;
     }

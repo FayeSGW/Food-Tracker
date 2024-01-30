@@ -1,10 +1,8 @@
 package app.db;
 
 import java.util.HashSet;
-import java.util.Scanner;
 
 public class Food extends SupFood{
-    Scanner scanner = new Scanner(System.in);
     private String unit, displayName;
     private String barcode;
     private HashSet<String> foodType;
