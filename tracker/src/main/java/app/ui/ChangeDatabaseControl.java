@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import java.util.HashMap;
 import java.util.ArrayList;

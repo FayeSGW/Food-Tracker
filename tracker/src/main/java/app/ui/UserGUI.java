@@ -1,5 +1,6 @@
-package app.graphics;
+package app.ui;
 
+import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -9,7 +10,7 @@ class UserGUI extends JPanel {
     UserControl uControl;
     TrackerControl tControl;
 
-    JPanel whole, headerPanel, namePanel, genderPanel, dobPanel, heightPanel, weightPanel,
+    JPanel whole, headerPanel, leftPanel, rightPanel, namePanel, genderPanel, dobPanel, heightPanel, weightPanel,
         goalPanel, ratePanel, waterPanel, waistPanel, hipsPanel, calfPanel, thighPanel,
         upperArmPanel, chestPanel, underwirePanel, bodyFatPanel, footerPanel;
     JLabel headerLabel, nameLabel, genderLabel, dobLabel, dobLabel2, heightLabel, 
@@ -35,38 +36,47 @@ class UserGUI extends JPanel {
             System.exit(1);
         }
 
-        whole = new JPanel(); whole.setLayout(new BoxLayout(whole, BoxLayout.Y_AXIS)); this.add(whole);
-        headerPanel = new JPanel(); whole.add(headerPanel);
+        whole = new JPanel(new BorderLayout()); this.add(whole);
+        headerPanel = new JPanel(); whole.add(headerPanel, BorderLayout.NORTH);
         headerLabel = new JLabel("Hi " + uControl.userName() + "!"); headerPanel.add(headerLabel);
         
-        namePanel = new JPanel(); whole.add(namePanel);
+        leftPanel = new JPanel(); leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS)); 
+        leftPanel.setAlignmentX(LEFT_ALIGNMENT); whole.add(leftPanel, BorderLayout.WEST);
+        rightPanel = new JPanel(); rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS)); whole.add(rightPanel, BorderLayout.EAST);
+
+        namePanel = new JPanel(); //namePanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        namePanel.setPreferredSize(new Dimension(100, 26)); leftPanel.add(namePanel);
         nameLabel = new JLabel("Name: "); 
         nameField = new JTextField(uControl.userName());
         namePanel.add(nameLabel); namePanel.add(nameField);
 
-        genderPanel = new JPanel(); whole.add(genderPanel);
+        genderPanel = new JPanel(); //genderPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        genderPanel.setPreferredSize(new Dimension(100, 26)); leftPanel.add(genderPanel);
         genderLabel = new JLabel("Gender: ");
         genderChooser = new JComboBox<>(genderList); genderChooser.setSelectedItem(uControl.userGender());
         genderPanel.add(genderLabel); genderPanel.add(genderChooser);
 
-        dobPanel = new JPanel(); whole.add(dobPanel);
+        dobPanel = new JPanel(); //dobPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        leftPanel.add(dobPanel);
         dobLabel = new JLabel("Date of Birth: "); dobLabel2 = new JLabel(uControl.userDOB());
         dobButton = new JButton("Change"); dobButton.addActionListener(new calendarDOB());
         dobPanel.add(dobLabel); dobPanel.add(dobLabel2); dobPanel.add(dobButton);
 
-        heightPanel = new JPanel(); whole.add(heightPanel);
+        heightPanel = new JPanel(); //heightPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        leftPanel.add(heightPanel);
         heightLabel = new JLabel("Height: ");
         heightField = new JTextField(Integer.toString(uControl.userHeight()));
         heightLabel2 = new JLabel(" cm");
         heightPanel.add(heightLabel); heightPanel.add(heightField); heightPanel.add(heightLabel2);
 
-        weightPanel = new JPanel(); whole.add(weightPanel);
+        weightPanel = new JPanel(); rightPanel.add(weightPanel);
         weightLabel = new JLabel("Weight: ");
         weightField = new JTextField(Double.toString(uControl.userWeight()));
         weightLabel2 = new JLabel(" kg");
         weightPanel.add(weightLabel); weightPanel.add(weightField); weightPanel.add(weightLabel2);
 
-        goalPanel = new JPanel(); whole.add(goalPanel);
+        goalPanel = new JPanel(); //goalPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        leftPanel.add(goalPanel);
         goalLabel = new JLabel("Goal: ");
         goalChooser = new JComboBox<>(goalList); goalChooser.setSelectedItem(uControl.userGoal());
         goalPanel.add(goalLabel); goalPanel.add(goalChooser);
@@ -80,63 +90,63 @@ class UserGUI extends JPanel {
         }
         goalPanel.add(goalLabel2);
 
-        waterPanel = new JPanel(); whole.add(waterPanel);   
+        waterPanel = new JPanel(); leftPanel.add(waterPanel);   
         waterLabel = new JLabel("Water Goal: ");
         waterField = new JTextField(Integer.toString(uControl.userWater()));
         waterLabel2 = new JLabel(" glasses per day");
         waterPanel.add(waterLabel); waterPanel.add(waterField); waterPanel.add(waterLabel2);
 
-        waistPanel = new JPanel(); whole.add(waistPanel);
+        waistPanel = new JPanel(); rightPanel.add(waistPanel);
         waistLabel1 = new JLabel("Waist: ");
         waistField = new JTextField(Double.toString(uControl.userMeasurement("Waist")));
         waistLabel2 = new JLabel("cm.");
         waistPanel.add(waistLabel1); waistPanel.add(waistField); waistPanel.add(waistLabel2);
 
-        hipsPanel = new JPanel(); whole.add(hipsPanel);
+        hipsPanel = new JPanel(); rightPanel.add(hipsPanel);
         hipsLabel1 = new JLabel("Hips: ");
         hipsField = new JTextField(Double.toString(uControl.userMeasurement("Hips")));
         hipsLabel2 = new JLabel("cm.");
         hipsPanel.add(hipsLabel1); hipsPanel.add(hipsField); hipsPanel.add(hipsLabel2);
 
-        calfPanel = new JPanel(); whole.add(calfPanel);
+        calfPanel = new JPanel(); rightPanel.add(calfPanel);
         calfLabel1 = new JLabel("Calf: ");
         calfField = new JTextField(Double.toString(uControl.userMeasurement("Calf")));
         calfLabel2 = new JLabel("cm.");
         calfPanel.add(calfLabel1); calfPanel.add(calfField); calfPanel.add(calfLabel2);
 
-        thighPanel = new JPanel(); whole.add(thighPanel);
+        thighPanel = new JPanel(); rightPanel.add(thighPanel);
         thighLabel1 = new JLabel("Thigh: ");
         thighField = new JTextField(Double.toString(uControl.userMeasurement("Thigh")));
         thighLabel2 = new JLabel("cm.");
         thighPanel.add(thighLabel1); thighPanel.add(thighField); thighPanel.add(thighLabel2);
 
-        upperArmPanel = new JPanel(); whole.add(upperArmPanel);
+        upperArmPanel = new JPanel(); rightPanel.add(upperArmPanel);
         upperArmLabel1 = new JLabel("Upper Arm: ");
         upperArmField = new JTextField(Double.toString(uControl.userMeasurement("Upper Arm")));
         upperArmLabel2 = new JLabel("cm.");
         upperArmPanel.add(upperArmLabel1); upperArmPanel.add(upperArmField); upperArmPanel.add(upperArmLabel2);
 
-        chestPanel = new JPanel(); whole.add(chestPanel);
+        chestPanel = new JPanel(); rightPanel.add(chestPanel);
         chestLabel1 = new JLabel("Chest: ");
         chestField = new JTextField(Double.toString(uControl.userMeasurement("Chest")));
         chestLabel2 = new JLabel("cm.");
         chestPanel.add(chestLabel1); chestPanel.add(chestField); chestPanel.add(chestLabel2);
 
         if (uControl.userGender().equals("Female")) {
-            underwirePanel = new JPanel(); whole.add(underwirePanel);
+            underwirePanel = new JPanel(); rightPanel.add(underwirePanel);
             underwireLabel1 = new JLabel("Underwire: ");
             underwireField = new JTextField(Double.toString(uControl.userMeasurement("Underwire")));
             underwireLabel2 = new JLabel("cm.");
             underwirePanel.add(underwireLabel1); underwirePanel.add(underwireField); underwirePanel.add(underwireLabel2);
         }
         
-        bodyFatPanel = new JPanel(); whole.add(bodyFatPanel);
+        bodyFatPanel = new JPanel(); rightPanel.add(bodyFatPanel);
         bodyFatLabel1 = new JLabel("Body Fat: ");
         bodyFatField = new JTextField(Double.toString(uControl.userMeasurement("Body Fat")));
         bodyFatLabel2 = new JLabel("%");
         bodyFatPanel.add(bodyFatLabel1); bodyFatPanel.add(bodyFatField); bodyFatPanel.add(bodyFatLabel2);
 
-        footerPanel = new JPanel(); whole.add(footerPanel);
+        footerPanel = new JPanel(); whole.add(footerPanel, BorderLayout.SOUTH);
         messageLabel = new JLabel();
         saveButton = new JButton("Save changes"); saveButton.addActionListener(new saveChanges(this));
         footerPanel.add(messageLabel); footerPanel.add(saveButton);
@@ -177,6 +187,7 @@ class UserGUI extends JPanel {
 
                 String newGender = (String)genderChooser.getSelectedItem();
                 String newDOB = dobLabel2.getText();
+                String newGoal = (String)goalChooser.getSelectedItem();
 
                 String newHeightText = heightField.getText();
                 int newHeight = uControl.userHeight();
@@ -190,8 +201,6 @@ class UserGUI extends JPanel {
                     newWeight = ExHandling.checkDoubles("Weight", newWeightText);
                 } 
 
-                String newGoal = (String)goalChooser.getSelectedItem();
-
                 String newRateText = rateField.getText();
                 double newRate = uControl.userRate();
                 if (!ifNullDontUpdate(newRateText)) {
@@ -204,6 +213,7 @@ class UserGUI extends JPanel {
                     newWater = ExHandling.checkInts("Weight", newWaterText);
                 } 
 
+                //Body measurements (inc body fat %) handled in a loop
                 for (int i = 0; i < measurements.length; i++) {
                     String newText = texts[i].getText();
                     newMeasurements[i] = uControl.userMeasurement(measurements[i]);
@@ -211,12 +221,6 @@ class UserGUI extends JPanel {
                         newMeasurements[i] = ExHandling.checkDoubles(measurements[i] + " Measurement", newText);
                     }
                 }
-
-                /*String newBodyFatText = bodyFatField.getText();
-                double newBodyFat = uControl.getBodyFat();
-                if (!ifNullDontUpdate(newBodyFatText)) {
-                    newBodyFat = ExHandling.checkDoubles("Body Fat Percentage", newBodyFatText);
-                } */
                 
                 uControl.updateUserParameters(oldName, newName, newGender, newWeight, newHeight, newDOB, newGoal, newRate, newWater, 
                     newMeasurements);

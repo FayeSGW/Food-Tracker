@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import javax.swing.*;
 import io.github.cdimascio.dotenv.*;
@@ -19,7 +19,6 @@ class Test {
         Database data = user.accessDatabase();
         TrackerControl control = new TrackerControl(user, diary, data);
         control.start();
-
     }
 }
 
@@ -29,26 +28,20 @@ class TrackerGUI {
     DiaryGUI dGUI;
     ChangeDatabaseGUI dbGUI;
     UserGUI uGUI;
+    HistoryGUI hGUI;
     JFrame window;
     JTabbedPane tabbedPane;
 
     JPanel summary, diary, history, database, profile; //tab panels
 
-    //Components for summary tab
-    
-
-    //Components for diary tab
-    JPanel diaryDateButtons, remaining, breakfastTitle, breakfastContents, lunchTitle, lunchContents, dinnerTitle, dinnerContents, snacksTitle, snacksContents, diaryWater, diaryExercise;
-
-
-
     TrackerGUI (TrackerControl control, String name, SummaryGUI sGUI, DiaryGUI dGUI, ChangeDatabaseGUI dbGUI,
-                UserGUI uGUI) {
+                UserGUI uGUI, HistoryGUI hGUI) {
         this.control = control;
         this.sGUI = sGUI;
         this.dGUI = dGUI;
         this.dbGUI = dbGUI;
         this.uGUI = uGUI;
+        this.hGUI = hGUI;
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -68,7 +61,7 @@ class TrackerGUI {
         diary = dGUI; dGUI.setLayout(new BoxLayout(diary, BoxLayout.Y_AXIS));
         tabbedPane.add("Diary", diary);
 
-        history = new JPanel();
+        history = hGUI; hGUI.setLayout(new BoxLayout(history, BoxLayout.Y_AXIS));
         tabbedPane.add("History", history);
 
         database = dbGUI;

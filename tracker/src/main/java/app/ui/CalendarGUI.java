@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -72,8 +72,6 @@ class CalendarGUI {
         monthYear.add(prevYear); monthYear.add(prevMonth); 
         monthYear.add(months); monthYear.add(years);
         monthYear.add(nextMonth); monthYear.add(nextYear);
-
-        System.out.println(today.getYear());
 
         for (int c = 0; c < 7; c++) {
             JLabel day = new JLabel(dayLabelList[c]);

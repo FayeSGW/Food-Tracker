@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -18,6 +18,8 @@ class TrackerControl {
     ChangeDatabaseGUI dbGUI;
     UserControl uControl;
     UserGUI uGUI;
+    HistoryControl hControl;
+    HistoryGUI hGUI;
     User user;
     Diary diary;
     Database data;
@@ -34,8 +36,12 @@ class TrackerControl {
         dbGUI = dbControl.showDbGUI();
         uControl = new UserControl(this, user);
         uGUI = uControl.showUserGUI();
+        hControl = new HistoryControl(this, user);
+        hGUI = hControl.showHistoryGUI();
+        
+        
 
-        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI, uGUI);  
+        tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI, uGUI, hGUI);  
     }
 
     public User showUser() {

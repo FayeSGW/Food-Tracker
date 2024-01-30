@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import java.util.ArrayList;
 import java.util.HashSet;

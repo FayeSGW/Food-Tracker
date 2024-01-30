@@ -1,7 +1,6 @@
-package app.graphics;
+package app.ui;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 
 import app.diary.*;
 

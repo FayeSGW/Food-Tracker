@@ -1,4 +1,4 @@
-package app.graphics;
+package app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -233,7 +233,6 @@ class AddFoodGUI {
                     amountInput.setText("");
                     searchBar.requestFocusInWindow();
                 } else {
-                    System.out.println(type);
                     control.addFoodToRecipe(itemName, amount);
                     window.dispose();
                 }
