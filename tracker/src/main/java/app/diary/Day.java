@@ -34,6 +34,7 @@ public class Day {
         //remainingNutrition = user.showNutrition();
 
         Map.Entry<LocalDate, Day> prevEntry = user.accessDiary().showDiary().floorEntry(date);
+        
         if (prevEntry != null) {
             todaysWeight = prevEntry.getValue().showWeight();
         }
@@ -41,12 +42,20 @@ public class Day {
         /*for (int i = 0; i < nutrition.length; i++) {
             remainingNutrition[i] = user.showNutrition()[i];
         }*/
-
-        if (todaysWeight == 0) {
-            totalNutrition = user.showNutrition();
+        totalNutrition = new double[8];
+        if (todaysWeight > 0) {
+            //totalNutrition = user.calculateNutrition(date, todaysWeight);
+            for (int i = 0; i < nutrition.length; i++) {
+                totalNutrition[i] = user.calculateNutrition(date, todaysWeight)[i];
+            }
         } else {
-            totalNutrition = user.calculateNutrition(date, todaysWeight);
+            
+            for (int i = 0; i < nutrition.length; i++) {
+                totalNutrition[i] = user.showNutrition()[i];
+            }
+            //totalNutrition = user.showNutrition();
         }
+       
         remainingNutrition = totalNutrition;
 
         calorieGoal = totalNutrition[0];
@@ -68,6 +77,10 @@ public class Day {
         if (user.showGender().equals("Female")) {
             measurements.put("Underwire", 0.0);
         }   
+    }
+
+    public double[] showTotal() {
+        return totalNutrition;
     }
 
     public LocalDate showDate() {
@@ -190,7 +203,7 @@ public class Day {
         dinner.removeAll();
         snacks.removeAll();
         nutrition = new double[8];
-        remainingNutrition = user.showNutrition();
+        remainingNutrition = totalNutrition;
         exercise.clear();
         caloriesBurned = 0;
     }
@@ -286,11 +299,18 @@ public class Day {
         todaysWeight = weight;
         if (weight > 0) {
             user.updateWeight(date, weight);
+
             totalNutrition = user.calculateNutrition(date, weight);
+            calorieGoal = totalNutrition[0];
+            carbGoal = totalNutrition[3];
+            fatGoal = totalNutrition[1];
+            proteinGoal = totalNutrition[6];
+            
 
             for (int i = 0; i < nutrition.length; i++) {
                 remainingNutrition[i] = totalNutrition[i] - nutrition[i];
             }
+            System.out.println(date + " " + showRemainingNutrition()[0]);
         }
     }
 
