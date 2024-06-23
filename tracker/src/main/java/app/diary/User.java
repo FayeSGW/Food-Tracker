@@ -178,7 +178,6 @@ public class User implements java.io.Serializable {
             }
         }
         
-
         //This should now be handled in the GUI
         /*try {
             this.weight = checkForNegativeValues("Weight", weight);
