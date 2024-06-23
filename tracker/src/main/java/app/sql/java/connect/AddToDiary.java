@@ -100,7 +100,7 @@ public class AddToDiary {
 
             userStmt = conn.prepareStatement(userWeight);
 
-            userStmt.setDouble(1, user.showWeight());
+            userStmt.setDouble(1, day.showWeight());
 
             userStmt.executeUpdate();
         } catch (SQLException e) {

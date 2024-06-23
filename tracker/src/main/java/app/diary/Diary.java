@@ -23,6 +23,10 @@ public class Diary implements java.io.Serializable {
         return diary.keySet();
     }
 
+    public TreeMap<LocalDate, Day> showDiary() {
+        return diary;
+    }
+
     public String showName() {
         return name;
     }

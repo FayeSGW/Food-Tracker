@@ -46,6 +46,7 @@ public class User implements java.io.Serializable {
             measurements.put("Body Fat", measurements.get("BodyFat"));
             measurements.remove("UpperArm"); measurements.remove("BodyFat");
         } else {
+            measurements = new HashMap<>();
             for (String type: measurementTypes) {
                 measurements.put(type, 0.0);
             }
@@ -119,8 +120,9 @@ public class User implements java.io.Serializable {
         return calories;
     }
 
-    public void updateNutrition(LocalDate date) {
+    public double[] calculateNutrition(LocalDate date, double weight) {
         int age = this.age;
+        double[] nutrition = new double[8];
         try {
             age = calculateAge(date);
         } catch (NoNegativeException e) {}
@@ -128,7 +130,7 @@ public class User implements java.io.Serializable {
         double hb = 0;
         double fibre = 0;
         double satfat = 0;
-        //Calculates BMR using two forumlae for each gender
+        //Calculates BMR using two formulae for each gender
         if (gender.toLowerCase().equals("male")) {
             msj = (10 * weight) + (6.25 * height) - (5 * age) + 5; //Mifflin-St Jeor Equation
             hb = (13.397 * weight) + (4.799 * height) - (5.677 * age) + 88.362; //Revised Harris-Benedict Equation
@@ -156,11 +158,18 @@ public class User implements java.io.Serializable {
         nutrition[5] = fibre;
         nutrition[6] = protein;
         nutrition[7] = salt;
+
+        return nutrition;
+    }
+
+    public void updateNutrition(LocalDate date) {
+        nutrition = calculateNutrition(date, weight);
     }
 
     public void updateWeight(LocalDate date, double weight) {
         diary.addDay(date); //Ensures that if day doesn't already exist, we create it
-        
+        this.weight = weight;
+        updateNutrition(date);
         // This ensures that if a more recent weight has been entered in the diary, then 
         // we don't overwrite it.
         for (LocalDate day: diary.showDays()) {
@@ -168,8 +177,7 @@ public class User implements java.io.Serializable {
                 return;
             }
         }
-        this.weight = weight;
-        updateNutrition(date);
+        
 
         //This should now be handled in the GUI
         /*try {

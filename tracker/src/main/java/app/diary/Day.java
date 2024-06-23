@@ -2,6 +2,7 @@ package app.diary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.time.LocalDate;
 
 import app.db.*;
@@ -10,7 +11,7 @@ import app.sql.java.connect.*;
 public class Day {
     private LocalDate date;
     private Meal breakfast, lunch, dinner, snacks;
-    private double[] nutrition, remainingNutrition;
+    private double[] nutrition, remainingNutrition, totalNutrition;
     private HashMap<Integer, Exercise> exercise;
     private ArrayList<Exercise> workouts;
     private int caloriesBurned = 0, waterDrunk = 0, remainingWater;
@@ -30,15 +31,28 @@ public class Day {
         snacks = new Meal("Snacks", date, database);
 
         nutrition = new double[8];
-        remainingNutrition = new double[8];
-        for (int i = 0; i < nutrition.length; i++) {
-            remainingNutrition[i] = user.showNutrition()[i];
-        }
+        //remainingNutrition = user.showNutrition();
 
-        calorieGoal = user.showNutrition()[0];
-        carbGoal = user.showNutrition()[3];
-        fatGoal = user.showNutrition()[1];
-        proteinGoal = user.showNutrition()[6];
+        Map.Entry<LocalDate, Day> prevEntry = user.accessDiary().showDiary().floorEntry(date);
+        if (prevEntry != null) {
+            todaysWeight = prevEntry.getValue().showWeight();
+        }
+        
+        /*for (int i = 0; i < nutrition.length; i++) {
+            remainingNutrition[i] = user.showNutrition()[i];
+        }*/
+
+        if (todaysWeight == 0) {
+            totalNutrition = user.showNutrition();
+        } else {
+            totalNutrition = user.calculateNutrition(date, todaysWeight);
+        }
+        remainingNutrition = totalNutrition;
+
+        calorieGoal = totalNutrition[0];
+        carbGoal = totalNutrition[3];
+        fatGoal = totalNutrition[1];
+        proteinGoal = totalNutrition[6];
 
         this.exercise = new HashMap<>();
         this.workouts = new ArrayList<>();
@@ -272,6 +286,11 @@ public class Day {
         todaysWeight = weight;
         if (weight > 0) {
             user.updateWeight(date, weight);
+            totalNutrition = user.calculateNutrition(date, weight);
+
+            for (int i = 0; i < nutrition.length; i++) {
+                remainingNutrition[i] = totalNutrition[i] - nutrition[i];
+            }
         }
     }
 
