@@ -20,6 +20,7 @@ public class Day {
     private HashMap<String, Double> measurements = new HashMap<>();
     private User user;
     private Database database;
+    private boolean realWeight = false;
 
     public Day(LocalDate date, User user) {
         this.date = date;
@@ -36,6 +37,7 @@ public class Day {
         Map.Entry<LocalDate, Day> prevEntry = user.accessDiary().showDiary().floorEntry(date);
         
         if (prevEntry != null) {
+            //System.out.println(date + " " + prevEntry.getValue().showDate() + " " + prevEntry.getValue().showWeight());
             todaysWeight = prevEntry.getValue().showWeight();
         }
         
@@ -295,8 +297,13 @@ public class Day {
         return todaysWeight;
     }
 
+    public boolean hasRealWeight() {
+        return realWeight;
+    }
+
     public void addWeight(double weight) {
         todaysWeight = weight;
+        realWeight = true;
         if (weight > 0) {
             user.updateWeight(date, weight);
 
@@ -305,12 +312,10 @@ public class Day {
             carbGoal = totalNutrition[3];
             fatGoal = totalNutrition[1];
             proteinGoal = totalNutrition[6];
-            
 
             for (int i = 0; i < nutrition.length; i++) {
                 remainingNutrition[i] = totalNutrition[i] - nutrition[i];
             }
-            System.out.println(date + " " + showRemainingNutrition()[0]);
         }
     }
 

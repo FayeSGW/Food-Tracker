@@ -42,7 +42,6 @@ public class GetFoodsDB {
                 }
 
                 user = new User(name, gender, weight, height, DOB, goal, rate, water, measurements);
-
                 Database data = user.accessDatabase();
                 Diary diary = user.accessDiary();
 
@@ -138,7 +137,7 @@ public class GetFoodsDB {
     }
 
     public static void getDiary(Connection conn, Diary diary) {
-        String dayString = "SELECT Date, Water , Weight FROM Days";
+        String dayString = "SELECT Date, Water , Weight FROM Days ORDER BY Date ASC";
         String mealStrng = "SELECT Meal, FoodID, FoodName, RecipeID, RecipeName, Amount, Days.Date FROM FoodsInDiary INNER JOIN Days ON FoodsInDiary.Date = Days.Date";
         String exercises = "SELECT ID, WorkoutName, Minutes, Seconds, Calories, Days.Date FROM Workouts INNER JOIN Days ON Workouts.Date = Days.Date";
 

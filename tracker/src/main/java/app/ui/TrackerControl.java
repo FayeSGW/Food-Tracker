@@ -39,8 +39,6 @@ class TrackerControl {
         hControl = new HistoryControl(this, user);
         hGUI = hControl.showHistoryGUI();
         
-        
-
         tGUI = new TrackerGUI(this, user.showName(), sGUI, dGUI, dbGUI, uGUI, hGUI);  
     }
 
@@ -183,6 +181,7 @@ class TrackerControl {
         Day day = diary.goToDay(date);
         day.addWeightFromGUI(weight);
         uGUI.updateWeight();
+        updateNutrition();
     }
 
     //Functionality for user to add/edit workouts

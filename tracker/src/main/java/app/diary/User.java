@@ -168,15 +168,15 @@ public class User implements java.io.Serializable {
 
     public void updateWeight(LocalDate date, double weight) {
         diary.addDay(date); //Ensures that if day doesn't already exist, we create it
-        this.weight = weight;
-        updateNutrition(date);
         // This ensures that if a more recent weight has been entered in the diary, then 
         // we don't overwrite it.
         for (LocalDate day: diary.showDays()) {
-            if (day.isAfter(date) == true && diary.getDay(day).showWeight() > 0) {
+            if (day.isAfter(date) && diary.getDay(day).hasRealWeight()) {
                 return;
             }
         }
+        this.weight = weight;
+        updateNutrition(date);
         
         //This should now be handled in the GUI
         /*try {
