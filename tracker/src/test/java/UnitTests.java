@@ -259,18 +259,18 @@ public class UnitTests {
         assertThrows(NoNegativeException.class, () -> user.calculateAge(now));
         //reset stub
         try {
-            stubs.stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8);
+            stubs.stubUserMaintain = new User("Edmund", "M", 90.0, 200, "2000-01-01", "M", 0.0, 8, null);
         } catch (NoNegativeException e) {}
         
     }
         
     @Test
     public void test013_AssertNegativeParametersInConstructorThrowException() {
-        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8), "Weight cannot have negative value!");
-        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8), "Height cannot have negative value!");
-        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", -1.0, 8), "Rate cannot have negative value!");
-        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", 0.0, -8), "Water cannot have negative value!");
-        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2050-01-01", "M", 0.0, 8), "DOB can't be after the current date!");
+        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8, null), "Weight cannot have negative value!");
+        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, -200, "2000-01-01", "M", 0.0, 8, null), "Height cannot have negative value!");
+        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", -1.0, 8, null), "Rate cannot have negative value!");
+        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2000-01-01", "M", 0.0, -8, null), "Water cannot have negative value!");
+        assertThrows(NoNegativeException.class, () -> new User("Baldrick", "M", 90.0, 200, "2050-01-01", "M", 0.0, 8, null), "DOB can't be after the current date!");
     }
 
     @ParameterizedTest
@@ -295,7 +295,7 @@ public class UnitTests {
     @Test
     public void test016_AssertSimpleUserSetters() {
         try {
-            User stubUser = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "M", 0.0, 8);
+            User stubUser = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "M", 0.0, 8, null);
             stubUser.changeName("Blackadder");
             stubUser.changeGender("Female");
             stubUser.changeHeight(180);

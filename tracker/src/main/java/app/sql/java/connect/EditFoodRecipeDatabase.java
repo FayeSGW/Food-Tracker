@@ -28,7 +28,7 @@ public class EditFoodRecipeDatabase {
             try {
                 stmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -52,7 +52,7 @@ public class EditFoodRecipeDatabase {
             try {
                 stmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -76,7 +76,7 @@ public class EditFoodRecipeDatabase {
             try {
                 stmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -105,7 +105,7 @@ public class EditFoodRecipeDatabase {
             try {
                 stmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -147,7 +147,7 @@ public class EditFoodRecipeDatabase {
             try {
                 stmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -188,7 +188,7 @@ public class EditFoodRecipeDatabase {
                 rsDiary.close();
                 rsRecipes.close();
                 stmtDiary.close();
-            } catch (SQLException e) {}
+            } catch (SQLException | NullPointerException e) {}
         }
         return contains;
     }
@@ -248,7 +248,7 @@ public class EditFoodRecipeDatabase {
                     stmt2.close();
                 }
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             } 
         }

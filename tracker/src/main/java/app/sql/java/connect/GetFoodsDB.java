@@ -57,7 +57,7 @@ public class GetFoodsDB {
                 urs.close();
                 userStmt.close();
                 conn.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }
@@ -130,7 +130,7 @@ public class GetFoodsDB {
                 frs.close();
                 rrs.close();
                 stmt.close();
-            } catch (SQLException e) {
+            } catch (SQLException | NullPointerException e) {
                 System.out.println("!");
             }
         }

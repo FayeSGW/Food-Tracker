@@ -20,39 +20,39 @@ class UserControl {
         return gui;
     }
 
-    public String userName() {
+    public String getUserName() {
         return user.showName();
     }
 
-    public String userGender() {
+    public String getUserGender() {
         return user.showGender();
     }
 
-    public String userDOB() {
+    public String getUserDOB() {
         return user.showDOB();
     }
 
-    public int userHeight() {
+    public int getUserHeight() {
         return user.showHeight();
     }
 
-    public double userWeight() {
+    public double getUserWeight() {
         return user.showWeight();
     }
 
-    public String userGoal() {
+    public String getUserGoal() { // Loss, gain, maintain
         return user.showGoal();
     }
 
-    public double userRate() {
+    public double getUserRate() { // Rate of weight loss/gain per week
         return user.showRate();
     }
 
-    public int userWater() {
+    public int getUserWaterGoal() {
         return user.showWater();
     }
 
-    public double userMeasurement(String type) {
+    public double getUserMeasurement(String type) {
         return user.getSingleMeasurement(type);
     }
 

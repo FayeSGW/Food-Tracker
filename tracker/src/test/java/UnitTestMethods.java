@@ -27,6 +27,7 @@ class UnitTestMethods {
         public static User stubUserMaintain = null;
         public static User stubUserLose = null;
         public static User stubUserGain = null;
+        public static HashMap<String, Double> measurements = null;
 
         static {
             try {
@@ -34,12 +35,13 @@ class UnitTestMethods {
                 stubFoodWithDisplayName = new Food(mockDB, 1, "Full Name1", "Display Name", 100, "g", 350, 12.3, 3, 24, 10, 14, 37, 0.4, "barcode");
                 stubFoodWithNullDisplayName = new Food(mockDB, null, "Full Name2", null, 50, "ml", 350, 12.3, 3, 24, 10, 14, 37, 0.4, null);
 
-                stubRecipe1 = new Recipe(mockDB, 4, "Recipe Name1", 4);
-                stubRecipe2 = new Recipe(mockDB, 5, "Recipe Name2", 1);
+                stubRecipe1 = new Recipe(mockDB, 5, "Recipe Name1", 4);
+                stubRecipe2 = new Recipe(mockDB, 4, "Recipe Name2", 1);
 
-                stubUserMaintain = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8);
-                stubUserLose = new User("Elizabeth", "Female", 60.0, 160, "1990-12-12", "Lose", 0.5, 10);
-                stubUserGain = new User("Percy", "Male", 65.5, 200, "1995-06-07", "Gain", 1.0, 7);
+                measurements = new HashMap<>(Map.of("Waist", 0.0, "Hips", 0.0, "Calf", 0.0, "Thigh", 0.0, "UpperArm", 0.0, "Chest", 0.0, "Underwire", 0.0, "Body Fat", 0.0));
+                stubUserMaintain = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8, measurements);
+                stubUserLose = new User("Elizabeth", "Female", 60.0, 160, "1990-12-12", "Lose", 0.5, 10, null);
+                stubUserGain = new User("Percy", "Male", 65.5, 200, "1995-06-07", "Gain", 1.0, 7, null);
             } catch (NoNegativeException e) {}
         }
     }
@@ -91,8 +93,8 @@ class UnitTestMethods {
         Set<Map.Entry<String,Double>> expectedIngredientList = ingList.entrySet();
         
         return Stream.of(
-        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 4, 4, 0, expectedNutrition, expectedIngredientList),
-        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 5, 1, 0, expectedNutrition, expectedIngredientList)
+        Arguments.of(Stubs.stubRecipe1, "Recipe Name1", 5, 4, 0, expectedNutrition, expectedIngredientList),
+        Arguments.of(Stubs.stubRecipe2, "Recipe Name2", 4, 1, 0, expectedNutrition, expectedIngredientList)
         );
     }
 
@@ -247,7 +249,7 @@ class UnitTestMethods {
     protected static Stream<Arguments> providesUserWeightUpdates() {
         User user = null;
         try {
-            user = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8);
+            user = new User("Edmund", "Male", 90.0, 200, "2000-01-01", "Maintain", 0.0, 8, null);
         } catch (NoNegativeException e) {}
         
         //Dates to use

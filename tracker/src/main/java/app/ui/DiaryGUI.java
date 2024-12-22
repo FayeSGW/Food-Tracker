@@ -296,7 +296,8 @@ class DiaryGUI extends JPanel {
             JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
             JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
             foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
-;
+
+            name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

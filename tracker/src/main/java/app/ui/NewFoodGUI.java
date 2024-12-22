@@ -34,52 +34,52 @@ class NewFoodGUI {
         titlePanel = new JPanel(); whole.add(titlePanel);
         titleLabel = new JLabel("Add new food/edit food in database"); titlePanel.add(titleLabel);
 
-        namePanel = new JPanel(); whole.add(namePanel);
+        namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(namePanel);
         nameLabel = new JLabel("Name of Food: "); namePanel.add(nameLabel);
-        nameField = new JTextField(); nameField.setPreferredSize(new Dimension(150,26)); namePanel.add(nameField);
+        nameField = new JTextField(); nameField.setPreferredSize(new Dimension(200,26)); namePanel.add(nameField);
 
-        displayNamePanel = new JPanel(); whole.add(displayNamePanel);
+        displayNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(displayNamePanel);
         displayNameLabel = new JLabel("Display Name of Food (optional): "); displayNamePanel.add(displayNameLabel);
-        displayNameField = new JTextField(); displayNameField.setPreferredSize(new Dimension(150,26)); displayNamePanel.add(displayNameField);
+        displayNameField = new JTextField(); displayNameField.setPreferredSize(new Dimension(200,26)); displayNamePanel.add(displayNameField);
 
-        amountPanel = new JPanel(); whole.add(amountPanel);
+        amountPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(amountPanel);
         amountLabel = new JLabel("Amount: "); amountPanel.add(amountLabel);
         amountField = new JTextField(); amountField.setPreferredSize(new Dimension(50,26)); amountPanel.add(amountField);
         unitField = new JTextField(); unitField.setPreferredSize(new Dimension(50,26)); amountPanel.add(unitField);
 
-        caloriesPanel = new JPanel(); whole.add(caloriesPanel);
+        caloriesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(caloriesPanel);
         caloriesLabel = new JLabel("Calories: "); caloriesPanel.add(caloriesLabel);
         caloriesField = new JTextField(); caloriesField.setPreferredSize(new Dimension(50,26)); caloriesPanel.add(caloriesField);
 
-        fatPanel = new JPanel(); whole.add(fatPanel);
+        fatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(fatPanel);
         fatLabel = new JLabel("Fat (g): "); fatPanel.add(fatLabel);
         fatField = new JTextField(); fatField.setPreferredSize(new Dimension(50,26)); fatPanel.add(fatField);
 
-        satfatPanel = new JPanel(); whole.add(satfatPanel);
+        satfatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(satfatPanel);
         satfatLabel = new JLabel("Saturated Fat (g): "); satfatPanel.add(satfatLabel);
         satfatField = new JTextField(); satfatField.setPreferredSize(new Dimension(50,26)); satfatPanel.add(satfatField);
 
-        carbsPanel = new JPanel(); whole.add(carbsPanel);
+        carbsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(carbsPanel);
         carbsLabel = new JLabel("Carbohydrates (g): "); carbsPanel.add(carbsLabel);
         carbsField = new JTextField(); carbsField.setPreferredSize(new Dimension(50,26)); carbsPanel.add(carbsField);
 
-        sugarPanel = new JPanel(); whole.add(sugarPanel);
+        sugarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(sugarPanel);
         sugarLabel = new JLabel("Sugars (g): "); sugarPanel.add(sugarLabel);
         sugarField = new JTextField(); sugarField.setPreferredSize(new Dimension(50,26)); sugarPanel.add(sugarField);
 
-        fibrePanel = new JPanel(); whole.add(fibrePanel);
+        fibrePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(fibrePanel);
         fibreLabel = new JLabel("Fibre (g): "); fibrePanel.add(fibreLabel);
         fibreField = new JTextField(); fibreField.setPreferredSize(new Dimension(50,26)); fibrePanel.add(fibreField);
 
-        proteinPanel = new JPanel(); whole.add(proteinPanel);
+        proteinPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(proteinPanel);
         proteinLabel = new JLabel("Protein (g): "); proteinPanel.add(proteinLabel);
         proteinField = new JTextField(); proteinField.setPreferredSize(new Dimension(50,26)); proteinPanel.add(proteinField);
 
-        saltPanel = new JPanel(); whole.add(saltPanel);
+        saltPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(saltPanel);
         saltLabel = new JLabel("Salt (g): "); saltPanel.add(saltLabel);
         saltField = new JTextField(); saltField.setPreferredSize(new Dimension(50,26)); saltPanel.add(saltField);
 
-        barcodePanel = new JPanel(); whole.add(barcodePanel);
+        barcodePanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); whole.add(barcodePanel);
         barcodeLabel = new JLabel("Barcode (optional): "); barcodePanel.add(barcodeLabel);
         barcodeField = new JTextField(); barcodeField.setPreferredSize(new Dimension(100,26)); barcodePanel.add(barcodeField);
 

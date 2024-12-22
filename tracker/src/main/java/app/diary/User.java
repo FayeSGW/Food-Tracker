@@ -144,8 +144,9 @@ public class User implements java.io.Serializable {
         }
         double sugar = 50;
         double salt = 6;
-        double restingCalories = ((msj + hb) / 2) * 1.2;
-        double calories = Math.rint(restingCalories + caloriesForWeightGoal());
+        double restingCalories = ((msj + hb) / 2) * 1.2; // Average BMR (from formulae) * 1.2 for sedentary
+        double calories = Math.rint(restingCalories + caloriesForWeightGoal()); // Calories required for weight goal
+        // make it possible to choose own proportions of macros
         double protein = (calories * 0.25) / 4;
         double carbs = (calories * 0.5) / 4;
         double fat = (calories * 0.25) / 9;
