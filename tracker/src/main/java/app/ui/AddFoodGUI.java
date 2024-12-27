@@ -216,8 +216,9 @@ class AddFoodGUI {
         public void actionPerformed (ActionEvent e) {
             String name = foodsList.getSelectedValue();
             int index = foodsList.getSelectedIndex();
-            control.deleteFromDatabase(name);
             model.remove(index);
+            control.deleteFromDatabase(name);
+            
         }
     }
 

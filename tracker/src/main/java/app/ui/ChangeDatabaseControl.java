@@ -122,65 +122,41 @@ class ChangeDatabaseControl {
     }
     //Editing food objects, taking into account issues with the food having been prevously added to the diary or to recipes
     boolean saveEditedFood(String oldName, String newName, String oldDisplayName, String displayName, double amount, String unit, double calories, double fat, double satfat, double carbs, double sugar, double fibre, double protein, double salt, String barcode) {
-        String name = oldName, disp = oldDisplayName;
-        if (!oldName.equals(newName)) {
-            name = newName;
-        }
-        if (!oldDisplayName.equals(displayName)) {
-            disp = displayName;
-        }
-        if (!databaseCheck(name, disp)) {
-            return false;
-        } else {      
-            /* If the food is not contained in a recipe or in the diary, we can just edit it, otherwise we need to account for the 
-             * recipe/diary entries.
-             * If only the name/display name has changed, we can edit as normal and just update the name in the corresponding 
-             * diary/recipe entries.
-             * For cases when the nutrition/unit nutrition has changed, I have chosen to keep a reference to the old food (in the 
-             * same way as when deleting items) so that already-existing recipe ingredient/diary entries are not changed-
-             * This essentially "deletes" the old food and creates a new one */                  
-            if (!EditFoodRecipeDatabase.checkIfContains(null, oldName, "food")) {
+        /* If the food is not contained in a recipe or in the diary, we can just edit it, otherwise we need to account for the 
+            * recipe/diary entries.
+            * If only the name/display name has changed, we can edit as normal and just update the name in the corresponding 
+            * diary/recipe entries.
+            * For cases when the nutrition/unit nutrition has changed, I have chosen to keep a reference to the old food (in the 
+            * same way as when deleting items) so that already-existing recipe ingredient/diary entries are not changed-
+            * This essentially "deletes" the old food and creates a new one */                  
+        if (!EditFoodRecipeDatabase.checkIfContains(null, oldName, "food")) {
+            int index = data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            EditFoodRecipeDatabase.addFood(index, oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+        } else {
+            Food food = (Food) data.findItem(oldName);
+            double[] newNutr = {calories, fat, satfat, carbs, sugar, fibre, protein, salt};
+            /* If only the name or display name has been edited, then we can edit as normal.
+                * But if the nutrition or unit nutrition of the food has changed, then we need to keep a reference
+                * to the current food.*/
+            if (Arrays.equals(newNutr, food.showNutrition()) && amount == food.showAmount() && unit.equals(food.showUnit())) {
                 int index = data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 EditFoodRecipeDatabase.addFood(index, oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
             } else {
-                Food food = (Food) data.findItem(oldName);
-                double[] newNutr = {calories, fat, satfat, carbs, sugar, fibre, protein, salt};
-                /* If only the name or display name has been edited, then we can edit as normal.
-                 * But if the nutrition or unit nutrition of the food has changed, then we need to keep a reference
-                 * to the current food.*/
-                if (Arrays.equals(newNutr, food.showNutrition()) && amount == food.showAmount() && unit.equals(food.showUnit())) {
-                    int index = data.editFood(oldName, newName, oldDisplayName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                    EditFoodRecipeDatabase.addFood(index, oldName, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                } else {
-                    delete(oldName);
-                    Food newFood = data.addFood(null, 0, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                    EditFoodRecipeDatabase.addFood(newFood.showIndex(), null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
-                }   
-            }
-            aGUI.updateResults();
-            return true;
+                delete(oldName);
+                Food newFood = data.addFood(null, 0, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                EditFoodRecipeDatabase.addFood(newFood.showIndex(), null, newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+            }   
         }
-    }
-    //Check if the submitted name for a food/recipe is already in use
-    boolean nameCheck(String name, String string) {
-        SupFood item = data.findItem(name);
-        messageString = "There is already a food/recipe with that " + string + "!";
-        if (item != null) {
-            if (item.isDeleted()) {
-                messageString = "This " + string + " is in use by a deleted item!";
-            }
-            if (fGUI != null) {
-                fGUI.changeAddedLabel(messageString); 
-            } else if (rGUI != null) {
-                rGUI.setInfoLabel(messageString);
-            }
-            return false;
-        }
+        aGUI.updateResults();
         return true;
     }
 
-    boolean databaseCheck(String name, String displayName) {  
-        if (!nameCheck(name, "name") || !nameCheck(displayName, "display name")) {
+
+    //Check if the submitted name for a food/recipe is already in use
+    boolean databaseCheck(String name, String displayName) { 
+        SupFood itemFromName = data.findItem(name); 
+        SupFood itemFromDisplayName = data.findItem(displayName);
+        if (itemFromName != null || itemFromDisplayName != null) {
             return false;
         }
         return true;

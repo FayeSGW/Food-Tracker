@@ -165,20 +165,23 @@ public class EditFoodRecipeDatabase {
 
             if (itemType.equals("food")) {
                 searchDiary = "SELECT COUNT(*) FROM FoodsInDiary WHERE FoodName = ?"; 
+                searchRecipes = "SELECT COUNT(*) FROM RecipeIngredients WHERE FoodName = ?";
             } else if (itemType.equals("recipe")) {
                 searchDiary = "SELECT COUNT(*) FROM FoodsInDiary WHERE RecipeName = ?"; 
             } 
 
-            searchRecipes = "SELECT COUNT(*) FROM RecipeIngredients WHERE FoodName = ?";
-            stmtRecipes = conn.prepareStatement(searchRecipes);
-            stmtRecipes.setString(1, itemName);
-            rsRecipes = stmtRecipes.executeQuery();
+            if (searchRecipes != null) {
+                stmtRecipes = conn.prepareStatement(searchRecipes);
+                stmtRecipes.setString(1, itemName);
+                rsRecipes = stmtRecipes.executeQuery();
+            }
+            
 
             stmtDiary = conn.prepareStatement(searchDiary);
             stmtDiary.setString(1, itemName);
             rsDiary = stmtDiary.executeQuery();
 
-            if (rsDiary.getInt(1) == 0 && rsRecipes.getInt(1) == 0) {
+            if (rsDiary.getInt(1) == 0 && (rsRecipes == null || rsRecipes.getInt(1) == 0)) {
                 contains = false;
             }
         } catch (SQLException e) {
@@ -186,7 +189,9 @@ public class EditFoodRecipeDatabase {
         } finally {
             try {
                 rsDiary.close();
-                rsRecipes.close();
+                if (rsRecipes != null) {
+                    rsRecipes.close();
+                }
                 stmtDiary.close();
             } catch (SQLException | NullPointerException e) {}
         }

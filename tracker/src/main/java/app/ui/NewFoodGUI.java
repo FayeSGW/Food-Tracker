@@ -144,24 +144,38 @@ class NewFoodGUI {
                 double fibre = ExHandling.checkDoublesIncNullCheck("FIbre", fibreField.getText().trim());
                 double protein = ExHandling.checkDoublesIncNullCheck("Protein", proteinField.getText().trim());
                 double salt = ExHandling.checkDoublesIncNullCheck("Salt", saltField.getText().trim());
-                
+
                 String barcode = barcodeField.getText().trim();
                 if (barcode.equals("")) {
                     barcode = null;
                 } 
-                
+
                 //So we can tell the user that the food was successfully added to the database
-                boolean saveSuccess = true;
+                boolean saveSuccess = false;
                 if (foodName != null) {
                     String oldName = foodName;
-                    saveSuccess = control.saveEditedFood(oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    String name = oldName, disp = display;
+                    if (!oldName.equals(newName)) {
+                        name = newName;
+                    }
+                    if (!display.equals(displayName)) {
+                        disp = displayName;
+                    }
+                    if (!control.databaseCheck(name, disp)) {
+                        int confirmation = JOptionPane.showConfirmDialog(window, String.format("<html><center>There is already a %s with that %s! <br> Are you sure you want to save?</html>", "food", "name"), ".", JOptionPane.OK_CANCEL_OPTION);
+                        if (confirmation == JOptionPane.OK_OPTION) {
+                            saveSuccess = control.saveEditedFood(oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                        } 
+                    } else {
+                        saveSuccess = control.saveEditedFood(oldName, newName, display, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
+                    }
+
                 } else {
                     saveSuccess = control.saveNewFood(newName, displayName, amount, unit, calories, fat, satfat, carbs, sugar, fibre, protein, salt, barcode);
                 }
 
                 if (saveSuccess) {
-                    String confirmation = displayName + " added successfully!";
-                    changeAddedLabel(confirmation);
+                    changeAddedLabel(displayName + " added successfully!");
                     //Reset fields
                     nameField.setText("");
                     displayNameField.setText("");
@@ -176,7 +190,12 @@ class NewFoodGUI {
                     proteinField.setText("");
                     saltField.setText("");
                     barcodeField.setText("");
+
+                    if (foodName != null) {
+                        window.dispose();
+                    }
                 }
+
             } catch (NoNegativeException | NoNullException | NumberFormatException n) {
                 changeAddedLabel(n.getMessage());
             }
