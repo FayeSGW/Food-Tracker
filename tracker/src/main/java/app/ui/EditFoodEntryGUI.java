@@ -66,7 +66,7 @@ class EditFoodEntryGUI {
         public void actionPerformed (ActionEvent e) {
             if (type.equals("diary")) {
                 control.removeFromMeal(mealName, foodIndex);
-                control.updateNutrition();
+                control.updateNutrition(mealName);
             } else {
                 control.editRecipeIngredient(mealName, foodIndex, 0);
             }
@@ -87,7 +87,7 @@ class EditFoodEntryGUI {
 
             if (type.equals("diary")) {
                 control.editMeal(mealName, foodIndex, amount);
-                control.updateNutrition();
+                control.updateNutrition(mealName);
             } else {
                 control.editRecipeIngredient(mealName, foodIndex, amount); //mealname here is the recipe name
             }

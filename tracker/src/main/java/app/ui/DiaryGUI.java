@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 
 class DiaryGUI extends JPanel {
     TrackerControl control;
@@ -239,14 +240,27 @@ class DiaryGUI extends JPanel {
     }
 
     void clearMealPanels() {
-        for (JPanel panel: mealPanels) {
+        clearMealPanels(-1);
+    }
+
+    void clearMealPanels(int mealIndex) {
+        if (mealIndex != -1) {
+            JPanel panel = mealPanels[mealIndex];
             Component[] foodPanels = panel.getComponents();
             for (Component foodPanel: foodPanels) {
                 panel.remove(foodPanel);
             }
             panel.repaint();
+        } else {
+            for (JPanel panel: mealPanels) {
+                Component[] foodPanels = panel.getComponents();
+                for (Component foodPanel: foodPanels) {
+                    panel.remove(foodPanel);
+                }
+                panel.repaint();
+            }
         }
-        
+
         Component[] exPanel = exerciseWorkoutsPanel.getComponents();
         for (Component panel: exPanel) {
             exerciseWorkoutsPanel.remove(panel);
@@ -256,9 +270,18 @@ class DiaryGUI extends JPanel {
     }
 
     void populateMealPanels() {
-        clearMealPanels();
-        for (String meal:mealsList) {
-            updateMealPanels(meal);
+        populateMealPanels(null);
+    }
+
+    void populateMealPanels(String mealName) {
+        if (mealName != null) {
+            clearMealPanels(Arrays.asList(mealsList).indexOf(mealName));
+            updateMealPanels(mealName);
+        } else {
+            clearMealPanels();
+            for (String meal:mealsList) {
+                updateMealPanels(meal);
+            }
         }
         updateExercisePanel();
         this.repaint();
@@ -269,7 +292,6 @@ class DiaryGUI extends JPanel {
 
         for (Integer index: foodsList.keySet()) {
             ArrayList<Object> details = foodsList.get(index);
-            String foodName = (String)details.get(0);
             String displayName = (String)details.get(3);
             String foodAmount = control.showFoodItemAmount(mealName, index);
             String[] foodNutrition = control.showFoodItemNutrition(mealName, index);
@@ -288,20 +310,31 @@ class DiaryGUI extends JPanel {
             }
 
             mp.add(foodItem);
-            
+
+            JLabel delete = new JLabel(String.valueOf("\u2A02")); delete.setFont(new Font(delete.getFont().toString(), Font.BOLD, 15)); 
+            delete.setPreferredSize(new Dimension(15, 15)); delete.setForeground(Color.RED);
             JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 15));
             JLabel calories = new JLabel(foodNutrition[0], SwingConstants.CENTER); calories.setPreferredSize(new Dimension(47, 15));
             JLabel carbs = new JLabel(foodNutrition[3] + " g", SwingConstants.CENTER); carbs.setPreferredSize(new Dimension(34, 15));
             JLabel fat = new JLabel(foodNutrition[1] + " g", SwingConstants.CENTER); fat.setPreferredSize(new Dimension(25, 15));
             JLabel protein = new JLabel(foodNutrition[6] + " g", SwingConstants.CENTER); protein.setPreferredSize(new Dimension(42, 15));
             JLabel fibre = new JLabel(foodNutrition[5] + " g", SwingConstants.CENTER); fibre.setPreferredSize(new Dimension(30, 15));
-            foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
+            foodItem.add(delete); foodItem.add(name); foodItem.add(calories); foodItem.add(carbs); foodItem.add(fat); foodItem.add(protein); foodItem.add(fibre);
 
             name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.editMealDialogue(mealName, index);
+                }
+            });
+
+            delete.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            delete.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.removeFromMeal(mealName, index);
+                    populateMealPanels(mealName);
                 }
             });
         }

@@ -92,6 +92,10 @@ class TrackerControl {
     //---------------------SUMMARY--------------------------------------------
     //Updating nutrition display on the SummaryGUI
     void updateNutrition() {
+        updateNutrition(null);
+    }
+
+    void updateNutrition(String mealName) {
         Day day = diary.goToDay(showCurrentDate());
         double[] remaining = day.showRemainingNutrition();
         double[] nutrition = day.showNutrition();
@@ -109,7 +113,7 @@ class TrackerControl {
         showGoals();
 
         dGUI.updateSummary(nutrition, remaining);
-        dGUI.populateMealPanels();
+        dGUI.populateMealPanels(mealName);
     }
 
     void showGoals() {
@@ -130,7 +134,7 @@ class TrackerControl {
     void addFoodToDiary(String meal, String name, double amount) {
         Day day = diary.goToDay(showCurrentDate());
         day.addFoodFromGUI(meal, name, amount, "new");
-        updateNutrition();
+        updateNutrition(meal);
     }
 
     AddFoodGUI addFoodDialogue(int index, String type) {
@@ -244,12 +248,13 @@ class TrackerControl {
     void removeFromMeal(String mealName, int index) {
         Day day = diary.goToDay(showCurrentDate());
         day.removeFromDB(mealName, index);
+        updateNutrition(mealName);
     }
 
     void clearMeal(String mealName) {
         Day day = diary.goToDay(showCurrentDate());
         day.clearMeal(mealName);
-        updateNutrition();
+        updateNutrition(mealName);
     }
 
     void editRecipeIngredientDialogue(String recipeName, int index) {
@@ -305,7 +310,7 @@ class TrackerControl {
         fromDay.copyMeal(from, toMeal, toDay);
         chooseDate(tempDateForCopy);
         tempDateForCopy = null;
-        updateNutrition();
+        updateNutrition(toMeal);
     }
 
     void setUserTempDOB(LocalDate date) {
