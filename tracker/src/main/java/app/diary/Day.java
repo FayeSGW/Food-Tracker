@@ -216,18 +216,9 @@ public class Day {
 
     public Integer addExercise(Integer index, String name, int minutes, int seconds, int calories) {
         Exercise workout = new Exercise(index, name, minutes, seconds, calories);
-        remainingNutrition[0] = remainingNutrition[0] + calories;
-        remainingNutrition[1] = remainingNutrition[1] + ((calories * 0.25)/9); //update fat requirement based on new calories
-        remainingNutrition[3] = remainingNutrition[3] + ((calories * 0.5)/4); //update carbs based on new calories
-        remainingNutrition[6] = remainingNutrition[6] + ((calories * 0.25)/4); //update protein requirement based on new calories
-        
-        calorieGoal += calories;
-        fatGoal += ((calories * 0.25)/9);
-        carbGoal += ((calories * 0.5)/4);
-        proteinGoal += ((calories * 0.25)/4);
+        recalculateNutritionFromExercise(calories);
 
-        caloriesBurned += calories;
-
+        // Why do I do this?? Figure out later
         Integer ind = workout.showIndex();
         exercise.put(ind, workout);
         workouts.add(workout);
@@ -241,34 +232,43 @@ public class Day {
         AddToDiary.addExercise(ind, date, name, minutes, seconds, calories, null);
     }
 
-    public void editExercise(Integer index, String oldName, String newName, int minutes, int seconds, int calories) {
+    public void editExercise(Integer index, String oldName, String newName, int minutes, int seconds, int newCalories) {
         Exercise workout = exercise.get(index);
-        workout.edit(newName, minutes, seconds, calories);
+        int originalCalories = workout.showCalories();
+        workout.edit(newName, minutes, seconds, newCalories);
+
+        int caloriesDifference = newCalories - originalCalories;
+        recalculateNutritionFromExercise(caloriesDifference);
         
-        AddToDiary.addExercise(index, showDate().toString(), newName, minutes, seconds, calories, oldName);
+        AddToDiary.addExercise(index, showDate().toString(), newName, minutes, seconds, newCalories, oldName);
     }
 
     public void removeExercise(Integer index) {
         if (exercise.containsKey(index)) {
             Exercise workout = exercise.get(index);
             int calories = workout.showCalories();
-            remainingNutrition[0] = remainingNutrition[0] - calories;
-            remainingNutrition[1] = remainingNutrition[1] - ((calories * 0.25)/9);
-            remainingNutrition[3] = remainingNutrition[3] - ((calories * 0.5)/4);
-            remainingNutrition[6] = remainingNutrition[6] - ((calories * 0.25)/4);
-            
-            calorieGoal -= calories;
-            fatGoal -= ((calories * 0.25)/9);
-            carbGoal -= ((calories * 0.5)/4);
-            proteinGoal -= ((calories * 0.25)/4);
-            
-            caloriesBurned -= calories;
+            recalculateNutritionFromExercise((calories * -1));
+
             exercise.remove(index);
             workouts.remove(workout);
 
             String date = showDate().toString();
             AddToDiary.removeWorkout(date, index);
         }
+    }
+
+    void recalculateNutritionFromExercise(int calories) {
+        remainingNutrition[0] = remainingNutrition[0] + calories;
+        remainingNutrition[1] = remainingNutrition[1] + ((calories * 0.25)/9); //update fat requirement based on new calories
+        remainingNutrition[3] = remainingNutrition[3] + ((calories * 0.5)/4); //update carbs based on new calories
+        remainingNutrition[6] = remainingNutrition[6] + ((calories * 0.25)/4); //update protein requirement based on new calories
+        
+        calorieGoal += calories;
+        fatGoal += ((calories * 0.25)/9);
+        carbGoal += ((calories * 0.5)/4);
+        proteinGoal += ((calories * 0.25)/4);
+
+        caloriesBurned += calories;
     }
 
     public ArrayList<Exercise> showWorkouts() {

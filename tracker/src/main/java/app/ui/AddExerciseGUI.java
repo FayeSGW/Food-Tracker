@@ -113,7 +113,7 @@ class AddExerciseGUI {
                     control.editExercise(date, index, oldName, name, mins, secs, calories);
                     
                 }
-                control.updateNutrition();
+                control.updateNutrition("exercise");
                 window.dispose();
                 
                 

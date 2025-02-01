@@ -250,19 +250,18 @@ public class AddToDiary {
         Connection conn = null;
         PreparedStatement stmt = null;
         String string = "INSERT INTO Workouts(WorkoutName, Minutes, Seconds, Calories, Date, ID) VALUES (?,?,?,?,?,?)";
-        String update = "UPDATE Workouts SET WorkoutName = ?, Minutes = ?, Seconds = ?, Calories = ?, Date = ?, ID = ? WHERE WorkoutName = ?";
+        String update = "UPDATE Workouts SET WorkoutName = ?, Minutes = ?, Seconds = ?, Calories = ?, Date = ?, ID = ? WHERE ID = ?";
 
         try {
             conn = Connect.connect();
-
+            
             if (oldName == null) {
                 stmt = conn.prepareStatement(string);
             } else {
                 stmt = conn.prepareStatement(update);
 
-                stmt.setString(7, oldName);
+                stmt.setInt(7, index);
             }
-            
             
             stmt.setString(1, name);
             stmt.setInt(2, minutes);

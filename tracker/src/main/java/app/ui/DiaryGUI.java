@@ -214,6 +214,13 @@ class DiaryGUI extends JPanel {
         populatePanels();
     }
 
+    JLabel deleteIcon() {
+        JLabel delete = new JLabel(String.valueOf("\u2A02")); delete.setFont(new Font(delete.getFont().toString(), Font.BOLD, 15)); 
+        delete.setPreferredSize(new Dimension(15, 15)); delete.setForeground(Color.RED);
+
+        return delete;
+    }
+
     void changeDate(String day, int date, String month) {
         String string = String.format("%s %d %s", day, date, month);
         chooseDay.setText(string);
@@ -323,8 +330,7 @@ class DiaryGUI extends JPanel {
 
             mp.add(foodItem);
 
-            JLabel delete = new JLabel(String.valueOf("\u2A02")); delete.setFont(new Font(delete.getFont().toString(), Font.BOLD, 15)); 
-            delete.setPreferredSize(new Dimension(15, 15)); delete.setForeground(Color.RED);
+            JLabel delete = deleteIcon();
             JLabel name = new JLabel(String.format("%s, %s", displayName, foodAmount)); name.setPreferredSize(new Dimension(200, 15));
             JLabel calories = new JLabel(foodNutrition[0], SwingConstants.CENTER); calories.setPreferredSize(new Dimension(47, 15));
             JLabel carbs = new JLabel(foodNutrition[3] + " g", SwingConstants.CENTER); carbs.setPreferredSize(new Dimension(34, 15));
@@ -346,7 +352,6 @@ class DiaryGUI extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.removeFromMeal(mealName, index);
-                    populateMealPanels(mealName);
                 }
             });
         }
@@ -362,15 +367,25 @@ class DiaryGUI extends JPanel {
             String cals = workouts.get(workout).get(2);
             String workoutName = workouts.get(workout).get(0);
 
+            JLabel delete = deleteIcon();
             JLabel name = new JLabel(workoutName);
             JLabel timeLabel = new JLabel(time);
             JLabel calories = new JLabel(cals);
-            exercise.add(name); exercise.add(timeLabel); exercise.add(calories);
+            exercise.add(delete); exercise.add(name); exercise.add(timeLabel); exercise.add(calories);
             
+            name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             name.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     control.editExerciseDialogue("edit", workout);
+                }
+            });
+
+            delete.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            delete.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    control.removeExercise(control.showCurrentDate(), workout);
                 }
             });
         }

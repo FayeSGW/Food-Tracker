@@ -209,6 +209,7 @@ class TrackerControl {
     void editExercise(LocalDate date, Integer index, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.goToDay(date);
         day.editExercise(index, oldName, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
+        updateNutrition("exercise");
     }
 
     void editExerciseDialogue(String type, Integer index) {
@@ -224,7 +225,7 @@ class TrackerControl {
     void removeExercise(LocalDate date, Integer index) {
         Day day = diary.goToDay(date);
         day.removeExercise(index);
-        updateNutrition();
+        updateNutrition("exercise");
     }
 
     HashMap<Integer, ArrayList<String>> showWorkouts() {
