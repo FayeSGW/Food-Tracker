@@ -64,6 +64,7 @@ class TrackerControl {
     void chooseDate(LocalDate date) {
         diary.goToDay(date);
         updateDate(date);
+        updateWaterInGUI();
         updateNutrition();
     }
 
@@ -95,11 +96,12 @@ class TrackerControl {
         updateNutrition(null);
     }
 
-    void updateNutrition(String mealName) {
+    // typeName is "weight", "exercise", or the name of the meal panel to be updated
+    // Used so we only refresh relevant panels in the UI, not all of them
+    void updateNutrition(String typeName) {
         Day day = diary.goToDay(showCurrentDate());
         double[] remaining = day.showRemainingNutrition();
         double[] nutrition = day.showNutrition();
-        int drunk = day.showWaterDrunk();
 
         String cals = String.format("%.0f calories remaining", remaining[0]);
         sGUI.updateCalories(cals, (int)nutrition[0]);
@@ -109,17 +111,19 @@ class TrackerControl {
         sGUI.updateProtein(protein, nutrition[6]);
         String fat = String.format("%.1f g remaining", remaining[1]);
         sGUI.updateFat(fat, nutrition[1]);
-        sGUI.updateWater(drunk);
         showGoals();
 
         dGUI.updateSummary(nutrition, remaining);
-        dGUI.populateMealPanels(mealName);
+        dGUI.populateMealPanels(typeName);
+    }
+
+    void updateWaterInGUI() {
+        Day day = diary.goToDay(showCurrentDate());
+        sGUI.updateWater(day.showWaterDrunk());
+        sGUI.setWaterProgessBounds(user.showWater());
     }
 
     void showGoals() {
-        int water = user.showWater();
-        sGUI.setWaterProgessBounds(water);
-
         Day day = diary.goToDay(showCurrentDate());
 
         double[] goals = day.showGoals();
@@ -150,7 +154,7 @@ class TrackerControl {
     void addWater() {
         Day day = diary.goToDay(showCurrentDate());
         day.addWaterFromGUI();
-        updateNutrition();
+        updateWaterInGUI();
     }
 
     HashMap<Integer, ArrayList<Object>> showFoodsinMeal(String mealName) {
