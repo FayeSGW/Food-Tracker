@@ -114,7 +114,10 @@ class TrackerControl {
         showGoals();
 
         dGUI.updateSummary(nutrition, remaining);
-        dGUI.populateMealPanels(typeName);
+        if (typeName == null || !typeName.equals("weight")) {
+            dGUI.populateMealPanels(typeName);
+        }
+        
     }
 
     void updateWaterInGUI() {
@@ -189,7 +192,7 @@ class TrackerControl {
         Day day = diary.goToDay(date);
         day.addWeightFromGUI(weight);
         uGUI.updateWeight();
-        updateNutrition();
+        updateNutrition("weight");
     }
 
     //Functionality for user to add/edit workouts
@@ -200,7 +203,7 @@ class TrackerControl {
     void addExercise(LocalDate date, Integer index, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {
         Day day = diary.goToDay(date);
         day.addExercisefromGUI(index, workoutName, workoutMinutes, workoutSeconds, caloriesBurned);
-        updateNutrition();
+        updateNutrition("exercise");
     }
 
     void editExercise(LocalDate date, Integer index, String oldName, String workoutName, int workoutMinutes, int workoutSeconds, int caloriesBurned) {

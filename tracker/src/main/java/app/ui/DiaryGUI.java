@@ -211,7 +211,7 @@ class DiaryGUI extends JPanel {
         
         mealPanels[0] = breakfastFoodsPanel; mealPanels[1] = lunchFoodsPanel; mealPanels[2] = dinnerFoodsPanel; mealPanels[3] = snacksFoodsPanel;
 
-        populateMealPanels();
+        populatePanels();
     }
 
     void changeDate(String day, int date, String month) {
@@ -251,16 +251,21 @@ class DiaryGUI extends JPanel {
                 panel.remove(foodPanel);
             }
             panel.repaint();
-        } else {
-            for (JPanel panel: mealPanels) {
-                Component[] foodPanels = panel.getComponents();
-                for (Component foodPanel: foodPanels) {
-                    panel.remove(foodPanel);
-                }
-                panel.repaint();
-            }
-        }
+            return;
+        } 
 
+        for (JPanel panel: mealPanels) {
+            Component[] foodPanels = panel.getComponents();
+            for (Component foodPanel: foodPanels) {
+                panel.remove(foodPanel);
+            }
+            panel.repaint();
+        }
+        clearExercisePanel();
+        
+    }
+
+    void clearExercisePanel() {
         Component[] exPanel = exerciseWorkoutsPanel.getComponents();
         for (Component panel: exPanel) {
             exerciseWorkoutsPanel.remove(panel);
@@ -269,21 +274,28 @@ class DiaryGUI extends JPanel {
         exerciseWorkoutsPanel.repaint();
     }
 
-    void populateMealPanels() {
+    void populatePanels() {
         populateMealPanels(null);
     }
 
-    void populateMealPanels(String mealName) {
-        if (mealName != null) {
-            clearMealPanels(Arrays.asList(mealsList).indexOf(mealName));
-            updateMealPanels(mealName);
-        } else {
+    // typeName is null (which refreshes everything), "exercise", or the name of the meal being updated
+    // Used so we only refresh the relevant panel(s), not all of them
+    void populateMealPanels(String typeName) {
+        if (typeName == null) {
             clearMealPanels();
             for (String meal:mealsList) {
                 updateMealPanels(meal);
             }
-        }
-        updateExercisePanel();
+            updateExercisePanel();
+        } else if (typeName.equals("exercise")) {
+            clearExercisePanel();
+            updateExercisePanel();
+        } else {
+            clearMealPanels(Arrays.asList(mealsList).indexOf(typeName));
+            updateMealPanels(typeName);
+            return;
+        } 
+        
         this.repaint();
     }
 
