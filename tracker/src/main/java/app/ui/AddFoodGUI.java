@@ -114,6 +114,8 @@ class AddFoodGUI {
         finished.setAlignmentX(Component.LEFT_ALIGNMENT); finished.setMaximumSize(new Dimension(75, 26));
         finished.addActionListener(new Exit());
         foodButtons.add(finished);
+
+        addedLabel = new JLabel(""); foodButtons.add(addedLabel);
         
         window.pack();
         window.setResizable(false);
@@ -226,18 +228,26 @@ class AddFoodGUI {
         @Override
         public void actionPerformed (ActionEvent e) {
             try {
-                double amount = ExHandling.checkDoublesIncNullCheck("Amount", amountInput.getText());
                 String itemName = foodsList.getSelectedValue();
-                if (type.equals("diary")) {
-                    String meal = (String)mealChooser.getSelectedItem();
-                    control.addFoodToDiary(meal, itemName, amount);
-                    amountInput.setText("");
-                    searchBar.requestFocusInWindow();
+                if (itemName == null) {
+                    addedLabel.setText("No item selected!");
                 } else {
-                    control.addFoodToRecipe(itemName, amount);
-                    window.dispose();
+                    double amount = ExHandling.checkDoublesIncNullCheck("Amount", amountInput.getText());
+                    if (type.equals("diary")) {
+                        String meal = (String)mealChooser.getSelectedItem();
+                        control.addFoodToDiary(meal, itemName, amount);
+                        addedLabel.setText(String.format("%s added to %s", itemName, meal));
+                        amountInput.setText("");
+                        searchBar.requestFocusInWindow();
+                    } else {
+                        control.addFoodToRecipe(itemName, amount);
+                        addedLabel.setText(String.format("%s added to recipe", itemName));
+                        window.dispose();
+                    }
                 }
-            } catch (NumberFormatException | NoNegativeException | NoNullException n) {}
+            } catch (NumberFormatException | NoNegativeException | NoNullException n) {
+                addedLabel.setText(n.getMessage());
+            }
         }
     }
 
