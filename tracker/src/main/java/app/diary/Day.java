@@ -366,7 +366,9 @@ public class Day {
     }
 
     public void setMeasurementFromGUI(String type, double value, boolean save) {
-        setMeasurement(type, value);
+        if (type != null) {
+            setMeasurement(type, value);
+        }
         if (save) {
             AddToDiary.updateMeasurements(this, user);
         }   

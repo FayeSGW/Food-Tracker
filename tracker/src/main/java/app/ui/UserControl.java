@@ -52,7 +52,7 @@ class UserControl {
         return user.showWater();
     }
 
-    public double getUserMeasurement(String type) {
+    public double userMeasurement(String type) {
         return user.getSingleMeasurement(type);
     }
 
@@ -61,8 +61,8 @@ class UserControl {
         CalendarGUI cGUI = new CalendarGUI(tControl, dob, "DOB");
     }
 
-    public void updateUserParameters(String oldName, String newName, String gender, double weight, int height, String dob,
+    public boolean updateUserParameters(String oldName, String newName, String gender, double weight, int height, String dob,
         String goal, double rate, int water, double[] measurements) {
-            user.edit(oldName, newName, gender, weight, height, dob, goal, rate, water, measurements);
+            return user.edit(oldName, newName, gender, weight, height, dob, goal, rate, water, measurements);
         }
 }

@@ -77,22 +77,42 @@ public class User implements java.io.Serializable {
         return diary;
     }
 
-    public void edit(String oldName, String name, String gender, double weight, int height, String dob, String goal, double rate, int water,
-        double[] measurements) {
-        changeName(name);
-        changeGender(gender);
-        changeHeight(height);
-        changeDOB(dob);
-        updateGoal(rate, goal);
-        setWaterGoal(water);
+    public boolean edit(String oldName, String name, String gender, double weight, int height, String dob, String goal, double rate, int water,
+        double[] newMeasurements) {
+        boolean measurementUpdated = false, weightUpdated = false, basicsUpdated = false;
+        basicsUpdated |= changeName(name);
+        basicsUpdated |= changeGender(gender);
+        basicsUpdated |= changeHeight(height);
+        basicsUpdated |= changeDOB(dob);
+        basicsUpdated |= updateGoal(rate, goal);
+        basicsUpdated |= setWaterGoal(water);
 
         Day day = diary.getDay(today);
-        day.addWeightFromGUI(weight);
-        for (int i = 0; i < measurements.length-1; i++) {
-            day.setMeasurementFromGUI(measurementTypes[i], measurements[i], false);
+        if (weight != this.weight) {
+            System.out.println("weight updated");
+            weightUpdated = true;
+            day.addWeightFromGUI(weight);
         }
-        day.setMeasurementFromGUI("Body Fat", measurements[measurements.length-1], true);
-        AddToDiary.addUser(this, oldName);
+        
+        for (int i = 0; i < newMeasurements.length; i++) {
+            if (newMeasurements[i] != measurements.get(measurementTypes[i])) {
+                measurementUpdated = true;
+                day.setMeasurementFromGUI(measurementTypes[i], newMeasurements[i], false);
+            }
+            
+        }
+        if (measurementUpdated) {
+            System.out.println("measurements updated");
+            day.setMeasurementFromGUI(null, 0, true);
+        }
+        
+        if (basicsUpdated) {
+            System.out.println("basics updated");
+            AddToDiary.addUser(this, oldName);
+        }
+
+        return measurementUpdated | weightUpdated | basicsUpdated;
+        
     }
 
     public int calculateAge(LocalDate now) throws NoNegativeException {
@@ -189,26 +209,47 @@ public class User implements java.io.Serializable {
         
     }
 
-    public void updateGoal(double rate, String goal) {
-        this.rate = rate;
-        this.goal = goal;
-        updateNutrition(today);
+    public boolean updateGoal(double rate, String goal) {
+        if (this.rate != rate || !this.goal.equals(goal)) {
+            this.rate = rate;
+            this.goal = goal;
+            updateNutrition(today);
+            return true;
+        }
+        return false;
+        
     }
 
-    public void changeName(String name) {
-        this.name = name;
+    public boolean changeName(String name) {
+        if (!this.name.equals(name)) {
+            this.name = name;
+            return true;
+        };
+        return false;
     }
 
-    public void changeGender(String gender) {
-        this.gender = gender;
+    public boolean changeGender(String gender) {
+        if (!this.gender.equals(gender)) {
+            this.gender = gender;
+            return true;
+        }
+        return false;
     }
 
-    public void changeHeight(int height) {
-        this.height = height;
+    public boolean changeHeight(int height) {
+        if (this.height != height) {
+            this.height = height;
+            return true;
+        }
+        return false;
     }
 
-    public void changeDOB(String dob) {
-        dateOfBirth = dob;
+    public boolean changeDOB(String dob) {
+        if (!dateOfBirth.equals(dob)) {
+            dateOfBirth = dob;
+            return true;
+        }
+        return false;
     }
 
     public String showName() {
@@ -243,8 +284,13 @@ public class User implements java.io.Serializable {
         return nutrition;
     }
 
-    public void setWaterGoal(int amount) {
-        water = amount;
+    public boolean setWaterGoal(int amount) {
+        if (water != amount) {
+            water = amount;
+            return true;
+        }
+        return false;
+       
     }
 
     public int showWater() {
