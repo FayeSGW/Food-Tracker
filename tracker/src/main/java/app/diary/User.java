@@ -191,8 +191,8 @@ public class User implements java.io.Serializable {
         diary.addDay(date); //Ensures that if day doesn't already exist, we create it
         // This ensures that if a more recent weight has been entered in the diary, then 
         // we don't overwrite it.
-        for (LocalDate day: diary.showDays()) {
-            if (day.isAfter(date) && diary.getDay(day).hasRealWeight()) {
+        for (LocalDate day: diary.showDaysAfter(date)) {
+            if (diary.getDay(day).hasRealWeight()) {
                 return;
             }
         }
@@ -307,8 +307,8 @@ public class User implements java.io.Serializable {
         if (measurements.containsKey(type)) {
             diary.addDay(date);
 
-            for (LocalDate day: diary.showDays()) {
-                if (day.isAfter(date) && diary.getDay(day).getSingleMeasurement(type) > 0) {
+            for (LocalDate day: diary.showDaysAfter(date)) {
+                if (diary.getDay(day).getSingleMeasurement(type) > 0) {
                     return;
                 }
             }

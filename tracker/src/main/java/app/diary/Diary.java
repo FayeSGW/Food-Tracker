@@ -23,6 +23,14 @@ public class Diary implements java.io.Serializable {
         return diary.keySet();
     }
 
+    public Set<LocalDate> showDaysAfter(LocalDate date) {
+        return diary.tailMap(date).keySet();
+    }
+
+    public Set<LocalDate> showDaysBefore(LocalDate date) {
+        return diary.headMap(date).keySet();
+    }
+
     public TreeMap<LocalDate, Day> showDiary() {
         return diary;
     }
