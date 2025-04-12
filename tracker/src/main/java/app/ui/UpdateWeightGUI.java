@@ -38,7 +38,7 @@ class UpdateWeightGUI {
         instructions = new JLabel("Input your new weight below:");
         whole.add(instructions, BorderLayout.NORTH);
 
-        input = new JTextField(); 
+        input = new JTextField(); input.addActionListener(new updateWeight(date));
         whole.add(input, BorderLayout.CENTER);
 
         button = new JButton("Update Weight"); button.addActionListener(new updateWeight(date));
